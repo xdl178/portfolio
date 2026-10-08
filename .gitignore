@@ -27,3 +27,7 @@ desktop.ini
 # æœ¬åœ°å‡­æ®ï¼šç»ä¸æäº¤
 .token
 *.token
+
+# ÁÙÊ±Æ¾¾İÎÄ¼ş£¨¾ø²»Ìá½»£©
+*gitdsh-cred*
+*cred.txt

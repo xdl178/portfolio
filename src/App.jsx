@@ -1,76 +1,95 @@
-import { Routes, Route, Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import Navbar from './components/Navbar.jsx'
+import Footer from './components/sections/Footer.jsx'
+import Home from './pages/Home.jsx'
+import Works from './pages/Works.jsx'
+import WorkDetail from './pages/WorkDetail.jsx'
+import { useCursorHalo, CursorHalo } from './hooks/useCursorHalo.jsx'
+import { useLenis } from './hooks/useSmoothScroll.jsx'
 
-function Home() {
+/* 路由切换时的淡入 */
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } },
+}
+
+function Page({ children }) {
   return (
-    <>
-      <p className="font-mono text-expo-eyebrow uppercase text-blood">Portfolio / 2026</p>
-      <h1 className="mt-6 font-display text-brut-headline text-paper">
-        你好，我是 xdl178
-      </h1>
-      <p className="mt-6 max-w-content text-peach-lead text-bone">
-        这是我的个人主页骨架。技术栈已经装好并与参考站保持一致：
-        Vite + React 19 + Tailwind + framer-motion + GSAP + Lenis + JSX 路由。
-        接下来在这里写你自己的页面。
-      </p>
-      <nav className="mt-10 flex flex-wrap gap-4">
-        <Link
-          to="/works"
-          className="border-2 border-paper px-6 py-3 font-mono text-body-sm uppercase tracking-expo-track text-paper shadow-brut-press transition hover:bg-paper hover:text-ink"
-        >
-          查看 Works
-        </Link>
-        <a
-          href="https://vite.dev/guide/"
-          target="_blank"
-          rel="noreferrer"
-          className="border-2 border-concrete px-6 py-3 font-mono text-body-sm uppercase tracking-expo-track text-bone transition hover:border-paper hover:text-paper"
-        >
-          Vite 文档
-        </a>
-      </nav>
-    </>
+    <motion.main variants={pageVariants} initial="initial" animate="animate" exit="exit" className="pt-nav">
+      {children}
+    </motion.main>
   )
 }
 
-function Works() {
+function NotFound() {
+  return (
+    <Page>
+      <div className="container py-30 text-center">
+        <p className="eyebrow">404</p>
+        <h1 className="mt-4 font-display text-hero-sub text-ink">页面不存在</h1>
+        <p className="mt-5 text-body text-slate-soft">检查一下地址，或者回首页看看。</p>
+        <a href="#/" className="btn-primary mt-8">
+          回到首页
+        </a>
+      </div>
+    </Page>
+  )
+}
+
+function Shell() {
+  const location = useLocation()
+  const { dotRef, haloRef } = useCursorHalo()
+  const lenis = useLenis()
+
+  // 换页时回到顶部（交给 Lenis，避免和它的滚动位置打架）
+  useEffect(() => {
+    if (lenis) lenis.scrollTo(0, { immediate: true })
+    else window.scrollTo(0, 0)
+  }, [location.pathname, lenis])
+
   return (
     <>
-      <p className="font-mono text-expo-eyebrow uppercase text-blood">Selected Works</p>
-      <h1 className="mt-6 font-display text-brut-headline text-paper">作品列表</h1>
-      <p className="mt-6 max-w-content text-peach-lead text-bone">
-        这里是 <code className="font-mono text-ochre">/works</code> 路由，用来看
-        HashRouter 是否工作：刷新页面、直接访问链接都不应该 404。
-      </p>
-      <Link
-        to="/"
-        className="mt-10 inline-block border-2 border-paper px-6 py-3 font-mono text-body-sm uppercase tracking-expo-track text-paper shadow-brut-press transition hover:bg-paper hover:text-ink"
-      >
-        返回首页
-      </Link>
+      <CursorHalo dotRef={dotRef} haloRef={haloRef} />
+      <Navbar />
+
+      <AnimatePresence mode="wait" initial={false}>
+        <Routes location={location} key={location.pathname}>
+          <Route
+            path="/"
+            element={
+              <Page>
+                <Home />
+              </Page>
+            }
+          />
+          <Route
+            path="/works"
+            element={
+              <Page>
+                <Works />
+              </Page>
+            }
+          />
+          <Route
+            path="/works/:slug"
+            element={
+              <Page>
+                <WorkDetail />
+              </Page>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AnimatePresence>
+
+      <Footer />
     </>
   )
 }
 
 export default function App() {
-  return (
-    <div className="min-h-screen bg-ink bg-grain px-6 py-24">
-      <div className="container">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/works" element={<Works />} />
-          <Route
-            path="*"
-            element={
-              <div>
-                <h1 className="font-display text-brut-headline text-paper">404</h1>
-                <Link to="/" className="mt-6 inline-block text-bone underline">
-                  返回首页
-                </Link>
-              </div>
-            }
-          />
-        </Routes>
-      </div>
-    </div>
-  )
+  return <Shell />
 }

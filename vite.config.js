@@ -1,37 +1,45 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// GitHub Pages 部署在 https://<user>.github.io/<repo>/ 这样的子路径下，
-// 因此必须显式设置 base，否则打包后的 JS/CSS 会去根路径找而 404。
+// ---------------------------------------------------------------------------
+// base 路径（关键配置）
 //
-// 默认按仓库名 portfolio 配置。换仓库名 / 绑自定义域名时：
-//   - 自定义域名或部署到根路径 -> 设 VITE_BASE=/ 再构建
-//   - PowerShell 里的写法：$env:VITE_BASE='/'; npm run build
-const base = process.env.VITE_BASE ?? '/portfolio/'
+// 生产构建：部署在 https://xdl178.github.io/portfolio/ 这样的【子路径】下，
+//   必须设 base='/portfolio/'，否则打包后的 JS/CSS 会去站点根目录找，全部 404。
+// 本地开发：dev server 用 base='/'，这样 http://localhost:5174/ 直接可用，
+//   不必再加 /portfolio/ 前缀（之前两边共用会导致本地打不开）。
+//
+// 换仓库名 / 绑自定义域名时，构建时覆盖即可：
+//   PowerShell:  $env:VITE_BASE='/'; npm run build
+// ---------------------------------------------------------------------------
+export default defineConfig(({ command }) => {
+  const isBuild = command === 'build'
+  const base = isBuild ? (process.env.VITE_BASE ?? '/portfolio/') : '/'
 
-export default defineConfig({
-  base,
-  plugins: [react()],
-  server: {
-    host: '0.0.0.0',
-    port: 5174,
-  },
-  build: {
-    target: 'es2019',
-    cssCodeSplit: true,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-router-dom') || id.includes('react/') || id.includes('react-dom')) {
-              return 'react-vendor'
+  return {
+    base,
+    plugins: [react()],
+    server: {
+      host: '0.0.0.0',
+      port: 5174,
+    },
+    build: {
+      target: 'es2019',
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react-router-dom') || id.includes('react/') || id.includes('react-dom')) {
+                return 'react-vendor'
+              }
+              if (id.includes('framer-motion')) {
+                return 'motion-vendor'
+              }
             }
-            if (id.includes('framer-motion')) {
-              return 'motion-vendor'
-            }
-          }
+          },
         },
       },
     },
-  },
+  }
 })
