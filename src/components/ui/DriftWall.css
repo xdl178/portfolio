@@ -1,0 +1,205 @@
+/* 飘移照片墙：多列瓦片持续缓慢飘移，鼠标靠近时整面墙做轻微视差位移。
+   配色改为白底 / 墨蓝黑文字 / 品牌蓝 + 科技青，阴影统一走冷色柔光。 */
+
+.drift-wall {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  perspective: var(--dw-perspective, 1200px);
+  perspective-origin: 50% 50%;
+
+  --dw-tile-w: 200px;
+  --dw-tile-h: 132px;
+  --dw-gap: 18px;
+  --dw-radius: 14px;
+  --dw-lift: 64px;
+  --dw-dim: 0.55;
+  --dw-gray: 0;
+  --dw-overlay: #dce4ff;
+  --dw-edge: 40%;
+  --dw-ph-from: #4d6bfe;
+  --dw-ph-to: #00c2ff;
+
+  /* 四周柔和渐隐，让飘移的边界消失在底色里 */
+  -webkit-mask-image:
+    radial-gradient(ellipse 78% 82% at 50% 46%, #000 var(--dw-edge), transparent 100%),
+    linear-gradient(to top, #000 var(--dw-edge), transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(ellipse 78% 82% at 50% 46%, #000 var(--dw-edge), transparent 100%),
+    linear-gradient(to top, #000 var(--dw-edge), transparent 100%);
+  mask-composite: intersect;
+}
+
+.drift-wall__plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: row;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.drift-wall__col {
+  position: relative;
+  width: calc(var(--dw-tile-w) + var(--dw-gap));
+  transform-style: preserve-3d;
+}
+
+.drift-wall__track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.drift-wall__tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(var(--dw-tile-h) + var(--dw-gap));
+  flex: 0 0 auto;
+  outline: none;
+  transform-style: preserve-3d;
+}
+
+.drift-wall__inner {
+  position: absolute;
+  inset: calc(var(--dw-gap) / 2);
+  display: block;
+  border-radius: var(--dw-radius);
+  overflow: hidden;
+  /* 浅色主题下的底色：极浅蓝渐变，替代原来的深色底 */
+  background-image: linear-gradient(135deg, #eef2ff, #f6f8fc);
+  opacity: var(--dw-dim);
+  transform: translateZ(0);
+  pointer-events: none;
+  transition:
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 没有图片时的渐变占位：品牌蓝 → 科技青，保证不引用任何外部图片 */
+.drift-wall__inner--ph {
+  background-image: linear-gradient(135deg, var(--dw-ph-from), var(--dw-ph-to));
+}
+
+/* 占位层上的冷光高光，让纯色块也有层次 */
+.drift-wall__inner--ph::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(120% 90% at 18% 12%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(to top, rgba(11, 18, 32, 0.16) 0%, rgba(11, 18, 32, 0) 58%);
+}
+
+.drift-wall__tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(var(--dw-gray)) saturate(0.92);
+  transition: filter 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.drift-wall__subtitle {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 14px;
+  /* 浮在渐变占位或图片上：墨蓝黑文字 + 浅色文字底，保证对比度 */
+  color: #0b1220;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7),
+    0 1px 6px rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.drift-wall__subtitle .dw-label {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.72);
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #3a55e8;
+  margin-bottom: 6px;
+}
+
+.drift-wall__subtitle .dw-value {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.drift-wall__subtitle .dw-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: #1b2740;
+  margin-top: 4px;
+}
+
+/* 静置时的浅色薄纱，悬停时完全撤掉还原真实色彩 */
+.drift-wall__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--dw-overlay);
+  opacity: 0.35;
+  pointer-events: none;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 悬停 / 键盘聚焦：抬起来并加品牌蓝柔光，代替原来的重色阴影 */
+.drift-wall__tile.is-active .drift-wall__inner,
+.drift-wall__tile:focus-visible .drift-wall__inner {
+  opacity: 1;
+  transform: translateZ(var(--dw-lift));
+  box-shadow:
+    0 24px 56px -20px rgba(77, 107, 254, 0.32),
+    0 1px 2px rgba(11, 18, 32, 0.04);
+}
+
+.drift-wall__tile.is-active img,
+.drift-wall__tile:focus-visible img {
+  filter: grayscale(0) saturate(1.05) contrast(1.02);
+}
+
+.drift-wall__tile.is-active .drift-wall__overlay,
+.drift-wall__tile:focus-visible .drift-wall__overlay {
+  opacity: 0;
+}
+
+/* 键盘可见焦点环 */
+.drift-wall__tile:focus-visible .drift-wall__inner {
+  box-shadow:
+    0 24px 56px -20px rgba(77, 107, 254, 0.32),
+    0 0 0 2px rgba(255, 255, 255, 0.95),
+    0 0 0 4px rgba(77, 107, 254, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift-wall__plane,
+  .drift-wall__track {
+    will-change: auto;
+  }
+}

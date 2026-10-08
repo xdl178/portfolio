@@ -1,0 +1,32 @@
+/* ============================================================
+   TextLoop —— 沿 SVG 路径循环流动的文字
+   白底浅色主题：不加底色，只让 SVG 自适应容器宽度。
+   ============================================================ */
+
+.text-loop {
+  @apply relative block w-full overflow-hidden;
+}
+
+.text-loop-svg {
+  @apply block h-auto w-full;
+}
+
+/* 测量用的隐藏文本：参与排版但不显示，也不能被读到 */
+.text-loop-measure {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 路径上流动的文字：统一走无衬线主字体，粗体由内联样式控制 */
+.text-loop-text {
+  @apply font-sans;
+  white-space: pre;
+}
+
+/* 尊重系统的「减少动态效果」设置：动画已由 JS 关闭，这里再兜底一次 */
+@media (prefers-reduced-motion: reduce) {
+  .text-loop {
+    transition: none;
+  }
+}

@@ -1,0 +1,88 @@
+/* ============================================================
+   Ripple —— 点击 / 键盘触发的水波反馈
+   白底浅色主题：品牌蓝 → 科技青的圆形波纹。
+   浅色底上不用混色模式（mix-blend-mode: difference 会发灰），
+   波纹自身也不加底色，只靠极淡的径向渐变，压在按钮内容之下。
+   ============================================================ */
+
+.ripple-container {
+  @apply relative overflow-hidden;
+  isolation: isolate;
+  /* 移动端点击时不要再叠一层系统高亮，波纹本身就是反馈 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 波纹节点：由 JS 动态创建后插入，宽高与 left / top 通过内联样式给出 */
+.ripple-effect {
+  position: absolute;
+  border-radius: 999px;
+  background-image: radial-gradient(
+    circle,
+    rgba(77, 107, 254, 0.32) 0%,
+    rgba(0, 194, 255, 0.18) 48%,
+    rgba(77, 107, 254, 0) 72%
+  );
+  transform: scale(0);
+  opacity: 0;
+  animation: ripple-wave 0.7s ease-out forwards;
+  pointer-events: none;
+  /* 压在文字之下：容器内有 isolation，z-index 不会外溢 */
+  z-index: 1;
+  will-change: transform, opacity;
+}
+
+/* 变体色调：默认品牌蓝，cyan / violet 走科技青与科技紫 */
+.ripple-container[data-variant='cyan'] .ripple-effect {
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 194, 255, 0.34) 0%,
+    rgba(124, 77, 255, 0.16) 48%,
+    rgba(0, 194, 255, 0) 72%
+  );
+}
+
+.ripple-container[data-variant='violet'] .ripple-effect {
+  background-image: radial-gradient(
+    circle,
+    rgba(124, 77, 255, 0.3) 0%,
+    rgba(77, 107, 254, 0.16) 48%,
+    rgba(124, 77, 255, 0) 72%
+  );
+}
+
+@keyframes ripple-wave {
+  from {
+    transform: scale(0);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* 键盘焦点环：白底上默认轮廓太淡，换成品牌蓝 */
+.ripple-container:focus-visible {
+  outline: 2px solid #4d6bfe;
+  outline-offset: 2px;
+}
+
+/* 尊重系统「减少动态效果」：不做缩放扩散，只静态闪一下再淡出 */
+@media (prefers-reduced-motion: reduce) {
+  .ripple-container {
+    transition: none;
+  }
+  .ripple-effect {
+    transform: none;
+    animation: ripple-flash 0.32s ease-out forwards;
+  }
+}
+
+@keyframes ripple-flash {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0;
+  }
+}

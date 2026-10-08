@@ -1,0 +1,75 @@
+/* ============================================================
+   DepthText —— 景深文字（分层错位 + 微视差）
+   白底浅色主题：文字本身走墨蓝黑，纵深色走品牌蓝，
+   阴影是冷调柔光而不是深色硬投影。
+   所有尺寸 / 颜色都由 JSX 注入的 CSS 变量驱动。
+   ============================================================ */
+
+.depth-text {
+  display: inline-block;
+  /* 立体纵深的透视强度，由 perspective prop 换算 */
+  perspective: var(--depth-text-perspective);
+  perspective-origin: 50% 48%;
+  isolation: isolate;
+}
+
+.depth-text__stage {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  /* 初始倾角：JS 挂载后会立刻按基础倾角覆写 */
+  transform: rotateX(-2.4deg) rotateY(3.15deg);
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* 分层副本与正面文字叠在同一个网格单元里 */
+.depth-text__layer,
+.depth-text__face {
+  grid-area: 1 / 1;
+  display: inline-block;
+  font-family: "Inter Tight", "Inter", "PingFang SC", "HarmonyOS Sans SC", "Noto Sans SC",
+    "Microsoft YaHei", system-ui, sans-serif;
+  font-size: var(--depth-text-font-size);
+  font-weight: var(--depth-text-font-weight);
+  line-height: 0.86;
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+  user-select: none;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  font-kerning: normal;
+  text-rendering: geometricPrecision;
+}
+
+/* 纵深副本：被正面文字压住，只从边缘露出厚度，收一点饱和度更贴合冷调 */
+.depth-text__layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  filter: saturate(0.92) brightness(0.97);
+  pointer-events: none;
+}
+
+/* 正面文字：真实内容，带品牌蓝柔光 */
+.depth-text__face {
+  position: relative;
+  z-index: 1;
+  color: var(--depth-text-face-color);
+  text-shadow: var(--depth-text-shadow);
+  transform: translateZ(0.6px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .depth-text {
+    cursor: default;
+  }
+}
+
+/* 尊重系统的「减少动态效果」：动画已由 JS 关闭，这里再兜底一次 */
+@media (prefers-reduced-motion: reduce) {
+  .depth-text__stage {
+    will-change: auto;
+  }
+}

@@ -1,0 +1,102 @@
+/* ==========================================================================
+   BlurHighlight · 模糊入场 + 关键词扫光
+   白底深字的蓝白科技风：正文用墨蓝黑，关键词用品牌蓝 / 科技紫 / 科技青
+   ========================================================================== */
+
+.blur-highlight {
+  --blur-highlight-wash: rgba(77, 107, 254, 0.06);
+
+  font-family: "Inter Tight", "Inter", "PingFang SC", "HarmonyOS Sans SC", "Noto Sans SC", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: clamp(20px, 2.4vw, 30px);
+  line-height: 1.6;
+  letter-spacing: 0.005em;
+  width: 100%;
+  max-width: 68ch;
+  margin: 0 auto;
+  position: relative;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+/* 单个词单元：相对定位承载扫光层。
+   overflow hidden + 高度钳制一起把扫光色块裁在文字行内（不用 lh 单位，避免兼容问题）。 */
+.blur-highlight__word {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  vertical-align: baseline;
+  max-height: max(1.5em, 1.3lh);
+  will-change: filter, opacity;
+}
+
+/* 空白单元：原样保留空格，让 inline-block 词之间正常断行 */
+.blur-highlight__space {
+  white-space: pre;
+}
+
+/* 关键词单元：加粗抬高对比度，并在底部铺一层极浅蓝底，形成柔和的高亮 */
+.blur-highlight__word--kw {
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  border-radius: 6px;
+  background: var(--blur-highlight-wash);
+}
+
+/* 扫光层：彩色色块自左向右横扫过文字，只做冷色提亮，不遮挡正文 */
+.blur-highlight__sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.16;
+}
+
+/* 关键词文字置于扫光层之上，用柔和的品牌色光晕替代描边，贴合浅色科技风 */
+.blur-highlight__text {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 22px rgba(77, 107, 254, 0.22);
+}
+
+/* 大号段落排版（长文开篇引言） */
+.blur-highlight--lg {
+  font-size: clamp(24px, 2.8vw, 36px);
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+/* 小号段落排版（卡片内说明文字） */
+.blur-highlight--sm {
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.7;
+  max-width: 76ch;
+}
+
+/* 响应式：窄屏收紧字号，关键词减一档字重 */
+@media (max-width: 768px) {
+  .blur-highlight {
+    font-size: clamp(16px, 4vw, 22px);
+    line-height: 1.65;
+    max-width: 100%;
+    text-align: left;
+  }
+  .blur-highlight__word--kw {
+    font-weight: 700;
+  }
+}
+
+/* 用户要求减少动效：直接给出静态成品，不做 blur / 位移 / 扫光 */
+@media (prefers-reduced-motion: reduce) {
+  .blur-highlight__word {
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+  /* 扫光层是纯装饰，减动效模式下直接不渲染 */
+  .blur-highlight__sweep {
+    display: none !important;
+  }
+}

@@ -31,3 +31,7 @@ desktop.ini
 # 临时凭据文件（绝不提交）
 *gitdsh-cred*
 *cred.txt
+
+# 本地验证脚本与临时截图
+.probe/
+.shots/

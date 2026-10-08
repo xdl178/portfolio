@@ -8,6 +8,21 @@
     /* 平滑滚动交给 Lenis 接管，这里不设 scroll-behavior，避免两者打架 */
   }
 
+  /* =====================================================================
+     Grid / Flex 子项的最小尺寸下限
+     浏览器默认 min-width/min-height: auto，会让 fr 轨道无法收缩到内容宽度以下，
+     一旦某列里有长文本或固定宽元素，整列就会被撑爆并把兄弟列挤出视口。
+     这是分栏布局最常见的塌陷原因，统一在这里兜住。
+     ===================================================================== */
+  .grid > *,
+  .flex > * {
+    min-width: 0;
+  }
+
+  .grid > * {
+    min-height: 0;
+  }
+
   body {
     @apply bg-white font-sans text-ink antialiased;
     margin: 0;
@@ -123,5 +138,169 @@
   /* 数字等宽，避免跳动 */
   .tnum {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* =====================================================================
+     主题兼容工具类
+     移植过来的组件会用到 grid / scanlines / paper-texture / torn 边缘这些
+     装饰层，这里在蓝白主题下重新定义：全部改成浅色冷调的细线，不用纸感噪点。
+     ===================================================================== */
+  .bg-grid-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(11, 18, 32, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11, 18, 32, 0.045) 1px, transparent 1px);
+    background-size: 88px 88px;
+  }
+
+  .brut-grid-lines {
+    @apply bg-grid-lines;
+  }
+
+  .bg-scanlines-soft {
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(11, 18, 32, 0.035) 0px,
+      rgba(11, 18, 32, 0.035) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  }
+
+  .bg-paper-texture {
+    background-image:
+      radial-gradient(ellipse at 25% 15%, rgba(77, 107, 254, 0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 80%, rgba(0, 194, 255, 0.06) 0%, transparent 55%);
+  }
+
+  /* 撕纸边缘 → 改成极细的冰蓝色渐变分割线 */
+  .brut-torn-top,
+  .brut-torn-bottom {
+    background-image: linear-gradient(90deg, transparent, rgba(77, 107, 254, 0.5), rgba(0, 194, 255, 0.35), transparent);
+    background-size: 200% 100%;
+    animation: loading-flow 3.5s linear infinite;
+  }
+  .brut-torn-bottom {
+    animation-direction: reverse;
+  }
+
+  /* 泼墨溅点 → 改成柔和的冷色光斑 */
+  .brut-ink-splash {
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+    filter: blur(52px);
+    opacity: 0.5;
+  }
+  .brut-ink-splash--blood {
+    background: radial-gradient(circle, rgba(77, 107, 254, 0.5) 0%, rgba(77, 107, 254, 0) 70%);
+  }
+  .brut-ink-splash--ink {
+    background: radial-gradient(circle, rgba(0, 194, 255, 0.42) 0%, rgba(0, 194, 255, 0) 70%);
+  }
+
+  /* 印章 / 标签 */
+  .brut-stamp {
+    @apply inline-flex items-center rounded-pill border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em];
+  }
+  .brut-stamp--blood {
+    @apply border-brand-line bg-brand-soft text-brand;
+  }
+  .brut-stamp--marigold {
+    border-color: rgba(0, 194, 255, 0.35);
+    background: rgba(0, 194, 255, 0.1);
+    color: #0e7490;
+  }
+
+  .brut-label {
+    @apply font-mono text-[10px] uppercase tracking-[0.22em] text-slate-faint;
+  }
+
+  .brut-scrawl {
+    @apply font-mono font-medium tracking-[0.14em] text-brand/70;
+  }
+
+  /* 顶部滚动进度条 */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    z-index: 60;
+    pointer-events: none;
+    background: transparent;
+  }
+  .scroll-progress__bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4d6bfe, #00c2ff);
+    box-shadow: 0 0 12px rgba(77, 107, 254, 0.45);
+    transition: width 0.12s linear;
+  }
+  .scroll-progress__bar.is-end {
+    background: linear-gradient(90deg, #4d6bfe, #7c4dff, #00c2ff);
+  }
+
+  /* 自定义光标光晕（大范围柔光，浅色主题下用轻微蓝雾） */
+  .cursor-halo {
+    position: fixed;
+    z-index: 9998;
+    pointer-events: none;
+    border-radius: 999px;
+    opacity: 0;
+    background: radial-gradient(circle, rgba(77, 107, 254, 0.18) 0%, rgba(77, 107, 254, 0.06) 45%, rgba(77, 107, 254, 0) 70%);
+    transition: opacity 0.45s ease;
+  }
+  .cursor-halo.is-active {
+    opacity: 1;
+  }
+
+  /* 网格线动画（跑马灯底纹） */
+  @keyframes loading-flow {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 200% 0%;
+    }
+  }
+
+  /* 滚动揭示：子项依次滑入。
+     注意是「渐进增强」写法：默认可见（.is-init 之前不动），
+     只有 JS 成功挂上 IntersectionObserver 后才收起并揭示。
+     这样即使观察器没触发（脚本失败、元素贴底、无 JS），内容也不会永久隐身。 */
+  .scroll-reveal.is-init .scroll-reveal__item {
+    opacity: 0;
+    transform: translateY(var(--sr-y, 24px));
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 依次延迟：最多支持 12 个子项 */
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(1) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 0); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(2) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 1); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(3) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 2); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(4) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 3); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(5) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 4); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(6) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 5); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(7) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 6); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(8) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 7); }
+  .scroll-reveal.is-init.is-visible .scroll-reveal__item:nth-child(n + 9) { transition-delay: calc(var(--sr-delay, 0s) + var(--sr-stagger, 0.1s) * 8); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal.is-init .scroll-reveal__item,
+    .scroll-reveal.is-init.is-visible .scroll-reveal__item {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 }

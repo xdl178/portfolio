@@ -1,8 +1,17 @@
 import { Link } from 'react-router-dom'
+import FlowingMenu from '../ui/FlowingMenu.jsx'
 import { profile, navLinks } from '../../data/content.js'
 
 /* 在模块作用域取年份：组件里调用 new Date() 属于渲染期副作用，会破坏 React 的纯度约束 */
 const YEAR = new Date().getFullYear()
+
+/* 页脚大菜单：悬停时整行展开并带流动色带 */
+const FOOTER_MENU = [
+  { link: '#/', text: '首页', subtitle: 'Home', tags: ['Hero', '精选作品'], accent: '#4D6BFE' },
+  { link: '#/works', text: '作品', subtitle: 'Works', tags: ['项目', '案例'], accent: '#00C2FF' },
+  { link: '#/about', text: '关于', subtitle: 'About', tags: ['经历', '技能'], accent: '#7C4DFF' },
+  { link: '#/#contact', text: '联系', subtitle: 'Contact', tags: ['合作', '邀约'], accent: '#3A55E8' },
+]
 
 export default function Footer() {
   const go = (link) => {
@@ -12,6 +21,17 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-line bg-wash">
+      {/* 大菜单：鼠标悬停整行展开，带流动色带 */}
+      <div className="border-b border-line">
+        <FlowingMenu
+          items={FOOTER_MENU}
+          bgColor="#F6F8FC"
+          borderColor="#E2E8F0"
+          textColor="#0B1220"
+          speed={16}
+        />
+      </div>
+
       <div className="container py-14">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           {/* 品牌 */}

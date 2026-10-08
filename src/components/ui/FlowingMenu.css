@@ -1,0 +1,178 @@
+/* ============================================================
+   FlowingMenu · 蓝白科技主题样式
+   - 静态行：白底 + 墨蓝黑主标题 / 中灰副标题 / 极浅蓝标签
+   - 覆盖层：item.accent（默认科技青）底色 + 墨蓝黑文字
+     + 品牌蓝→科技青渐变图片药丸
+   - 尺寸走 8px 网格；颜色只用设计令牌里的蓝白色值
+   ============================================================ */
+
+.menu-wrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #eef2f7;
+  border-radius: 20px;
+  background-color: #ffffff;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.menu__item {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+.menu__item:first-child {
+  border-top: none;
+}
+
+.menu__item-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 16px 24px;
+  z-index: 2;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menu__item-link:focus-visible {
+  outline: 2px solid #4d6bfe;
+  outline-offset: -4px;
+  border-radius: 12px;
+}
+
+.menu__item-title {
+  font-family: 'Inter Tight', 'Inter', 'PingFang SC', 'Noto Sans SC', system-ui, sans-serif;
+  font-weight: 900;
+  font-size: clamp(28px, 5vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.menu__item-sub {
+  font-family: 'Inter Tight', 'Inter', 'PingFang SC', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(12px, 1.2vw, 16px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #475569;
+  opacity: 0.85;
+}
+
+.menu__item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.menu__item-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid #dce4ff;
+  border-radius: 999px;
+  background-color: #eef2ff;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #4d6bfe;
+}
+
+/* 行在可用空间里展开一点，突出当前项 */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .menu__item {
+    transition: flex-grow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .menu__item:hover,
+  .menu__item:focus-within {
+    flex-grow: 1.28;
+  }
+}
+
+/* ===== 跑马灯覆盖层 ===== */
+.marquee {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform: translate3d(0, 101%, 0);
+  will-change: transform;
+}
+
+.marquee__inner-wrap {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.marquee__inner {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+  width: fit-content;
+  will-change: transform;
+}
+
+.marquee__part {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marquee span {
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-family: 'Inter Tight', 'Inter', 'PingFang SC', 'Noto Sans SC', system-ui, sans-serif;
+  font-weight: 900;
+  font-size: clamp(28px, 5vw, 72px);
+  line-height: 1;
+  padding: 0 16px;
+  text-shadow: 0 2px 12px rgba(255, 255, 255, 0.35);
+}
+
+/* 图片药丸：没有传 image 时用品牌蓝→科技青渐变占位 */
+.marquee__img {
+  width: 168px;
+  height: 56px;
+  margin: 0 24px;
+  border-radius: 999px;
+  background-image: linear-gradient(135deg, #4d6bfe, #00c2ff);
+  background-size: cover;
+  background-position: 50% 50%;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 8px 24px -12px rgba(11, 18, 32, 0.35);
+}
+
+/* 减少动态效果：去掉展开过渡，覆盖层切换由 JS 即时完成 */
+@media (prefers-reduced-motion: reduce) {
+  .menu__item,
+  .menu__item-link {
+    transition: none;
+  }
+}

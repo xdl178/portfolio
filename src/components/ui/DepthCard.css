@@ -1,0 +1,233 @@
+/* ============================================================================
+   DepthCard —— 景深卡片（蓝白科技风）
+   白底 / 极浅冷灰底 + 墨蓝黑字 + 品牌蓝强调；柔光阴影，不用重描边。
+   颜色一律取自设计令牌的十六进制值或原生 CSS 变量，避免与主题冲突的深色。
+   ========================================================================== */
+
+.depth-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  /* 3D 倾斜需要保留子元素的三维空间 */
+  transform-style: preserve-3d;
+  will-change: transform;
+  background:
+    linear-gradient(135deg, rgba(77, 107, 254, 0.05) 0%, rgba(0, 194, 255, 0) 58%),
+    #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 12px 32px -16px rgba(11, 18, 32, 0.16),
+    0 2px 8px -4px rgba(11, 18, 32, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.depth-card:hover {
+  border-color: #dce4ff;
+  box-shadow:
+    0 24px 56px -20px rgba(77, 107, 254, 0.32),
+    0 2px 8px -4px rgba(11, 18, 32, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* 键盘聚焦：清晰的品牌蓝焦点环 */
+.depth-card:focus-visible {
+  outline: 2px solid #4d6bfe;
+  outline-offset: 3px;
+}
+
+/* ===== 冷光底纹：替掉参考实现的噪点颗粒 ===== */
+.depth-card__noise {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.9;
+  background-image:
+    radial-gradient(55% 45% at 12% 0%, rgba(77, 107, 254, 0.1) 0%, rgba(77, 107, 254, 0) 70%),
+    radial-gradient(50% 40% at 100% 100%, rgba(0, 194, 255, 0.1) 0%, rgba(0, 194, 255, 0) 70%);
+}
+
+/* 极细扫描线：浅色主题下用低透明度墨蓝，才有科技质感 */
+.depth-card__scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(11, 18, 32, 0.03) 0px,
+    rgba(11, 18, 32, 0.03) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* 悬停辉光：最远层，位移最大，鼠标进入时淡入 */
+.depth-card__glow {
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--depth-glow, rgba(77, 107, 254, 0.28));
+  transition: opacity 0.3s ease;
+}
+
+.depth-card:hover .depth-card__glow {
+  opacity: 0.45;
+}
+
+/* ===== 视差图层 ===== */
+.depth-card__layer {
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+/* 背景层：绝对铺满，随指针反向位移（最远的“墙”） */
+.depth-card__layer--bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(145deg, rgba(77, 107, 254, 0.06), rgba(255, 255, 255, 0) 62%);
+}
+
+/* 背景层右上角变体色斑 */
+.depth-card__layer--bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(
+    circle,
+    var(--depth-spot, rgba(77, 107, 254, 0.12)) 0%,
+    transparent 70%
+  );
+}
+
+/* 前层：真正承载 children，位移最大，离视点最近 */
+.depth-card__layer--fg {
+  z-index: 3;
+}
+
+/* ===== 配色变体：记号沿用参考实现的 variant 名称，色值换成蓝白科技色 ===== */
+.depth-card--default {
+  --depth-accent: #4d6bfe;
+  --depth-glow: rgba(77, 107, 254, 0.28);
+  --depth-spot: rgba(77, 107, 254, 0.12);
+}
+
+.depth-card--brand,
+.depth-card--cobalt {
+  --depth-accent: #4d6bfe;
+  --depth-glow: rgba(77, 107, 254, 0.3);
+  --depth-spot: rgba(77, 107, 254, 0.14);
+  border-color: #dce4ff;
+}
+
+.depth-card--cyan {
+  --depth-accent: #00c2ff;
+  --depth-glow: rgba(0, 194, 255, 0.3);
+  --depth-spot: rgba(0, 194, 255, 0.14);
+  border-color: rgba(0, 194, 255, 0.35);
+}
+
+.depth-card--violet,
+.depth-card--magenta {
+  --depth-accent: #7c4dff;
+  --depth-glow: rgba(124, 77, 255, 0.3);
+  --depth-spot: rgba(124, 77, 255, 0.14);
+  border-color: rgba(124, 77, 255, 0.32);
+}
+
+.depth-card--mint,
+.depth-card--green {
+  --depth-accent: #10b981;
+  --depth-glow: rgba(16, 185, 129, 0.28);
+  --depth-spot: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.depth-card--muted,
+.depth-card--slate {
+  --depth-accent: #94a3b8;
+  --depth-glow: rgba(148, 163, 184, 0.28);
+  --depth-spot: rgba(148, 163, 184, 0.14);
+  background: #f6f8fc;
+}
+
+/* 参考实现里的暖色记号，统一收敛到科技青 / 紫，避免出现与主题冲突的橙黄 */
+.depth-card--yellow,
+.depth-card--marigold {
+  --depth-accent: #00c2ff;
+  --depth-glow: rgba(0, 194, 255, 0.26);
+  --depth-spot: rgba(0, 194, 255, 0.12);
+  border-color: rgba(0, 194, 255, 0.3);
+}
+
+.depth-card--berry,
+.depth-card--blood {
+  --depth-accent: #4d6bfe;
+  --depth-glow: rgba(36, 64, 204, 0.3);
+  --depth-spot: rgba(36, 64, 204, 0.14);
+  border-color: #dce4ff;
+}
+
+/* ===== 透明玻璃质感（glass）
+   白底半透明 + backdrop-filter 模糊 + 1px 冷调软边 */
+.depth-card--glass {
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow:
+    0 8px 32px rgba(11, 18, 32, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.depth-card--glass .depth-card__noise {
+  opacity: 1;
+}
+
+.depth-card--glass .depth-card__layer--bg {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.5), rgba(238, 242, 255, 0.15) 62%);
+}
+
+/* ===== 减少动态效果：关掉过渡与悬停位移，只留静态层级 ===== */
+@media (prefers-reduced-motion: reduce) {
+  .depth-card,
+  .depth-card__glow {
+    transition: none;
+  }
+
+  .depth-card {
+    will-change: auto;
+  }
+
+  .depth-card__layer {
+    will-change: auto;
+  }
+}
+
+/* ===== 窄屏：减小圆角与辉光开销 ===== */
+@media (max-width: 640px) {
+  .depth-card {
+    border-radius: 16px;
+  }
+
+  .depth-card__glow {
+    filter: blur(44px);
+  }
+}

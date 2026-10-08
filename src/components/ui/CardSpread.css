@@ -1,0 +1,331 @@
+/* ============================================================================
+   CardSpread —— 蓝白科技风（白底 + 墨蓝黑字 + 品牌蓝强调）
+   颜色一律取自设计令牌里的十六进制值，避免写死与主题冲突的深色。
+   ========================================================================== */
+
+.card-spread {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 建立独立层叠上下文：置前的卡片放大后不会盖住页面其它浮层 */
+  isolation: isolate;
+  padding: 48px 0;
+}
+
+/* ===== 牌堆 ===== */
+.card-spread__deck {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  height: 560px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== 单张卡 ===== */
+.card-spread__card {
+  position: absolute;
+  width: 320px;
+  height: 440px;
+  padding: 32px;
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(77, 107, 254, 0.06) 0%, rgba(0, 194, 255, 0) 55%),
+    #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 12px 32px -16px rgba(11, 18, 32, 0.16),
+    0 2px 8px -4px rgba(11, 18, 32, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  /* 翻转/展开时以底部为轴，扇形更自然 */
+  transform-origin: 50% 88%;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  overflow: hidden;
+  will-change: transform;
+  cursor: pointer;
+}
+
+/* 展开后悬停：蓝色柔光阴影 + 蓝色描边 */
+.card-spread--open .card-spread__card:hover {
+  border-color: #dce4ff;
+  box-shadow:
+    0 24px 56px -20px rgba(77, 107, 254, 0.32),
+    0 2px 8px -4px rgba(11, 18, 32, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* 置前的卡片：品牌蓝描边 + 更实的光晕 */
+.card-spread__card--active {
+  border-color: #dce4ff;
+}
+
+/* 键盘聚焦时给一圈清晰的品牌蓝焦点环 */
+.card-spread__card:focus-visible {
+  outline: 2px solid #4d6bfe;
+  outline-offset: 3px;
+}
+
+/* ===== 卡片配色变体（沿用参考实现的 variant 记号，改成蓝白科技色） ===== */
+.card-spread__card--default {
+  --accent-color: #4d6bfe;
+  --glow-color: rgba(77, 107, 254, 0.18);
+}
+
+.card-spread__card--brand,
+.card-spread__card--cobalt {
+  --accent-color: #4d6bfe;
+  --glow-color: rgba(77, 107, 254, 0.2);
+  border-color: #dce4ff;
+  background: linear-gradient(145deg, rgba(77, 107, 254, 0.1), #ffffff 62%);
+}
+
+.card-spread__card--cyan {
+  --accent-color: #00c2ff;
+  --glow-color: rgba(0, 194, 255, 0.2);
+  border-color: rgba(0, 194, 255, 0.35);
+  background: linear-gradient(145deg, rgba(0, 194, 255, 0.1), #ffffff 62%);
+}
+
+.card-spread__card--violet,
+.card-spread__card--magenta {
+  --accent-color: #7c4dff;
+  --glow-color: rgba(124, 77, 255, 0.2);
+  border-color: rgba(124, 77, 255, 0.32);
+  background: linear-gradient(145deg, rgba(124, 77, 255, 0.09), #ffffff 62%);
+}
+
+.card-spread__card--mint,
+.card-spread__card--green {
+  --accent-color: #10b981;
+  --glow-color: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.08), #ffffff 62%);
+}
+
+.card-spread__card--muted,
+.card-spread__card--slate {
+  --accent-color: #94a3b8;
+  --glow-color: rgba(148, 163, 184, 0.22);
+  border-color: #e2e8f0;
+  background: linear-gradient(145deg, #f6f8fc 0%, #ffffff 65%);
+}
+
+/* 参考实现里的暖色变体，统一收敛到科技青，避免出现与主题冲突的橙黄 */
+.card-spread__card--yellow,
+.card-spread__card--marigold {
+  --accent-color: #00c2ff;
+  --glow-color: rgba(0, 194, 255, 0.18);
+  border-color: rgba(0, 194, 255, 0.3);
+  background: linear-gradient(145deg, rgba(0, 194, 255, 0.08), #ffffff 62%);
+}
+
+.card-spread__card--berry,
+.card-spread__card--blood {
+  --accent-color: #4d6bfe;
+  --glow-color: rgba(77, 107, 254, 0.2);
+  border-color: #dce4ff;
+  background: linear-gradient(145deg, rgba(36, 64, 204, 0.1), #ffffff 62%);
+}
+
+/* ===== 装饰层 ===== */
+/* 冷光斑：左上品牌蓝、右下科技青，替掉原来的噪点颗粒 */
+.card-spread__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.85;
+  pointer-events: none;
+  background-image:
+    radial-gradient(60% 45% at 15% 0%, rgba(77, 107, 254, 0.1) 0%, rgba(77, 107, 254, 0) 70%),
+    radial-gradient(50% 40% at 100% 100%, rgba(0, 194, 255, 0.1) 0%, rgba(0, 194, 255, 0) 70%);
+}
+
+/* 极细扫描线：浅色主题下用深色低透明度才有质感 */
+.card-spread__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(11, 18, 32, 0.03) 0px,
+    rgba(11, 18, 32, 0.03) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* 顶部辉光：悬停 / 置前时亮起 */
+.card-spread__glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: 22px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    var(--glow-color, rgba(77, 107, 254, 0.18)),
+    transparent 70%
+  );
+  transition: opacity 0.4s ease;
+}
+
+.card-spread--open .card-spread__card:hover .card-spread__glow,
+.card-spread__card--active .card-spread__glow {
+  opacity: 1;
+}
+
+/* ===== 内容 ===== */
+.card-spread__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-spread__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-spread__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color, #4d6bfe);
+  box-shadow: 0 0 0 4px rgba(77, 107, 254, 0.1);
+}
+
+.card-spread__label-text {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.card-spread__title {
+  font-family: 'Inter Tight', 'Inter', 'PingFang SC', 'Noto Sans SC', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #0b1220;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 22px rgba(77, 107, 254, 0.12);
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.card-spread__body {
+  font-family: 'Inter Tight', 'Inter', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #64748b;
+  flex: 1;
+  overflow: hidden;
+}
+
+.card-spread__body p {
+  margin: 0;
+}
+
+.card-spread__body ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card-spread__body li {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #64748b;
+  padding: 0;
+  margin: 0;
+}
+
+.card-spread__body li + li {
+  margin-top: 12px;
+}
+
+/* ===== 数字统计小组件（body 里可直接用） ===== */
+.card-spread__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-spread__stat-value {
+  font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  color: #0b1220;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px rgba(77, 107, 254, 0.14);
+}
+
+.card-spread__stat-label {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+/* ===== 底部提示：展开后才显现 ===== */
+.card-spread__hint {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-spread--open .card-spread__hint {
+  opacity: 1;
+}
+
+/* ===== 窄屏：牌堆变纵向，卡片收小 ===== */
+@media (max-width: 768px) {
+  .card-spread {
+    padding: 32px 0;
+  }
+
+  .card-spread__deck {
+    height: 700px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-spread__card {
+    width: 260px;
+    height: 360px;
+    padding: 24px;
+  }
+
+  .card-spread__title {
+    font-size: 26px;
+  }
+}
+
+/* ===== 减少动态效果：去掉过渡与辉光动画，只保留静态层级 ===== */
+@media (prefers-reduced-motion: reduce) {
+  .card-spread__card,
+  .card-spread__glow,
+  .card-spread__hint {
+    transition: none;
+  }
+}

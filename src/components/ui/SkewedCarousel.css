@@ -1,0 +1,372 @@
+/* ==========================================================================
+   SkewedCarousel · 倾斜卡片 3D 轮播
+   蓝白科技风：白底卡片 + 极细描边 + 冷色调玻璃质感 + 柔和品牌蓝光晕
+   所有颜色取自设计令牌（#4D6BFE / #00C2FF / #7C4DFF / #0B1220 / #E2E8F0 等）
+   ========================================================================== */
+.skewed-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 32px 0;
+  /* 两端淡出遮罩的底色：默认白底，放在 bg-wash 区块里时可从外层覆盖 */
+  --sc-fade-bg: #ffffff;
+  outline: none;
+}
+
+.skewed-carousel:focus-visible {
+  box-shadow: 0 0 0 3px rgba(77, 107, 254, 0.35);
+  border-radius: 20px;
+}
+
+.skewed-carousel__viewport {
+  position: relative;
+  overflow: visible;
+}
+
+.skewed-carousel__track {
+  display: flex;
+  gap: var(--sc-gap);
+  will-change: transform;
+  padding-right: var(--sc-gap);
+}
+
+/* 边缘淡出：让循环边界看不出来 */
+.skewed-carousel__fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 140px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.skewed-carousel__fade--left {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    var(--sc-fade-bg) 0%,
+    rgba(255, 255, 255, 0.92) 35%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.skewed-carousel__fade--right {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    var(--sc-fade-bg) 0%,
+    rgba(255, 255, 255, 0.92) 35%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+/* 卡片 */
+.skewed-carousel__card {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--sc-card-w);
+  height: var(--sc-card-h);
+  padding: 32px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 12px 32px -16px rgba(11, 18, 32, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  will-change: transform, opacity;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.skewed-carousel__card:hover {
+  border-color: #dce4ff;
+  box-shadow:
+    0 24px 56px -20px rgba(77, 107, 254, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* 拖拽中：锁定文本选择与光标，避免拖动时选中卡片文字 */
+.skewed-carousel--dragging {
+  cursor: grabbing;
+}
+
+.skewed-carousel--dragging .skewed-carousel__card {
+  cursor: grabbing;
+  transition: none;
+}
+
+/* 点击置前：放大 + 不透明 + 品牌蓝阴影 */
+.skewed-carousel__card--active {
+  border-color: #dce4ff;
+  box-shadow:
+    0 24px 56px -20px rgba(77, 107, 254, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* 冷调细颗粒，代替参考实现的哑光噪点 */
+.skewed-carousel__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: multiply;
+}
+
+/* 扫描线：极浅冷灰，科技底纹 */
+.skewed-carousel__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(11, 18, 32, 0.035) 0px,
+    rgba(11, 18, 32, 0.035) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* 顶部辉光：悬停 / 置前时出现 */
+.skewed-carousel__glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: 22px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    var(--glow-color, rgba(77, 107, 254, 0.22)),
+    transparent 70%
+  );
+  transition: opacity 0.4s ease;
+}
+
+.skewed-carousel__card:hover .skewed-carousel__glow,
+.skewed-carousel__card--active .skewed-carousel__glow {
+  opacity: 1;
+}
+
+.skewed-carousel__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skewed-carousel__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skewed-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color, #4d6bfe);
+  box-shadow: 0 0 8px var(--accent-color, #4d6bfe);
+}
+
+.skewed-carousel__label-text {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+.skewed-carousel__title {
+  font-family: 'Inter Tight', 'PingFang SC', 'Noto Sans SC', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #0b1220;
+  margin: 0;
+}
+
+.skewed-carousel__body {
+  flex: 1;
+  font-family: 'Inter Tight', 'PingFang SC', 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #64748b;
+}
+
+.skewed-carousel__body p {
+  margin: 0 0 8px;
+}
+
+.skewed-carousel__body ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.skewed-carousel__body ul li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 10px;
+}
+
+.skewed-carousel__body ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-color, #4d6bfe);
+}
+
+/* 统计块 */
+.skewed-carousel__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.skewed-carousel__stat-value {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1;
+  color: #0b1220;
+}
+
+.skewed-carousel__stat-label {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 13px;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
+}
+
+/* 右下角序号 */
+.skewed-carousel__index {
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(11, 18, 32, 0.28);
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== 指示点 ===== */
+.skewed-carousel__dots {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.skewed-carousel__dot-btn {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: #cbd5e1;
+  cursor: pointer;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.35s ease;
+}
+
+.skewed-carousel__dot-btn:hover {
+  background: #94a3b8;
+}
+
+.skewed-carousel__dot-btn:focus-visible {
+  outline: 2px solid #4d6bfe;
+  outline-offset: 3px;
+}
+
+.skewed-carousel__dot-btn--active {
+  width: 26px;
+  background: linear-gradient(90deg, #4d6bfe, #00c2ff);
+}
+
+/* ===== 颜色变体：统一到蓝白科技色板 ===== */
+.skewed-carousel__card--cobalt,
+.skewed-carousel__card--berry {
+  --accent-color: #4d6bfe;
+  --glow-color: rgba(77, 107, 254, 0.24);
+  border-color: #dce4ff;
+  background: linear-gradient(145deg, rgba(77, 107, 254, 0.1), rgba(255, 255, 255, 0.9));
+}
+
+.skewed-carousel__card--cyan,
+.skewed-carousel__card--yellow {
+  --accent-color: #00c2ff;
+  --glow-color: rgba(0, 194, 255, 0.22);
+  border-color: rgba(0, 194, 255, 0.32);
+  background: linear-gradient(145deg, rgba(0, 194, 255, 0.1), rgba(255, 255, 255, 0.9));
+}
+
+.skewed-carousel__card--violet,
+.skewed-carousel__card--magenta {
+  --accent-color: #7c4dff;
+  --glow-color: rgba(124, 77, 255, 0.22);
+  border-color: rgba(124, 77, 255, 0.28);
+  background: linear-gradient(145deg, rgba(124, 77, 255, 0.1), rgba(255, 255, 255, 0.9));
+}
+
+.skewed-carousel__card--slate {
+  --accent-color: #475569;
+  --glow-color: rgba(71, 85, 105, 0.18);
+  border-color: #e2e8f0;
+  background: linear-gradient(145deg, rgba(241, 245, 249, 0.9), rgba(255, 255, 255, 0.9));
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .skewed-carousel {
+    padding: 20px 0;
+  }
+
+  .skewed-carousel__fade {
+    width: 70px;
+  }
+
+  .skewed-carousel__card {
+    padding: 20px;
+  }
+
+  .skewed-carousel__title {
+    font-size: 28px;
+  }
+
+  .skewed-carousel__body {
+    font-size: 14px;
+  }
+
+  .skewed-carousel__stat-value {
+    font-size: 28px;
+  }
+}
+
+/* 减少动效：只保留交互，不做过渡动画 */
+@media (prefers-reduced-motion: reduce) {
+  .skewed-carousel__card,
+  .skewed-carousel__glow,
+  .skewed-carousel__dot-btn {
+    transition: none;
+  }
+}

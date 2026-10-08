@@ -13,7 +13,7 @@ export default function WorksPage() {
     <div className="container pt-16 md:pt-24">
       <Reveal>
         <p className="eyebrow">All Works</p>
-        <h1 className="mt-4 font-display text-hero-sub text-ink">全部作品</h1>
+        <h1 className="mt-4 font-display text-brut-sub text-ink">全部作品</h1>
         <p className="mt-6 max-w-prose-narrow text-lead text-slate-ink">
           共 {works.length} 个占位项目。点击卡片进入详情，替换成你的真实项目后这个数字会自动更新。
         </p>
@@ -26,6 +26,7 @@ export default function WorksPage() {
             key={c}
             type="button"
             onClick={() => setActive(c)}
+            aria-pressed={active === c}
             className={`rounded-pill border px-4 py-2 text-body-sm transition-all duration-300 ${
               active === c
                 ? 'border-brand bg-brand text-white shadow-brand-soft'

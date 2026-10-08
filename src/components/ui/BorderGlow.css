@@ -1,0 +1,201 @@
+/* ============================================================================
+   BorderGlow —— 鼠标跟随的边框光晕卡片
+
+   主题适配要点：
+     · 卡片底色由深色 #120F17 改为白卡（--card-bg 默认 #FFFFFF），
+       描边用站点浅色边框 #E2E8F0，阴影用 shadow-card / shadow-card-hover。
+     · 高光色由暖橙改为品牌蓝 #4D6BFE（JS 侧默认 glowColor = "230 99 65"），
+       渐变描边用品牌蓝 → 科技青 → 科技紫的冷色循环。
+     · 参考实现靠加色混合（plus-lighter / soft-light）发光，白底上会被"冲白"
+       而完全看不见，因此外发光改为正常混合、内部渐层改为 multiply（正片叠底），
+       保证光晕与渐层在白底上依然清晰。
+     · 蒙版沿用标准 mask-image / mask-composite，浏览器支持度已足够。
+
+   三个绘制层（都继承圆角、默认透明，hover 或自动扫光时淡入）：
+     ::before      渐变描边，被 conic 蒙版裁成朝指针方向的光锥
+     ::after       卡片内部冷色渐层
+     .edge-light   卡片外侧的品牌蓝外发光（带自己的 ::before 光晕盒子）
+   ============================================================================ */
+
+.border-glow-card {
+  /* ---- 交互状态：由 JS 在指针移动 / 自动扫光时实时写入 ---- */
+  --edge-proximity: 0;
+  --cursor-angle: 45deg;
+  --edge-sensitivity: 30;
+  --color-sensitivity: calc(var(--edge-sensitivity) + 20);
+
+  /* ---- 外观 ---- */
+  --border-radius: 28px;
+  --glow-padding: 40px;
+  --cone-spread: 25;
+  --card-bg: #FFFFFF;
+  --card-line: #E2E8F0;
+
+  /* ---- 外发光色阶兜底值（品牌蓝 #4D6BFE），JS 会按 glowColor 覆盖 ---- */
+  --glow-color: hsl(230deg 99% 65% / 100%);
+  --glow-color-60: hsl(230deg 99% 65% / 60%);
+  --glow-color-50: hsl(230deg 99% 65% / 50%);
+  --glow-color-40: hsl(230deg 99% 65% / 40%);
+  --glow-color-30: hsl(230deg 99% 65% / 30%);
+  --glow-color-20: hsl(230deg 99% 65% / 20%);
+  --glow-color-10: hsl(230deg 99% 65% / 10%);
+
+  position: relative;
+  border-radius: var(--border-radius);
+  /* 独立层叠上下文，让 z-index: -1 的绘制层落在卡片背景之上、内容之下 */
+  isolation: isolate;
+  transform: translate3d(0, 0, 0.01px);
+  display: grid;
+  border: 1px solid var(--card-line);
+  background: var(--card-bg, #FFFFFF);
+  overflow: visible;
+
+  @apply shadow-card;
+  transition: box-shadow 0.35s ease-out;
+}
+
+.border-glow-card:hover {
+  @apply shadow-card-hover;
+}
+
+.border-glow-card::before,
+.border-glow-card::after,
+.border-glow-card > .edge-light {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: opacity 0.25s ease-out;
+  z-index: -1;
+}
+
+/* 指针离开且没有自动扫光时，整体高光缓慢淡出 */
+.border-glow-card:not(:hover):not(.sweep-active)::before,
+.border-glow-card:not(:hover):not(.sweep-active)::after,
+.border-glow-card:not(:hover):not(.sweep-active) > .edge-light {
+  opacity: 0;
+  transition: opacity 0.75s ease-in-out;
+}
+
+/* ---- 渐变描边：padding-box 的实心底挡住卡片内部，只留 1px 边框环 ---- */
+.border-glow-card::before {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card-bg, #FFFFFF) 0 100%) padding-box,
+    linear-gradient(rgb(255 255 255 / 0%) 0% 100%) border-box,
+    var(--gradient-one, radial-gradient(at 80% 55%, #7C4DFF 0px, transparent 50%)) border-box,
+    var(--gradient-two, radial-gradient(at 69% 34%, #4D6BFE 0px, transparent 50%)) border-box,
+    var(--gradient-three, radial-gradient(at 8% 6%, #00C2FF 0px, transparent 50%)) border-box,
+    var(--gradient-four, radial-gradient(at 41% 38%, #4D6BFE 0px, transparent 50%)) border-box,
+    var(--gradient-five, radial-gradient(at 86% 85%, #00C2FF 0px, transparent 50%)) border-box,
+    var(--gradient-six, radial-gradient(at 82% 18%, #7C4DFF 0px, transparent 50%)) border-box,
+    var(--gradient-seven, radial-gradient(at 51% 4%, #2440CC 0px, transparent 50%)) border-box,
+    var(--gradient-base, linear-gradient(#4D6BFE 0 100%)) border-box;
+
+  /* 只有指针快贴到边时才点亮（edgeSensitivity 越大越难触发） */
+  opacity: calc(
+    (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity))
+  );
+
+  /* 以指针方位为中心裁出一个光锥，边框高光只出现在这一侧 */
+  mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center,
+      black calc(var(--cone-spread) * 1%),
+      transparent calc((var(--cone-spread) + 15) * 1%),
+      transparent calc((100 - var(--cone-spread) - 15) * 1%),
+      black calc((100 - var(--cone-spread)) * 1%)
+    );
+}
+
+/* ---- 卡片内部渐层：用 multiply 在白卡上叠出浅蓝冷光 ---- */
+.border-glow-card::after {
+  border: 1px solid transparent;
+  background:
+    var(--gradient-one, radial-gradient(at 80% 55%, #7C4DFF 0px, transparent 50%)) padding-box,
+    var(--gradient-two, radial-gradient(at 69% 34%, #4D6BFE 0px, transparent 50%)) padding-box,
+    var(--gradient-three, radial-gradient(at 8% 6%, #00C2FF 0px, transparent 50%)) padding-box,
+    var(--gradient-four, radial-gradient(at 41% 38%, #4D6BFE 0px, transparent 50%)) padding-box,
+    var(--gradient-five, radial-gradient(at 86% 85%, #00C2FF 0px, transparent 50%)) padding-box,
+    var(--gradient-six, radial-gradient(at 82% 18%, #7C4DFF 0px, transparent 50%)) padding-box,
+    var(--gradient-seven, radial-gradient(at 51% 4%, #2440CC 0px, transparent 50%)) padding-box,
+    var(--gradient-base, linear-gradient(#4D6BFE 0 100%)) padding-box;
+
+  mask-image:
+    linear-gradient(to bottom, black, black),
+    radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+    radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+    conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+
+  mask-composite: subtract, add, add, add, add, add;
+  mix-blend-mode: multiply;
+  opacity: calc(
+    var(--fill-opacity, 0.5) * (var(--edge-proximity) - var(--color-sensitivity)) /
+      (100 - var(--color-sensitivity))
+  );
+}
+
+/* ---- 外发光：向卡片外扩一圈，用多层阴影画出柔和的品牌蓝光晕 ---- */
+.border-glow-card > .edge-light {
+  inset: calc(var(--glow-padding) * -1);
+  pointer-events: none;
+  z-index: 1;
+
+  mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%
+    );
+
+  opacity: calc(
+    (var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity))
+  );
+  /* 参考实现用 plus-lighter 加色混合，在白底上会被冲成纯白；
+     这里改为正常混合，光晕直接以品牌蓝的半透明阴影绘制。 */
+}
+
+/* 外发光盒子的内边距正好收回卡片边界，于是阴影沿卡片描边内外同时晕开 */
+.border-glow-card > .edge-light::before {
+  content: "";
+  position: absolute;
+  inset: var(--glow-padding);
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px var(--glow-color, hsl(230deg 99% 65% / 100%)),
+    inset 0 0 1px 0 var(--glow-color-60, hsl(230deg 99% 65% / 60%)),
+    inset 0 0 3px 0 var(--glow-color-50, hsl(230deg 99% 65% / 50%)),
+    inset 0 0 6px 0 var(--glow-color-40, hsl(230deg 99% 65% / 40%)),
+    inset 0 0 15px 0 var(--glow-color-30, hsl(230deg 99% 65% / 30%)),
+    inset 0 0 25px 2px var(--glow-color-20, hsl(230deg 99% 65% / 20%)),
+    inset 0 0 50px 2px var(--glow-color-10, hsl(230deg 99% 65% / 10%)),
+    0 0 1px 0 var(--glow-color-60, hsl(230deg 99% 65% / 60%)),
+    0 0 3px 0 var(--glow-color-50, hsl(230deg 99% 65% / 50%)),
+    0 0 6px 0 var(--glow-color-40, hsl(230deg 99% 65% / 40%)),
+    0 0 15px 0 var(--glow-color-30, hsl(230deg 99% 65% / 30%)),
+    0 0 25px 2px var(--glow-color-20, hsl(230deg 99% 65% / 20%)),
+    0 0 50px 2px var(--glow-color-10, hsl(230deg 99% 65% / 10%));
+}
+
+/* ---- 内容容器：白底上使用墨蓝黑正文色 ---- */
+.border-glow-inner {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: auto;
+  z-index: 1;
+  border-radius: inherit;
+
+  @apply text-ink;
+}
+
+/* 尊重系统「减少动态效果」：淡入淡出改为瞬时切换 */
+@media (prefers-reduced-motion: reduce) {
+  .border-glow-card,
+  .border-glow-card::before,
+  .border-glow-card::after,
+  .border-glow-card > .edge-light {
+    transition-duration: 0.01ms;
+  }
+}

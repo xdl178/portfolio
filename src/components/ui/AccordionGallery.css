@@ -1,0 +1,205 @@
+/* ============================================================================
+   AccordionGallery —— 可展开的手风琴图片画廊（蓝白科技风）
+   GSAP 只负责 transform / flexGrow / 自定义变量的补间，颜色与质感全部由 CSS 决定：
+   白 + 浅冷灰底、墨蓝黑文字、品牌蓝强调、柔和阴影，不用深色块。
+   ========================================================================== */
+
+.accordion-gallery {
+  --ag-accent: #4d6bfe;
+  --ag-overlay: #0b1220;
+  --ag-text: #ffffff;
+  --ag-gap: 10px;
+  --ag-radius: 16px;
+  --ag-media-size: 320px;
+
+  display: flex;
+  flex-direction: row;
+  gap: var(--ag-gap);
+  width: 100%;
+  max-width: 100%;
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+}
+
+.accordion-gallery--vertical {
+  flex-direction: column;
+}
+
+/* ===== 面板 ===== */
+.ag-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--ag-radius);
+  background: #f6f8fc;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  outline: none;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  box-shadow: 0 12px 32px -18px rgba(11, 18, 32, 0.22);
+  will-change: flex-grow, transform;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 键盘焦点：品牌蓝描边环，不动 gsap 的 transform */
+.ag-panel:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--ag-accent),
+    0 12px 32px -18px rgba(11, 18, 32, 0.22);
+}
+
+.ag-panel--active {
+  box-shadow: 0 20px 48px -22px rgba(77, 107, 254, 0.4);
+}
+
+.ag-panel--active:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--ag-accent),
+    0 20px 48px -22px rgba(77, 107, 254, 0.4);
+}
+
+.ag-panel__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* ===== 媒体层（由 gsap 驱动位移/灰度/压暗） ===== */
+.ag-panel__media {
+  --ag-gray: 1;
+  --ag-dim: 0.35;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ag-media-size);
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  filter: grayscale(var(--ag-gray));
+  will-change: transform, filter;
+}
+
+.accordion-gallery--vertical .ag-panel__media {
+  width: 100%;
+  height: var(--ag-media-size);
+}
+
+.ag-panel__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* 无图时的冷色渐变占位（品牌蓝 → 科技青），不引用任何外部图片 */
+.ag-panel__placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background-image: linear-gradient(135deg, #4d6bfe 0%, #00c2ff 100%);
+  background-size: cover;
+  background-position: center;
+}
+
+.ag-panel__placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.ag-panel__glyph {
+  position: relative;
+  z-index: 1;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: clamp(30px, 4.4vw, 54px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 压暗遮罩：底部给文字留对比，整体按 --ag-dim 淡入淡出 */
+.ag-panel__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(11, 18, 32, 0) 42%, rgba(11, 18, 32, 0.46) 100%),
+    rgba(11, 18, 32, calc(var(--ag-dim, 0.35) * 0.8));
+}
+
+/* ===== 标签 ===== */
+.ag-panel__label {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ag-panel__bar {
+  flex: 0 0 auto;
+  width: 3px;
+  height: 26px;
+  border-radius: 3px;
+  background: var(--ag-accent);
+  opacity: 0;
+  box-shadow: 0 0 12px rgba(77, 107, 254, 0.55);
+}
+
+.ag-panel__text {
+  color: var(--ag-text);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: clamp(1rem, 1.4vw, 1.4rem);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  text-shadow: 0 2px 14px rgba(11, 18, 32, 0.45);
+}
+
+/* ===== 窄屏：改为纵向堆叠，并让出 gsap 的 transform 控制 ===== */
+@media (max-width: 520px) {
+  .accordion-gallery {
+    flex-direction: column;
+    perspective: none;
+    height: auto !important;
+  }
+
+  .ag-panel {
+    min-height: 84px;
+    transform: none !important;
+  }
+
+  .accordion-gallery .ag-panel__media {
+    width: 100%;
+    height: var(--ag-media-size);
+  }
+}
+
+/* ===== 降低动态效果：关掉合成层提示 ===== */
+@media (prefers-reduced-motion: reduce) {
+  .ag-panel,
+  .ag-panel__media {
+    will-change: auto;
+  }
+}
