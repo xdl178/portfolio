@@ -1,0 +1,8 @@
+# 本地凭据文件，绝不提交
+.token
+*.token
+
+# 常见临时/系统文件
+Thumbs.db
+desktop.ini
+.DS_Store
