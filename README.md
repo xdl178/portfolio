@@ -1,143 +1,117 @@
-# portfolio
+# ［工作室名称］ - 作品集
 
-xdl178 的个人作品集 —— 展厅式布局 + 现代科技蓝白风。
+独立工作室单页作品集。**深空蓝黑 · 磨砂玻璃** 暗色科技风格。
+React 19 + Vite 7 + TypeScript + Tailwind CSS 3 + GSAP + Framer Motion。
 
-- 线上地址：https://xdl178.github.io/portfolio/
-- 本地开发：`npm run dev` → http://localhost:5174
+> 全站设计规则的单一事实来源是 [`design.md`](./design.md)。改样式前先读它。
 
-## 技术栈
+## 快速开始
 
-| 类别 | 选型 | 用途 |
-| --- | --- | --- |
-| 构建 | Vite 8 | 开发服务器 + 打包 |
-| 框架 | React 19 | UI |
-| 路由 | react-router-dom 7（**HashRouter**） | 静态托管无需服务端回退 |
-| 样式 | Tailwind CSS 3.4 + PostCSS + autoprefixer | 原子化样式 + 设计令牌 |
-| 动画 | framer-motion 12 | 入场动画、路由过渡、弹簧计数 |
-| 动画 | GSAP 3 | 时间轴编排、手风琴画廊、光标跟随 |
-| 滚动 | @studio-freight/lenis | 全站平滑滚动 + 锚点滚动 |
-| 导出 | html2canvas + jsPDF | 已安装，尚未接入 UI |
-| 检查 | oxlint | 静态检查 |
-
-**没有引入任何 UI 组件库**：全部交互组件都是项目内的自研实现，只依赖上面这些包。
-
-## 常用命令
-
-```powershell
-npm run dev        # 开发服务器，http://localhost:5174
-npm run build      # 产物输出到 dist/
-npm run preview    # 本地预览生产构建
-npm run lint       # oxlint 检查
+```bash
+npm install
+npm run dev      # 开发服务器 http://localhost:5180
+npm run build    # 类型检查 + 生产构建 → dist/
+npm run preview  # 预览构建产物
+npm run lint     # 仅类型检查（tsc --noEmit）
 ```
 
-> 本机 PowerShell 禁止运行 `npm.ps1`，若报「禁止运行脚本」就改用 `npm.cmd`，
-> 或执行 `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` 放行。
+## 设计系统速览
 
-## 页面
+### 配色（`src/index.css` `:root`，HSL 分量 + Tailwind alpha 通道）
 
-| 路由 | 页面 | 内容 |
-| --- | --- | --- |
-| `/` | 首页 | 首屏巨字 + 景深名片、数据条、能力卡、关于、项目经历、工作经历、精选作品、技术墙、工作原则、联系 |
-| `/works` | 作品列表 | 分类筛选 + 作品网格 |
-| `/works/:slug` | 作品详情 | 封面、正文、项目信息侧栏、下一个项目 |
-| `/about` | 关于 | 名片、自述、数据、能力自评条、技能清单、工作经历、时间线 |
+| Token | HSL | 用途 |
+|---|---|---|
+| `--bg` | `222 47% 4%` | 页面底色（近黑深蓝） |
+| `--bg-elev` | `222 40% 7%` | 抬升底色 |
+| `--surface` | `220 36% 10%` | 玻璃基底 |
+| `--text` | `210 40% 98%` | 主文字 |
+| `--muted` | `215 22% 64%` | 次级文字 |
+| `--stroke` | `213 28% 20%` | 描边 / 分隔线 |
+| `--accent` | `190 92% 58%` | 主强调（电光青） |
+| `--accent-2` | `288 88% 68%` | 点缀（仅光晕） |
 
-## 交互组件（`src/components/ui/`）
+品牌渐变 `--grad-accent`：`linear-gradient(120deg, #3CC6FF, #2ED9F5 45%, #C86BFF)`，只用于 1px 描边 / 光带 / 进度条。
 
-| 组件 | 能力 | 用在哪 |
-| --- | --- | --- |
-| `AccordionGallery` | GSAP 时间轴驱动的手风琴画廊：透视旋转、视差、标签淡入、方向键切换 | 首页精选作品 |
-| `SkewedCarousel` | 倾斜 3D 轮播：拖拽、滚轮、指示点、自动播放、边缘缩放 | 首页工作原则 |
-| `CardSpread` | 卡片扇形展开：交错动画、点击置前、方向键导航 | 首页项目经历 |
-| `DriftWall` | 缓慢飘移的卡片墙：列速差异、指针排斥、悬停暂停 | 首页技术栈 |
-| `FlowingMenu` | 悬停展开的菜单行：跟随鼠标方向的流动色带 | 页脚大菜单 |
-| `TextLoop` | SVG 路径文字循环：缎带底、无缝衔接、悬停暂停 | 首屏与页脚收尾 |
-| `BlurHighlight` | 逐词从模糊到清晰的揭示，关键词按主题色高亮 | 关于正文 |
-| `BorderGlow` | 指针位置驱动的渐变边框光晕 | 能力卡、关于名片 |
-| `DepthCard` | 3D 倾斜 + 内部分层视差 | 首屏名片 |
-| `DepthText` | 文字分层纵深 + 轻微环绕 | 关于标题 |
-| `CountUp` | 弹簧动画数字滚动 | 数据条、能力自评 |
-| `ScrollReveal` | 子项依次滚入（渐进增强，默认可见） | 各区块 |
-| `ScrollToTop` | 回到顶部按钮 | 全站 |
-| `Ripple` | 点击波纹反馈 | 联系按钮 |
-| `Reveal` / `Marquee` / `Avatar` / `WorkCard` | 基础入场、跑马灯、首字母头像、作品卡 | 多处 |
+### 字体
 
-外壳组件（`src/components/`）：`Preloader`（进度加载页，含 4 秒硬兜底）、
-`ScrollProgress`（顶部进度条）、`SideNav`（右侧章节指示器）、`Navbar`、`Footer`。
+全站**系统字体栈**，不依赖任何外部 Web Font（可在无外网环境正常渲染）。
+中文走 `--font-sans`，英文小标签 / 序号 / 数字走 `--font-mono`（大写 + 宽字距）。
 
-## 目录结构
+### 材质与组件类
+
+- 玻璃三档：`.glass-sm` / `.glass` / `.glass-lg`，配套 `.glass-hover`（hover 仅提亮边框 + 内高光，不加外发光）
+- 按钮：`.btn` + `.btn-primary` / `.btn-ghost` / `.btn-outline`
+- 排版基元：`.type-display` / `.type-h2` / `.type-h3` / `.type-body` / `.type-label` / `.type-num`
+- 装饰层：`.bg-grid` / `.mask-radial` / `.noise` / `.glow-cyan` / `.glow-magenta` / `.hairline`
+- 图片容器：`.media-crop`（裁掉生成图右下角水印）
+
+### 圆角体系
+
+交互件 `9999px` 全圆 / 卡片 `20px` / 输入 `12px`。不允许混用。
+
+### 动效
+
+- token：`--d-*`（时长，进慢出快）、`--e-*`（缓动，含 spring 过冲）
+- 编排归属：GSAP 管首屏入场 / 视差 / 跑马灯；Framer Motion 管进入视口 / 微交互 / 灯箱；纯 CSS 管常驻循环
+- 全部动画尊重 `prefers-reduced-motion`；`prefers-reduced-transparency` 时玻璃降级为不透明
+
+## 页面结构
+
+**路由式漫游（HashRouter）**：加载屏（仅首载）→ 全局导航 → 路由页 → 全局页脚；路由切换有页面转场（blur + 位移）并强制回顶。
+
+| 路由 | 页面 | 组成 |
+|---|---|---|
+| `/` | `HomePage` | Hero 巨字取景窗（SVG 蒙版透字 + 鼠标视差）→ `SelectedWorks` 精选作品 Bento（跳详情）→ `Explorations` 影像实验室 → `Clients` 客户墙 |
+| `/works` | `WorksPage` | 巨字刊头 + 统计卡 + 分类筛选 + 不对称大卡（封面 7 列 / 信息 5 列奇偶交替） |
+| `/works/:id` | `WorkDetailPage` | 面包屑 → 头牌（元数据 4 卡）→ 设计理念 → 页面陈列 → 原稿灯箱 → 相关作品 |
+| `/about` | `AboutPage` | 巨字刊头 → `AboutCapabilities`（创作理念 + 能力网格）→ 经历时间线 |
+
+全局：`Backdrop` 固定装饰层、`Navbar` 路由胶囊导航、`ContactFooter`（跑马灯 + 联系 CTA + 快捷链接）。
+作品数据统一在 `src/data/works.ts`。
+
+## 占位符约定
+
+所有真实姓名 / 头衔 / 简介 / 作品 / 能力 / 客户数据已移除，统一使用 `［ ］` 包裹的占位符。回填真实内容时只改文案，不动结构。
+
+## 无障碍与降级
+
+- 全部动画尊重 `prefers-reduced-motion`（入场直呈终态、无限循环暂停、视差关闭）
+- `prefers-reduced-transparency: reduce` 时玻璃面板降为不透明
+- 焦点环全站可见（`#2ED9F5`）
+- 390px 宽度无横向滚动，Bento / 能力网格降为单列
+- 装饰元素一律 `aria-hidden` + `pointer-events: none`
+
+## 目录
 
 ```
-├─ index.html                     # Vite 入口（字体、meta）
-├─ index.legacy.html              # 最早的纯静态版页面，留作备份
-├─ vite.config.js                 # base 路径、dev server、分包策略
-├─ tailwind.config.js             # 装配 design/tokens.js + 主题兼容层
-├─ .github/workflows/deploy.yml   # 推 main 自动构建发布到 Pages
-├─ public/favicon.svg
-└─ src/
-   ├─ main.jsx                    # 挂载 + HashRouter + SmoothScrollProvider
-   ├─ App.jsx                     # 路由表、页面过渡、光标/进度/侧边导航挂载
-   ├─ index.css                   # Tailwind 入口 + 组件类 + 兼容工具类
-   ├─ design/tokens.js            # ★ 设计令牌：配色、字阶、阴影、渐变、动画
-   ├─ data/content.js             # ★ 全站内容：个人信息、作品、技能、经历、原则
-   ├─ hooks/
-   │  ├─ useSmoothScroll.jsx      # Lenis Provider（同时驱动锚点滚动）+ useLenis()
-   │  └─ useCursorHalo.jsx        # GSAP 光标光晕 hook + <CursorHalo/>
-   ├─ components/                 # 见上表
-   └─ pages/                      # Home / Works / WorkDetail / About
+├── design.md                   # 全站设计规则（单一事实来源）
+├── index.html
+├── tailwind.config.js
+└── src/
+    ├── App.tsx                 # 外壳：加载屏 → Routes + 页面转场 → 全局页脚
+    ├── main.tsx                # 入口（HashRouter + StrictMode）
+    ├── index.css               # Token → 基础 → 玻璃材质 → 组件类 → 动效 → 降级
+    ├── data/
+    │   └── works.ts            # 作品数据源（works / categories / getWorkById / getRelatedWorks）
+    ├── pages/
+    │   ├── HomePage.tsx        # / 首页漫游
+    │   ├── WorksPage.tsx       # /works 作品档案馆
+    │   ├── WorkDetailPage.tsx  # /works/:id 详情（原稿灯箱）
+    │   └── AboutPage.tsx       # /about 关于（能力 + 经历时间线）
+    └── components/
+        ├── Backdrop.tsx        # 全站固定装饰层
+        ├── LoadingScreen.tsx
+        ├── Navbar.tsx          # 路由链接导航（active 由 pathname 判定）
+        ├── Hero.tsx            # 巨字取景窗（active 触发入场）
+        ├── SelectedWorks.tsx   # 数据驱动，跳 /works/:id
+        ├── AboutCapabilities.tsx
+        ├── Explorations.tsx
+        ├── Clients.tsx
+        ├── ContactFooter.tsx   # 含快捷路由链接
+        └── SectionHeader.tsx   # 统一章节头（eyebrow 可选，全站 ≤ 2 处）
 ```
 
-## 改内容 / 改风格
+## 图片素材
 
-- **换文案和作品**：只改 `src/data/content.js`。所有 `占位` 字样都是待替换的示例内容。
-- **换整站配色**：只改 `src/design/tokens.js` 的 `colors`。
-- **换头像**：图片放进 `public/`，然后在 `content.js` 里设置 `profile.avatarImage = '/portfolio/avatar.jpg'`。
-- **换作品封面**：给对应作品设置 `cover: '/portfolio/xxx.jpg'`；不设则显示自动生成的渐变封面。
-
-### 主题兼容层说明
-
-早期移植过来的组件内部沿用了 `ink` / `void` / `cream` / `paper` / `blood` 这类语义记号，
-`tailwind.config.js` 里的 **主题兼容层** 把它们重定向到本站的蓝白科技色
-（例如 `blood` → 品牌蓝 `#4D6BFE`，`void` → 墨蓝黑 `#0B1220`）。
-所以换配色时改 `tokens.js` 即可，不必去逐个组件改类名。
-
-## 部署（GitHub Pages）
-
-推送 `main` 后，`.github/workflows/deploy.yml` 自动 `npm ci → npm run build`，把 `dist/` 发布到 Pages。
-**仓库 Settings → Pages → Source 必须是 "GitHub Actions"**。
-
-### base 路径（已处理好）
-
-`vite.config.js` 按命令区分：`build` 用 `/portfolio/`（子路径部署必需），`dev` 用 `/`。
-换仓库名或绑自定义域名时，构建时覆盖：
-
-```powershell
-$env:VITE_BASE='/'; npm run build
-```
-
-### 为什么用 HashRouter
-
-GitHub Pages 是纯静态托管，无法把 `/works` 这类深链接回退到 `index.html`。
-HashRouter 把路由放在 `#` 后面（`/portfolio/#/works`），刷新和直接访问都不会 404。
-代价是锚点滚动不能用原生 `scrollIntoView`，必须交给 Lenis（见 `useSmoothScroll.jsx`）。
-
-## 已验证事项
-
-用 Chrome DevTools Protocol 对**生产构建**和**线上站点**逐路由验证过：
-
-- 所有路由正常渲染，15 个交互组件全部出现在 DOM 中
-- 无横向溢出、无运行时错误、无加载页残留
-- 资源路径带正确的 `/portfolio/` 前缀
-
-开发中修掉的三个真实缺陷：
-
-1. **Grid 塌陷**：CSS Grid/Flex 子项默认 `min-width: auto`，导致首屏 `1.25fr` 列被撑到 3134px、
-   名片卡被挤出视口。现已在 `index.css` 里统一加 `min-width: 0` 兜住。
-2. **滚动揭示隐形**：`ScrollReveal` 原本默认把子项设为 `opacity: 0`，
-   若观察器未触发内容会永久不可见。改成「观察器挂上后才收起」的渐进增强写法。
-3. **加载页兜底**：加了 4 秒硬兜底，避免分数计数异常时访问者被困在加载页。
-
-## 已知的 lint 提示
-
-`npm run lint` 报 **7 条 warning、0 条 error**，均为有意写法（在 effect 里初始化外部实例、
-hook 与其组件同文件导出等），不阻塞构建。
+`public/images/` 下的 6 张图为 AI 生成的占位素材（`hero-tunnel` + `work-01..04` + `study-01`）。
+换成真实作品图时保持同名同比例即可，`.media-crop` 会自动按 4:3 / 1:1 裁切。
