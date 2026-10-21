@@ -418,10 +418,10 @@
 /* 首屏：背景图极缓推近（呼吸感） */
 @keyframes hero-zoom {
   from {
-    transform: scale(1.06);
+    transform: scale(1.005);
   }
   to {
-    transform: scale(1.14);
+    transform: scale(1.028);
   }
 }
 

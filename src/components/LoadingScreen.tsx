@@ -2,63 +2,68 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 /* ============================================================
-   LoadingScreen · 全屏加载屏
-   - rAF 驱动计数器 000 → 100（按真实时间推进，不受掉帧影响）
-   - 中心轮播词 AnimatePresence mode="wait"
-   - 进度条 scaleX 绑定 count/100
-   - 到达 100 后延迟回调 onComplete
+   LoadingScreen · 全屏加载屏（真实进度）
+   - progress 由 App 的真实预加载驱动（fetch + ReadableStream 读字节）
+   - 计数器做「追赶」缓动，避免字节跳动导致数字乱跳
+   - ready = 首屏大图已解码完成，稍作停留后回调 onComplete
    ============================================================ */
 
 const WORDS = ['构思', '设计', '交付']
-const DURATION = 2400
-const WORD_INTERVAL = 800
 
-type Props = { onComplete: () => void }
+type Props = {
+  /** 真实加载进度 0..1 */
+  progress: number
+  /** 首屏关键资源是否已就绪 */
+  ready: boolean
+  onComplete: () => void
+}
 
-export default function LoadingScreen({ onComplete }: Props) {
+export default function LoadingScreen({ progress, ready, onComplete }: Props) {
   const [count, setCount] = useState(0)
   const [wordIndex, setWordIndex] = useState(0)
-  const completedRef = useRef(false)
+  const countRef = useRef(0)
+  const firedRef = useRef(false)
 
+  /* 数字追赶真实进度（只增不减，到点即停，不空转） */
   useEffect(() => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduceMotion) {
-      setCount(100)
-      const t = window.setTimeout(() => {
-        if (!completedRef.current) {
-          completedRef.current = true
-          onComplete()
-        }
-      }, 300)
-      return () => window.clearTimeout(t)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      countRef.current = Math.round(progress * 100)
+      setCount(countRef.current)
+      return
     }
-
     let rafId = 0
-    const start = performance.now()
-
-    const tick = (now: number) => {
-      const elapsed = now - start
-      const progress = Math.min(1, elapsed / DURATION)
-      setCount(Math.round(progress * 100))
-      if (progress < 1) {
+    const tick = () => {
+      const target = Math.round(progress * 100)
+      if (countRef.current < target) {
+        const step = Math.max(1, Math.ceil((target - countRef.current) * 0.15))
+        countRef.current = Math.min(target, countRef.current + step)
+        setCount(countRef.current)
         rafId = requestAnimationFrame(tick)
-      } else if (!completedRef.current) {
-        completedRef.current = true
-        window.setTimeout(onComplete, 350)
       }
     }
-
     rafId = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(rafId)
-  }, [onComplete])
+  }, [progress])
 
+  /* 就绪后停留一拍再退出，避免"闪一下" */
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!ready || firedRef.current) return
+    const t = window.setTimeout(() => {
+      if (firedRef.current) return
+      firedRef.current = true
+      onComplete()
+    }, 420)
+    return () => window.clearTimeout(t)
+  }, [ready, onComplete])
+
+  /* 轮播词：加载中才转，就绪即停 */
+  useEffect(() => {
+    if (ready || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const id = window.setInterval(() => {
       setWordIndex((i) => (i + 1) % WORDS.length)
-    }, WORD_INTERVAL)
+    }, 800)
     return () => window.clearInterval(id)
-  }, [])
+  }, [ready])
 
   const display = String(count).padStart(3, '0')
 
@@ -128,6 +133,16 @@ export default function LoadingScreen({ onComplete }: Props) {
         </span>
       </motion.div>
 
+      {/* 左下：加载对象说明 */}
+      <motion.span
+        className="type-label absolute bottom-8 left-6 hidden text-[10px] md:left-10 md:bottom-10 md:block"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, delay: 0.35 }}
+      >
+        {ready ? 'READY' : 'PRELOADING / HERO IMAGE'}
+      </motion.span>
+
       {/* 底部：进度条 */}
       <div className="absolute inset-x-0 bottom-0">
         <div className="h-[2px] w-full overflow-hidden bg-white/10">
@@ -136,7 +151,7 @@ export default function LoadingScreen({ onComplete }: Props) {
             style={{
               transform: `scaleX(${count / 100})`,
               boxShadow: '0 0 12px rgba(46, 217, 245, 0.5)',
-              transition: 'transform 80ms linear',
+              transition: 'transform 120ms linear',
             }}
           />
         </div>

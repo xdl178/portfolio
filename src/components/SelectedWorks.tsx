@@ -52,6 +52,7 @@ export default function SelectedWorks() {
                     alt=""
                     loading="lazy"
                     decoding="async"
+                    fetchPriority="low"
                     className="transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   />
                 </div>

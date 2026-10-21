@@ -59,6 +59,8 @@ npm run lint     # 仅类型检查（tsc --noEmit）
 
 **路由式漫游（HashRouter）**：加载屏（仅首载）→ 全局导航 → 路由页 → 全局页脚；路由切换有页面转场（blur + 位移）并强制回顶。
 
+**加载策略**：加载屏只等首屏大图（`fetch` 流式读字节 → 真实百分比，解码完成后才放行）；作品 / 影像图全部 `loading="lazy"` + `fetchPriority="low"`，进入页面后再异步拉取。
+
 | 路由 | 页面 | 组成 |
 |---|---|---|
 | `/` | `HomePage` | Hero 巨字取景窗（SVG 蒙版透字 + 鼠标视差）→ `SelectedWorks` 精选作品 Bento（跳详情）→ `Explorations` 影像实验室 → `Clients` 客户墙 |
@@ -113,5 +115,5 @@ npm run lint     # 仅类型检查（tsc --noEmit）
 
 ## 图片素材
 
-`public/images/` 下的 6 张图为 AI 生成的占位素材（`hero-tunnel` + `work-01..04` + `study-01`）。
+`public/images/` 下共 7 张占位素材：首屏背景 `hero-desk.jpg`（1672×941，238KB），其余为 AI 生成的占位图（`hero-tunnel` + `work-01..04` + `study-01`）。
 换成真实作品图时保持同名同比例即可，`.media-crop` 会自动按 4:3 / 1:1 裁切。
