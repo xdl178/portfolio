@@ -15,11 +15,11 @@ export default function Backdrop() {
 
       {/* 光晕：青色主光 + 品红副光 */}
       <span
-        className="glow glow-cyan animate-float-slow"
+        className="glow glow-brand animate-float-slow"
         style={{ width: '44rem', height: '44rem', left: '-14rem', top: '-16rem' }}
       />
       <span
-        className="glow glow-magenta animate-float-slow"
+        className="glow glow-indigo animate-float-slow"
         style={{ width: '34rem', height: '34rem', right: '-12rem', top: '42%', animationDelay: '-5s' }}
       />
 

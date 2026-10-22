@@ -81,7 +81,7 @@ export default function LoadingScreen({ progress, ready, onComplete }: Props) {
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="bg-grid mask-radial animate-grid-pan absolute inset-0 opacity-30" />
         <span
-          className="glow glow-cyan"
+          className="glow glow-brand"
           style={{
             width: '40rem',
             height: '40rem',
@@ -150,7 +150,7 @@ export default function LoadingScreen({ progress, ready, onComplete }: Props) {
             className="grad-accent h-full w-full origin-left"
             style={{
               transform: `scaleX(${count / 100})`,
-              boxShadow: '0 0 12px rgba(46, 217, 245, 0.5)',
+              boxShadow: '0 0 12px rgba(38, 134, 237, 0.55)',
               transition: 'transform 120ms linear',
             }}
           />

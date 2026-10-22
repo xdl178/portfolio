@@ -17,6 +17,8 @@ export default {
         accent: 'hsl(var(--accent) / <alpha-value>)',
         'accent-strong': 'hsl(var(--accent-strong) / <alpha-value>)',
         'accent-2': 'hsl(var(--accent-2) / <alpha-value>)',
+        /* 品牌主色 #2686ED（全局变量来自 --brand-rgb） */
+        brand: 'rgb(var(--brand-rgb) / <alpha-value>)',
       },
 
       /* ---------- 字体（系统栈，见 design.md §3） ---------- */

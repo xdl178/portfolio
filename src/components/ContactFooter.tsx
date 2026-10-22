@@ -54,7 +54,7 @@ export default function ContactFooter() {
       {/* 顶部发丝线 + 光晕 */}
       <div className="hairline mx-auto max-w-[1240px] px-6 md:px-10 lg:px-16" aria-hidden="true" />
       <span
-        className="glow glow-cyan"
+        className="glow glow-brand"
         style={{
           width: '46rem',
           height: '30rem',

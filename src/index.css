@@ -17,13 +17,18 @@
   --text: 210 40% 98%;
   --muted: 215 22% 64%;
   --stroke: 213 28% 20%;
-  --accent: 190 92% 58%;
-  --accent-strong: 199 95% 62%;
-  --accent-2: 288 88% 68%;
+  /* 主色 #2686ED：accent / accent-2 / 光晕 / 焦点环全部由它派生，页面不再出现青绿或品红 */
+  --accent: 211 85% 54%;
+  --accent-strong: 211 88% 62%;
+  --accent-2: 224 78% 58%;
 
-  /* 字体：系统栈，中文优先，无外部字体依赖（design.md §3） */
-  --font-sans: 'PingFang SC', 'HarmonyOS Sans SC', 'MiSans', 'Microsoft YaHei',
-    'Noto Sans SC', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* 品牌主色 #2686ED（全局唯一来源：Tailwind 的 brand-* 全部读这里） */
+  --brand-rgb: 38 134 237;
+  --brand: #2686ed;
+
+  /* 字体：思源黑体 Source Han Sans CN（已内嵌 woff2 分片，见 assets/fonts） */
+  --font-sans: 'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', 'PingFang SC',
+    'HarmonyOS Sans SC', 'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Mono', Consolas,
     'Liberation Mono', monospace;
 
@@ -43,8 +48,8 @@
   --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --e-morph: cubic-bezier(0.32, 1.25, 0.4, 1);
 
-  /* 品牌渐变：仅用于 1px 描边 / 光带 / 进度条 */
-  --grad-accent: linear-gradient(120deg, #3cc6ff 0%, #2ed9f5 45%, #c86bff 100%);
+  /* 品牌渐变（蓝色调）：浅蓝 → 主蓝 #2686ED → 深蓝，仅用于描边 / 光带 / 进度条 */
+  --grad-accent: linear-gradient(120deg, #6fb6ff 0%, #2686ed 48%, #1b52c9 100%);
 
   --nav-h: 64px;
 }
@@ -77,7 +82,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid #2ed9f5;
+    outline: 2px solid #2686ed;
     outline-offset: 2px;
     border-radius: 6px;
   }
@@ -254,10 +259,10 @@
     filter: blur(90px);
     opacity: 0.5;
   }
-  .glow-cyan {
+  .glow-brand {
     background: radial-gradient(circle, hsl(var(--accent) / 0.55), transparent 68%);
   }
-  .glow-magenta {
+  .glow-indigo {
     background: radial-gradient(circle, hsl(var(--accent-2) / 0.32), transparent 70%);
   }
 
@@ -418,10 +423,10 @@
 /* 首屏：背景图极缓推近（呼吸感） */
 @keyframes hero-zoom {
   from {
-    transform: scale(1.005);
+    transform: scale(1);
   }
   to {
-    transform: scale(1.028);
+    transform: scale(1.014);
   }
 }
 

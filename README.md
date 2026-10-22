@@ -3,7 +3,10 @@
 独立工作室单页作品集。**深空蓝黑 · 磨砂玻璃** 暗色科技风格。
 React 19 + Vite 7 + TypeScript + Tailwind CSS 3 + GSAP + Framer Motion。
 
-> 全站设计规则的单一事实来源是 [`design.md`](./design.md)。改样式前先读它。
+> 文档分工：
+> - [`design.md`](./design.md) — 全站设计规则，**唯一事实来源**，改样式前先读它
+> - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — 代码架构、数据流、动效分工、关键决策与硬性约束
+> - [`HANDOVER.md`](./HANDOVER.md) — 交接说明：当前状态、部署、占位符回填、故障排查
 
 ## 快速开始
 
@@ -27,15 +30,17 @@ npm run lint     # 仅类型检查（tsc --noEmit）
 | `--text` | `210 40% 98%` | 主文字 |
 | `--muted` | `215 22% 64%` | 次级文字 |
 | `--stroke` | `213 28% 20%` | 描边 / 分隔线 |
-| `--accent` | `190 92% 58%` | 主强调（电光青） |
-| `--accent-2` | `288 88% 68%` | 点缀（仅光晕） |
+| `--accent` | `211 85% 54%` | 主强调（= 品牌蓝 `#2686ED`） |
+| `--accent-2` | `224 78% 58%` | 深蓝端点（仅渐变末端 / 副光晕） |
 
-品牌渐变 `--grad-accent`：`linear-gradient(120deg, #3CC6FF, #2ED9F5 45%, #C86BFF)`，只用于 1px 描边 / 光带 / 进度条。
+品牌渐变 `--grad-accent`：`linear-gradient(120deg, #6FB6FF, #2686ED 48%, #1B52C9)`（蓝色调），只用于 1px 描边 / 光带 / 进度条 / 导航镀层。
 
 ### 字体
 
-全站**系统字体栈**，不依赖任何外部 Web Font（可在无外网环境正常渲染）。
-中文走 `--font-sans`，英文小标签 / 序号 / 数字走 `--font-mono`（大写 + 宽字距）。
+中文统一 **思源黑体 Source Han Sans CN**，字体文件内嵌在 `src/assets/fonts/source-han-sans/`（481 片 woff2，按 unicode-range 按需加载，首屏实测只拉 22 片），不依赖任何外链字体，离线可用。
+英文小标签 / 序号 / 数字走 `--font-mono`（大写 + 宽字距）。
+
+品牌主色 `#2686ED` 定义为全局变量 `--brand-rgb`（CSS）/ `brand-*`（Tailwind），是唯一来源；`--accent` 与之同色，全站不再出现第二种强调色相。
 
 ### 材质与组件类
 
@@ -63,7 +68,7 @@ npm run lint     # 仅类型检查（tsc --noEmit）
 
 | 路由 | 页面 | 组成 |
 |---|---|---|
-| `/` | `HomePage` | Hero 巨字取景窗（SVG 蒙版透字 + 鼠标视差）→ `SelectedWorks` 精选作品 Bento（跳详情）→ `Explorations` 影像实验室 → `Clients` 客户墙 |
+| `/` | `HomePage` | Hero 巨字（240px 描边 PORTFOLIO + 设计 / 未来 + 1400 版心 + 原图叠 40% 品牌蓝）→ `SelectedWorks` 精选作品 Bento（跳详情）→ `Explorations` 影像实验室 → `Clients` 客户墙 |
 | `/works` | `WorksPage` | 巨字刊头 + 统计卡 + 分类筛选 + 不对称大卡（封面 7 列 / 信息 5 列奇偶交替） |
 | `/works/:id` | `WorkDetailPage` | 面包屑 → 头牌（元数据 4 卡）→ 设计理念 → 页面陈列 → 原稿灯箱 → 相关作品 |
 | `/about` | `AboutPage` | 巨字刊头 → `AboutCapabilities`（创作理念 + 能力网格）→ 经历时间线 |
@@ -79,7 +84,7 @@ npm run lint     # 仅类型检查（tsc --noEmit）
 
 - 全部动画尊重 `prefers-reduced-motion`（入场直呈终态、无限循环暂停、视差关闭）
 - `prefers-reduced-transparency: reduce` 时玻璃面板降为不透明
-- 焦点环全站可见（`#2ED9F5`）
+- 焦点环全站可见（`#2686ED`）
 - 390px 宽度无横向滚动，Bento / 能力网格降为单列
 - 装饰元素一律 `aria-hidden` + `pointer-events: none`
 
@@ -104,7 +109,7 @@ npm run lint     # 仅类型检查（tsc --noEmit）
         ├── Backdrop.tsx        # 全站固定装饰层
         ├── LoadingScreen.tsx
         ├── Navbar.tsx          # 路由链接导航（active 由 pathname 判定）
-        ├── Hero.tsx            # 巨字取景窗（active 触发入场）
+        ├── Hero.tsx            # 巨字首屏（active 触发入场）
         ├── SelectedWorks.tsx   # 数据驱动，跳 /works/:id
         ├── AboutCapabilities.tsx
         ├── Explorations.tsx

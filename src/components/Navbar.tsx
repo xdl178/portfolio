@@ -46,7 +46,7 @@ export default function Navbar() {
             aria-hidden="true"
             className="absolute inset-[1.5px] grid place-items-center rounded-full bg-bg"
           >
-            <span className="font-mono text-[11px] font-semibold tracking-wider text-accent">
+            <span className="font-mono text-[11px] font-semibold tracking-wider text-text-primary">
               ST
             </span>
           </span>
