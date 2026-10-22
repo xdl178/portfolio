@@ -1,8 +1,8 @@
 # HANDOVER.md — 交接文档
 
 > 交接时间：2026-10-22
-> 代码基线：`31a6a71`（本地 `main` 分支，**尚未推送到 GitHub**）
-> 线上版本：https://xdl178.github.io/portfolio/ （线上仍是更早的 `c11aae0`）
+> 代码基线：本地 `72b3b80`（tag `deployed-2026-10-22`）
+> 线上版本：https://xdl178.github.io/portfolio/ ，commit `7fee1bb`，Actions run `39746491398` 成功
 > 视觉规范：`design.md` ｜ 架构说明：`ARCHITECTURE.md`
 
 ---
@@ -13,9 +13,9 @@
 
 **现在能跑吗**：能。`tsc -b` 与 `vite build` 均 0 error；1440 / 1920 / 1280 / 900 / 390 / 360 六视口横向溢出为 0；滚轮与加载屏都正常。
 
-**线上和本地一致吗**：**不一致**。本地有 5 个提交（主题色 `#2686ED`、40% 蓝色层、思源黑体内嵌、header 中性化、文字 30%）还没推。线上还是旧版首屏。
+**线上和本地一致吗**：内容一致，**历史不一致**。2026-10-22 已通过 Git Data API 上线，远端 HEAD 是 `7fee1bb`（一个快照提交，父提交 `c11aae0`）；本地 `main` 是 6 个细粒度提交，二者**树哈希相同**（`56729b6`）但 commit sha 不同。所以后续 `git push` 会被判 non-fast-forward——继续用 §4.2 的脚本推送即可，或用 `git push --force-with-lease` 覆盖为本地历史（内容相同，无数据风险）。
 
-**能直接上线吗**：能，但**内容全是占位符**。所有姓名 / 头衔 / 简介 / 作品 / 客户 / 能力都是 `［ ］` 包起来的假数据，`index.html` 的 `<title>` 也是 `［工作室名称］`。要真上线必须先回填文案（见 §7）。
+**能直接上线吗**：能，但**内容全是占位符**。所有姓名 / 头衔 / 简介 / 作品 / 客户 / 能力都是 `［ ］` 包起来的假数据，`index.html` 的 `<title>` 也是 `［工作室名称］`。要真对外发布必须先回填文案（见 §7）。
 
 ---
 
@@ -94,21 +94,51 @@ git push origin main
 
 ### 4.2 当前环境的方式（github.com 被拦，只能通 api.github.com）
 
-用 Git Data API 脚本，等价于一次提交：
+用 Git Data API 脚本，等价于一次提交。**本项目必须用「增量版」**：
 
 ```bash
 cd D:/WorkSpaces/workbuddy/portfolio-landing
-DEPLOY_MSG="feat: 首屏改版" node D:/WorkSpaces/workbuddy/.workbuddy/tools/deploy-github.mjs . --dry   # 预演
-DEPLOY_MSG="feat: 首屏改版" node D:/WorkSpaces/workbuddy/.workbuddy/tools/deploy-github.mjs .           # 真推
+TOOLS=D:/WorkSpaces/workbuddy/.workbuddy/tools
+
+# 预演（只算差异，不写任何东西）
+DEPLOY_MSG="..." node $TOOLS/deploy-github-incremental.mjs . --dry
+
+# 真推
+DEPLOY_MSG="..." node $TOOLS/deploy-github-incremental.mjs .
 ```
 
-脚本行为：读 `.token` → 递归收集文件（跳过 `node_modules/dist/.git/.shots/.token`）→ **逐文件做 token 明文内容扫描，命中即中止** → 并发 3 上传 blob（5xx 指数退避）→ 建 tree（全量替换）→ 建 commit → `PATCH refs/heads/main`。
+**为什么不能用 `deploy-github.mjs`**：那个脚本一次性 `POST /git/trees` 上传全部条目。本项目有 532 个文件（其中 481 片字体），实测直接 **422 timeout**，GitHub 的报错原文是 "your input was too large to process, consider building the tree incrementally"。`deploy-github-incremental.mjs` 的改动：
+
+1. 用本地 git blob sha（`sha1("blob <len>\0"+content)`）与远端 tree 比对，**只传差异**（首次上线 498 个，日常改动通常 < 10 个）；
+2. blob 先 `GET /git/blobs/<sha>` 探测，存在就复用，不重复上传 24 MB；
+3. tree 按 **40 条一块**、以 `base_tree` 链式合并，最终只产出**一个 commit**（不是几十个）；
+4. 远端多余文件用 `sha: null` 标记删除。
+
+脚本安全策略与旧版一致：只读 `.token`、不打印、逐文件做 token 明文扫描命中即中止。
 
 ### 4.3 凭据
 
 - `.token`（GitHub PAT）放在项目根，**已在 `.gitignore` 里**（`.token` / `*.token` / `*cred*`）。
 - 部署脚本只从 `<projectDir>/.token` 读，不打印、不落产物。
 - 交接后**建议轮换这个 token**，然后 `git remote` 用 SSH 或 credential helper，别再把长期 PAT 放在工作目录里。
+
+### 4.4 发布记录
+
+| 日期 | 远端 commit | Actions | 说明 |
+|---|---|---|---|
+| 2026-10-22 | `7fee1bb` | `39746491398` success | 首屏改版 + 品牌蓝 `#2686ED` + 思源黑体内嵌 + 架构/交接文档；树 `56729b6` 对应本地 `72b3b80` |
+| 2026-10-21 | `c11aae0` | `39580131665` success | 首屏图替换 + 真实加载进度 |
+| 2026-10-12 | `244b0a3` | `38230999656` success | 首次上线 |
+
+> 表内只登记**代码发布**；纯文档修订的提交不单独列出（会追加在对应发布之后）。
+
+上线后自检（本地跑，约 8 秒）：
+
+```bash
+node .shots/live-check.mjs        # 加载屏真实进度 + 首屏截图
+```
+
+实测基线（2026-10-22）：加载屏 3379 ms 消失、首屏图 1672×941 / 243 KB、`overflow=0`、字体 `Source Han Sans CN` 命中、22 片 woff2 全部 200。
 
 ---
 
@@ -132,7 +162,7 @@ DEPLOY_MSG="feat: 首屏改版" node D:/WorkSpaces/workbuddy/.workbuddy/tools/de
 | 级别 | 问题 | 说明 / 建议 |
 |---|---|---|
 | 高 | **全站占位符** | 不能直接对外发布。`grep -rn "［" src` 可列出全部 |
-| 高 | **本地 5 个提交未推送** | 线上是旧版首屏；确认视觉后先推 |
+| 中 | **远端历史是单次快照提交** | 远端 HEAD 是 API 生成的快照提交，与本地细粒度提交内容相同（树哈希一致）但 sha 不同；`git push` 会 non-fast-forward。要么继续用 §4.2 脚本，要么 `--force-with-lease` 覆盖为本地历史 |
 | 中 | **作品图未优化** | 6 张 PNG 共 11 MB，单张 1.5–2.2 MB。已 `loading="lazy"`，但移动端 4G 上仍慢。建议 WebP + `srcset` |
 | 中 | **CSS 325.7 KB（gzip 127 KB）** | 体积几乎全来自 481 条 `@font-face`。若在意首屏 CSS，可把 `fonts.css` 拆成动态注入，或只保留 300–800 常用字重 |
 | 中 | **仓库 37 MB** | 字体 24 MB 直接入库。换来的是构建稳定（不动 lockfile）。可接受，但 clone 偏慢 |
@@ -203,9 +233,9 @@ grep -rn "［" src index.html
 ## 10. 交接清单
 
 - [ ] 拿到项目目录后能 `npm install && npm run dev` 起得来
-- [ ] 知道线上地址、知道本地领先线上 5 个提交
+- [ ] 知道线上地址、知道远端 HEAD 是 `7fee1bb`（本地 tag `deployed-2026-10-22` 对应它）
 - [ ] 知道 `.token` 位置、知道要轮换
 - [ ] 知道占位符怎么回填（§7）
 - [ ] 能复现 §3 的截图流程（这是唯一的回归手段）
 - [ ] 读过 `design.md` 与 `ARCHITECTURE.md §11`
-- [ ] 知道 5 个提交待推送
+- [ ] 知道发布走 `deploy-github-incremental.mjs`（旧脚本会 422）

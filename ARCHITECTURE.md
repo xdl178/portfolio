@@ -227,14 +227,16 @@ main.tsx
    ├─ 方式 A（标准）：git push origin main
    │     └─ GitHub Actions: npm ci → npm run build → upload-pages-artifact → deploy-pages
    │
-   └─ 方式 B（当前沙箱受限时）：node .workbuddy/tools/deploy-github.mjs <projectDir>
-         └─ Git Data API：blob → tree → commit → PATCH refs/heads/main
+   └─ 方式 B（当前沙箱受限时）：node .workbuddy/tools/deploy-github-incremental.mjs <projectDir>
+         └─ Git Data API：差异 blob → 40 条一块的 base_tree 链 → 单个 commit → PATCH refs/heads/main
             （绕过被封的 github.com，只依赖 api.github.com）
 ```
 
+**为什么是「增量版」**：本项目 532 个文件（481 片字体），一次性 `POST /git/trees` 会触发 GitHub 422 "input too large"。增量版先用本地 git blob sha 比对远端 tree 只传差异，再按 40 条一块链式建树，最终仍只产出一个 commit。老的 `deploy-github.mjs` 只适用于小项目。
+
 线上：`https://xdl178.github.io/portfolio/`，Pages 的 `build_type` 为 `workflow`（不需要 `gh-pages` 分支，也不提交 `dist`）。
 
-**注意**：本地仓库**没有配置 git remote**（`git remote -v` 为空），历史上推送都走方式 B。如果要在本地用 `git push`，需先 `git remote add origin https://github.com/xdl178/portfolio.git` 并解决 github.com 的网络可达性。
+**注意**：本地仓库**没有配置 git remote**（`git remote -v` 为空），历史上推送都走方式 B。如果要在本地用 `git push`，需先 `git remote add origin https://github.com/xdl178/portfolio.git` 并解决 github.com 的网络可达性。另：远端 HEAD 是 API 快照提交，与本地细粒度提交**树相同、sha 不同**，直接 `git push` 会 non-fast-forward。
 
 ---
 
