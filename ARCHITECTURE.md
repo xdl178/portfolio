@@ -1,7 +1,7 @@
 # ARCHITECTURE.md — 项目架构说明
 
 > 独立工作室作品集（蓝黑科技磨砂玻璃 · 巨字首屏 · 路由式漫游）
-> 版本基线：`31a6a71`（main）
+> 版本基线：2026-10-23 增量同步（`portfolio-landing-next` → 本项目）
 > 配套文档：`design.md`（视觉规则，唯一事实来源）、`README.md`（速览）、`HANDOVER.md`（交接与运维）
 
 本文只讲**代码怎么组织、数据怎么流、为什么这么建**。视觉细节一律以 `design.md` 为准，不在这里重复。
@@ -18,7 +18,8 @@
 | 样式 | Tailwind CSS | 3.4.18 | + `tailwindcss-animate`，design token 挂在 `theme.extend` |
 | 动画 A | framer-motion | 12.23.12 | 滚动驱动、`whileInView` 入场、路由转场、`layoutId` |
 | 动画 B | GSAP | 3.13.0 | 时间线编排、`quickTo` 鼠标视差、`ScrollTrigger`、跑马灯 |
-| 路由 | react-router-dom | 7.18.4 | `HashRouter`（4 条路由） |
+| 动画 C | @gsap/react | 2.1.2 | `useGSAP()` 封装，负责 scope 清理与 `matchMedia` 还原 |
+| 路由 | react-router-dom | 7.18.4 | `HashRouter`（5 条路由，含 `*` 兜底 404） |
 | 字体 | 本地 woff2 分片 | — | 思源黑体 SC VF，481 片，`unicode-range` 按需加载 |
 
 **没有的东西**（刻意保持轻量）：状态管理库（Redux/Zustand）、CSS-in-JS、UI 组件库、请求库、测试框架、ESLint/Prettier 配置、Lenis 平滑滚动（早期引入过，当前已移除）。
@@ -39,7 +40,8 @@ portfolio-landing/
 ├── tsconfig{,.app,.node}.json  # 三份：根引用、app（src）、node（配置文件）
 ├── public/
 │   ├── favicon.svg
-│   └── images/                 # 7 张位图素材（hero-desk.jpg + 6 张占位 PNG）
+│   └── images/                 # hero-desk.jpg + works/ 三组真实作品图（61 张 / 25 MB）
+│                               # 旧占位 PNG（work-01..04 / study-01 / hero-tunnel）已无引用，可清理
 ├── src/
 │   ├── main.tsx                # 入口：字体 CSS → index.css → StrictMode + HashRouter + App
 │   ├── App.tsx                 # ★ 外壳：真实预加载 → 加载屏 → 路由 + 转场 → 全局页脚
@@ -49,12 +51,14 @@ portfolio-landing/
 │   │   ├── fonts.css           # 481 条 @font-face，族名统一 "Source Han Sans CN"
 │   │   └── *.woff2             # 481 片，24 MB
 │   ├── data/
-│   │   └── works.ts            # ★ 唯一作品数据源 + 派生查询函数
+│   │   ├── works.ts            # ★ 唯一作品数据源 + 派生查询函数
+│   │   └── profile.ts          # 个人资料占位（五屏改版遗留，仅 ContactFooter 曾引用）
 │   ├── pages/                  # 路由级页面（只做布局编排，不含区块内部实现）
 │   │   ├── HomePage.tsx        # /
 │   │   ├── WorksPage.tsx       # /works
 │   │   ├── WorkDetailPage.tsx  # /works/:id
-│   │   └── AboutPage.tsx       # /about
+│   │   ├── AboutPage.tsx       # /about
+│   │   └── NotFoundPage.tsx    # *（404 兜底）
 │   └── components/             # 可复用区块 / 全局层
 │       ├── Backdrop.tsx        # 全站 fixed 装饰层（网格 + 光晕 + 噪点）
 │       ├── LoadingScreen.tsx   # 加载屏（真实百分比 + 品牌环）
@@ -62,10 +66,14 @@ portfolio-landing/
 │       ├── Hero.tsx            # 首屏（三层：背景 / 暗幕 / 内容）
 │       ├── SectionHeader.tsx   # 统一章节头 + 共享入场常量
 │       ├── SelectedWorks.tsx   # 首页精选作品 Bento 网格
+│       ├── Practice.tsx        # 项目经验（桌面 GSAP 钉标题 + 滚动渐显）
 │       ├── Explorations.tsx    # 影像实验室（GSAP ScrollTrigger 视差 + 灯箱）
-│       ├── Clients.tsx         # 客户标记墙
+│       ├── ProfileIntro.tsx    # 01 关于我（未挂载，五屏改版备用）
+│       ├── ProfileContact.tsx  # 联系信息（未挂载，五屏改版备用）
+│       ├── Clients.tsx         # 客户标记墙（已不挂载）
 │       ├── AboutCapabilities.tsx
 │       └── ContactFooter.tsx   # 联系 CTA + GSAP 跑马灯 + 快捷路由
+├── docs/superpowers/           # 五屏改版的设计说明与实施计划（历史参考）
 ├── .github/workflows/deploy.yml # 推送 main → 构建 → GitHub Pages
 ├── .shots/                     # 本地验证脚本与截图（git 忽略）
 └── .token                      # GitHub PAT（git 忽略，禁止提交）
@@ -131,14 +139,16 @@ main.tsx
 | `originalImages` | `{src,label}[]` | 详情页原稿网格 + 灯箱 |
 | `tags / shortDesc / concept / description / details` | string / string[] | 卡片标签、详情正文 |
 
-数据是**静态模块**，构建期就被打进 `index.js`（52.9 KB 未压缩）。加作品只需往数组里追加对象，索引与统计自动派生（`WorksPage` 的统计卡是 `reduce` 出来的，不写死）。
+数据是**静态模块**，构建期就被打进 `index.js`（51.4 KB 未压缩）。加作品只需往数组里追加对象，索引与统计自动派生（`WorksPage` 的统计卡是 `reduce` 出来的，不写死）。
+
+2026-10-23 同步后的三件作品（`original-ip` / `mivox` / `art-studio`）是**真实内容**，不再是占位符；`pageImages` 从 `public/images/works/<folder>/Frame-N.jpg` 批量派生，原稿走中文文件名（需 `encodeURIComponent`）。
 
 ---
 
 ## 5. 样式体系（三层 token）
 
 ```
-第 1 层  src/index.css :root          —— 原始值（HSL 分量，便于 alpha 组合）
+第 1 层  src/index.css :root          —— 原始值（HSL/RGB 通道、完整 muted HEX）
 第 2 层  tailwind.config.js theme.extend —— 语义映射（bg / text-primary / accent / brand …）
 第 3 层  src/index.css @layer components —— 组合类（.glass / .btn / .chip / .type-* …）
 ```
@@ -148,16 +158,16 @@ main.tsx
 ```css
 --bg: 222 47% 4%;            /* 页面底色 #05070D */
 --text: 210 40% 98%;
---muted: 215 22% 64%;
---accent: 211 85% 54%;       /* = 品牌蓝 #2686ED */
+--muted: #BBC9DB;           /* 完整色值：color:var(--muted)，所有副文本 */
+--accent: var(--brand-rgb); /* RGB 别名，rgb(var(--accent)) */
 --accent-strong / --accent-2 /* 同色相明暗派生，不得引入新色相 */
 --brand-rgb: 38 134 237;     /* Tailwind `brand-*` 读这一条，rgb 分量形式才能用 bg-brand/40 */
 --font-sans: 'Source Han Sans CN', …;
 --font-mono: ui-monospace, …;
---grad-accent: linear-gradient(120deg, #6FB6FF, #2686ED 48%, #1B52C9);
+--grad-accent: linear-gradient(120deg, rgb(var(--accent-strong-rgb)), var(--brand) 48%, rgb(var(--accent-deep-rgb)));
 ```
 
-**为什么 `--brand*` 用 rgb 分量、其余用 HSL 分量**：Tailwind 的 `<alpha-value>` 占位需要"裸分量"。HSL 分量配 `hsl(var(--x) / <alpha>)`，rgb 分量配 `rgb(var(--x) / <alpha>)`。写成完整色值（`#2686ed`）会让 `bg-brand/40` 这类透明度修饰失效。
+**变量格式不可混用**：表面/主文字保留 HSL 通道；品牌、accent 别名与材质为 RGB 通道，分别用 `hsl()` / `rgb()`。`--muted` 是完整 HEX，直接 `var(--muted)`，不提供 `/alpha` 变体；副文本统一精确颜色。完整映射及特殊材质例外见 [COLOR-SYSTEM.md](<COLOR-SYSTEM.md>)，新增颜色必须先改全局 token。
 
 ### 5.2 组件类清单（`@layer components`）
 
@@ -206,14 +216,13 @@ main.tsx
 
 | 产物 | 未压缩 | gzip |
 |---|---|---|
-| `react-vendor` | 216.7 KB | 67 KB |
-| `motion-vendor` | 134.8 KB | 44 KB |
-| `gsap-vendor` | 111.4 KB | 44 KB |
-| `index`（业务代码 + 数据） | 52.9 KB | 13 KB |
-| `router-vendor` | 37.2 KB | 13 KB |
-| `index.css` | 325.7 KB | 127 KB |
-| `dist/assets/`（含 481 片字体） | 24 MB | — |
-| `dist/` 总计 | 35 MB | — |
+| `react-vendor` | 221.9 KB | 69 KB |
+| `motion-vendor` | 138.4 KB | 46 KB |
+| `gsap-vendor` | 114.9 KB | 46 KB |
+| `index`（业务代码 + 数据） | 51.4 KB | 15 KB |
+| `router-vendor` | 38.1 KB | 14 KB |
+| `index.css` | 339.9 KB | 131 KB |
+| `dist/` 总计（字体 24 MB + 作品图 36 MB） | 60 MB | — |
 
 字体占了产物 99% 的体积，但**是按需拉取**，不是首屏成本。首屏实际下载 ≈ JS gzip 181 KB + CSS gzip 127 KB + 首屏图 243 KB + 命中字体分片。
 
@@ -253,7 +262,8 @@ main.tsx
 | 7 | 单强调色（`#2686ED`），禁止第二色相 | 视觉统一；此前电光青 + 品红双色相被判"杂" | 渐变层次需靠同色相明度拉开 |
 | 8 | 导航保持黑白中性，只有渐变环带色 | 用户明确要求"只把原本彩色的改蓝，其余保持中色" | 导航与首屏色感略脱节，靠 monogram 渐变环呼应 |
 | 9 | 字体文件直接入库，不走 npm 依赖 | 避免 `package-lock.json` 变动引发跨平台 optional deps 构建失败（已踩一次） | 仓库 37 MB |
-| 10 | 文案全部用 `［ ］` 占位符 | 交付前需替换为真实内容，占位符让"哪些是假数据"一眼可辨 | 上线前必须全量回填 |
+| 10 | 作品改为真实内容，个人资料仍占位 | 作品图与项目文案可直接对外；姓名 / 学校 / 邮箱未经确认不能编造 | 作品素材展示许可需在发布前核实 |
+| 11 | 首页保留四段结构，不再挂载 `01 关于我` / 联系区块 | 源项目已回滚五屏改版（`#about-intro` / `#contact` 均未挂载），本仓库跟随该状态 | `ProfileIntro` / `ProfileContact` / `profile.ts` 成为未引用文件 |
 
 ---
 

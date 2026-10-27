@@ -1,127 +1,81 @@
-import { motion } from 'framer-motion'
 import AboutCapabilities from '../components/AboutCapabilities'
-import { HEADER_TRANSITION } from '../components/SectionHeader'
+import SectionHeader from '../components/SectionHeader'
+import { profileFields } from '../data/profile'
+import { works } from '../data/works'
 
-/* ============================================================
-   AboutPage · 关于 /about（参考 portfolio-test About 布局）
-   刊头（巨字 ABOUT）→ 工作室简介 + 能力网格 → 经历时间线
-   联系入口由全局页脚承担
-   ============================================================ */
+/* 关于：刊头（标签行 + 两行巨字）→ 导读（序号 + 正文 + 统计卡）→ 能力 → 经历 */
 
-const TIMELINE = [
-  {
-    no: '01',
-    org: '［公司 / 团队名称 01］',
-    orgEn: 'PLACEHOLDER STUDIO 01',
-    role: '［角色 · 头衔］',
-    period: '2026.03 - 至今',
-    points: [
-      '［工作内容：负责的主要业务与产出。］',
-      '［工作内容：负责的主要业务与产出。］',
-    ],
-  },
-  {
-    no: '02',
-    org: '［公司 / 团队名称 02］',
-    orgEn: 'PLACEHOLDER STUDIO 02',
-    role: '［角色 · 头衔］',
-    period: '2025.08 - 2026.02',
-    points: [
-      '［工作内容：负责的主要业务与产出。］',
-      '［工作内容：负责的主要业务与产出。］',
-    ],
-  },
-]
+const CONTACT_EMAIL = 'mailto:3112516515@qq.com'
 
 export default function AboutPage() {
-  return (
-    <div className="relative bg-bg pb-24 pt-32 md:pt-40">
-      <div className="mx-auto max-w-[1240px] px-6 md:px-10 lg:px-16">
-        {/* ============ 刊头 ============ */}
-        <header className="border-b border-white/10 pb-12 md:pb-16">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={HEADER_TRANSITION}
-            className="type-label mb-6"
-          >
-            ABOUT · 关于我们
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...HEADER_TRANSITION, delay: 0.1 }}
-            className="type-display text-text-primary"
-          >
-            关于<span className="text-gradient">工作室</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...HEADER_TRANSITION, delay: 0.18 }}
-            className="type-body mt-8 max-w-[56ch]"
-          >
-            ［工作室简介：我们是谁、相信什么、如何工作。］秩序、材质与光的克制使用，
-            让复杂系统变得直觉可读。
-          </motion.p>
-        </header>
-      </div>
+  const pages = works.reduce((total, work) => total + work.pageImages.length, 0)
+  const originals = works.reduce((total, work) => total + work.originalImages.length, 0)
+  const stats = [
+    { tag: 'N·01', value: String(works.length).padStart(2, '0'), label: '件精选作品' },
+    { tag: 'N·02', value: String(pages).padStart(2, '0'), label: '张设计页面' },
+    { tag: 'N·03', value: String(originals).padStart(2, '0'), label: '张主要原稿' },
+  ]
 
-      {/* ============ 简介 + 能力（复用组件） ============ */}
+  return (
+    <div className="bg-bg pb-28 pt-32 md:pb-44 md:pt-40">
+      <header className="mx-auto max-w-[1380px] px-5 md:px-10 lg:px-16">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <span className="rounded-full border border-paper/20 bg-paper/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Designer · 2026</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">About Me · 关于我 / The Designer</span>
+        </div>
+
+        <h1 className="mt-10 text-[clamp(2.8rem,11vw,8.4rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-text-primary">
+          <span className="block">关于</span>
+          <span className="block text-gradient">我。</span>
+        </h1>
+
+        <div className="mt-14 grid gap-10 border-b border-paper/15 pb-14 md:mt-16 md:grid-cols-12 md:items-end md:gap-14 md:pb-16">
+          <div className="md:col-span-7">
+            <div className="flex items-center gap-4">
+              <span aria-hidden="true" className="font-mono text-[2.6rem] font-semibold leading-none tracking-[-0.04em] text-muted">01</span>
+              <span aria-hidden="true" className="h-px w-10 bg-paper/25" />
+              <span className="type-label text-[11px] text-muted">Intro · 章节导读</span>
+            </div>
+            <p className="mt-6 max-w-[52ch] text-base leading-8 text-muted">
+              我是一名视觉与 UI/UX 设计师，工作覆盖原创 IP、品牌交互与 AI 产品官网。习惯从真实场景出发，把复杂的信息结构梳理成直觉可读的界面，并与开发一起把设计落到线上。
+            </p>
+            <p className="mt-4 max-w-[52ch] text-sm leading-7 text-muted">
+              当前可接受新项目委托，方向包括品牌视觉系统、产品界面与动态影像。
+            </p>
+            <a href={CONTACT_EMAIL} className="group mt-8 inline-flex items-center gap-3 border-b border-accent pb-2 text-sm text-text-primary transition-colors hover:text-accent-strong">
+              聊聊你的项目
+              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">↗</span>
+            </a>
+          </div>
+          <div className="grid grid-cols-3 gap-3 md:col-span-5">
+            {stats.map((stat) => (
+              <div key={stat.tag} className="relative rounded-card border border-paper/15 bg-paper/[0.02] p-4 md:p-5">
+                <span className="absolute right-3 top-3 font-mono text-[9px] tracking-[0.14em] text-muted">{stat.tag}</span>
+                <p className="font-mono text-[clamp(1.9rem,3vw,2.6rem)] font-semibold leading-none text-text-primary">{stat.value}</p>
+                <p className="mt-3 text-[11px] leading-5 text-muted">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </header>
+
       <AboutCapabilities />
 
-      {/* ============ 经历时间线 ============ */}
-      <section className="relative py-24 md:py-32" aria-labelledby="timeline-h">
-        <div className="mx-auto max-w-[1240px] px-6 md:px-10 lg:px-16">
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={HEADER_TRANSITION}
-            className="mb-12 md:mb-16"
-          >
-            <h2 id="timeline-h" className="type-h2 text-text-primary">
-              经历<span className="text-gradient">时间线</span>
-            </h2>
-            <p className="type-body mt-4 max-w-[52ch]">团队与合作经历的简要脉络。</p>
-          </motion.div>
-
-          <ol className="relative flex flex-col gap-6 md:gap-8">
-            {TIMELINE.map((item, i) => (
-              <motion.li
-                key={item.no}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ ...HEADER_TRANSITION, delay: i * 0.08 }}
-                className="glass glass-hover rounded-card p-6 md:p-10"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <p className="type-num mb-3 text-sm text-accent">N°{item.no}</p>
-                    <h3 className="type-h3 text-text-primary">{item.org}</h3>
-                    <p className="type-label mt-1.5">{item.orgEn}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="chip mb-3">{item.role}</p>
-                    <p className="type-num text-sm text-muted">{item.period}</p>
-                  </div>
-                </div>
-
-                <ul className="mt-6 grid grid-cols-1 gap-3 border-t border-white/10 pt-6 md:grid-cols-2">
-                  {item.points.map((p, idx) => (
-                    <li key={idx} className="flex gap-3">
-                      <span className="type-num flex-none text-xs text-accent/70">
-                        {String(idx + 1).padStart(2, '0')}
-                      </span>
-                      <p className="type-body text-sm">{p}</p>
-                    </li>
-                  ))}
-                </ul>
-              </motion.li>
-            ))}
-          </ol>
+      <section className="mx-auto max-w-[1380px] px-5 md:px-10 lg:px-16" aria-label="教育与工作经历">
+        <SectionHeader index="03" label="经历 · BACKGROUND" title={<>一路走来的<span className="text-gradient whitespace-nowrap">坐标。</span></>} />
+        <div className="mt-12 grid gap-px overflow-hidden rounded-card border border-paper/10 bg-paper/10 md:grid-cols-2">
+          <article className="bg-[rgb(var(--surface-card-rgb))] p-8 md:p-10">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Education · 教育背景</p>
+            <h3 className="mt-5 text-2xl font-semibold text-text-primary">{profileFields.school}</h3>
+            <p className="mt-3 text-sm leading-7 text-muted">{profileFields.major} <span className="mx-2 text-accent">/</span> {profileFields.educationPeriod}</p>
+          </article>
+          <article className="bg-[rgb(var(--surface-card-rgb))] p-8 md:p-10">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Experience · 工作经历</p>
+            <h3 className="mt-5 text-2xl font-semibold text-text-primary">{profileFields.employer}</h3>
+            <p className="mt-3 text-sm leading-7 text-muted">{profileFields.position} <span className="mx-2 text-accent">/</span> {profileFields.employmentPeriod}</p>
+          </article>
         </div>
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">以上字段为占位，待本人提供后回填</p>
       </section>
     </div>
   )

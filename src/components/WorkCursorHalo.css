@@ -1,0 +1,27 @@
+.work-cursor-halo {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 45;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-400px, -400px, 0);
+  transition: opacity var(--d-medium) var(--e-out);
+  will-change: transform;
+}
+.work-cursor-halo > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgb(var(--brand-rgb) / .18) 0%, rgb(var(--brand-rgb) / .075) 28%, transparent 68%);
+  transition: transform var(--d-slow) var(--e-smooth);
+}
+.work-cursor-halo[data-hover-level='control'] > span { transform: scale(1.4); }
+.work-cursor-halo[data-hover-level='card'] > span { transform: scale(1.9); }
+.work-cursor-halo[data-visible='true'] { opacity: 1; }
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .work-cursor-halo { display: none; }
+}

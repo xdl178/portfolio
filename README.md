@@ -1,124 +1,70 @@
-# ［工作室名称］ - 作品集
+# 设计未来 · 独立作品集
 
-独立工作室单页作品集。**深空蓝黑 · 磨砂玻璃** 暗色科技风格。
-React 19 + Vite 7 + TypeScript + Tailwind CSS 3 + GSAP + Framer Motion。
+深空蓝黑 · 磨砂玻璃 · 巨字首屏的单页作品集。React 19 + Vite 7 + TypeScript + Tailwind CSS 3 + GSAP + Framer Motion，HashRouter 路由式漫游。
 
 > 文档分工：
-> - [`design.md`](./design.md) — 全站设计规则，**唯一事实来源**，改样式前先读它
-> - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — 代码架构、数据流、动效分工、关键决策与硬性约束
-> - [`HANDOVER.md`](./HANDOVER.md) — 交接说明：当前状态、部署、占位符回填、故障排查
+> - [`design.md`](./design.md) — 全站视觉规则，**唯一事实来源**，改样式前先读
+> - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — 代码架构、数据流、动效分工、关键决策
+> - [`HANDOVER.md`](./HANDOVER.md) — 交接：状态、部署、占位符回填、故障排查
+> - [`WORKS-HANDOVER.md`](./WORKS-HANDOVER.md) — 作品档案与详情页动效、光晕描边、使用和测试交接
+> - [`COLOR-SYSTEM.md`](./COLOR-SYSTEM.md) — 全局色彩规范、统一副文本、材质例外与颜色回归
+> - [`LOADING-HANDOVER.md`](./LOADING-HANDOVER.md) — 星空加载页、自动进入与失败兜底
+> - [`CAREER-HANDOVER.md`](./CAREER-HANDOVER.md) — 双角视口光晕与第四屏经历滚动树
+> - [`docs/superpowers/`](./docs/superpowers/) — 五屏改版的设计说明与实施计划（历史参考，当前首页未采用该结构）
 
-## 快速开始
+## 运行
 
 ```bash
 npm install
-npm run dev      # 开发服务器 http://localhost:5180
-npm run build    # 类型检查 + 生产构建 → dist/
-npm run preview  # 预览构建产物
-npm run lint     # 仅类型检查（tsc --noEmit）
+npm run dev      # http://localhost:5180
+npm run build    # tsc -b && vite build → dist/
+npm run preview
+npm run lint     # tsc --noEmit
+npm run test:works  # 先启动 preview -- --port 5180；本机需 Chrome
+npm run test:loading  # 无输入自动进入与进度星空回归
+npm run test:home-works  # 作品屏上二下一布局、移动端单列与详情跳转
+npm run test:colors   # 全局颜色来源、副文本精确色值与变量联动
+npm run test:effects  # 全站光晕单实例、跨路由持久与2px描边
+npm run test:career   # 双角固定光晕、经历树滚动增长/回退和手机降级
+npm run test:home-spacing  # 五屏外层仅底padding128px、作品与经历同款标题
+npm run test:home-about  # 新增第二屏排版、资料和8个本地软件图标
+npm run test:badge  # 全局Badge三处同款样式、标题语义及10%背景
 ```
 
-## 设计系统速览
+当前生产构建与以上浏览器回归均已通过：全站光晕、2px 描边、首页标签尺寸/换行、自动进入和既有作品交互。触控与减少动态效果保持降级。
 
-### 配色（`src/index.css` `:root`，HSL 分量 + Tailwind alpha 通道）
+## 首页结构（当前线上形态）
 
-| Token | HSL | 用途 |
-|---|---|---|
-| `--bg` | `222 47% 4%` | 页面底色（近黑深蓝） |
-| `--bg-elev` | `222 40% 7%` | 抬升底色 |
-| `--surface` | `220 36% 10%` | 玻璃基底 |
-| `--text` | `210 40% 98%` | 主文字 |
-| `--muted` | `215 22% 64%` | 次级文字 |
-| `--stroke` | `213 28% 20%` | 描边 / 分隔线 |
-| `--accent` | `211 85% 54%` | 主强调（= 品牌蓝 `#2686ED`） |
-| `--accent-2` | `224 78% 58%` | 深蓝端点（仅渐变末端 / 副光晕） |
+| 顺序 | 区块 | 组件 | 说明 |
+|---|---|---|---|
+| 1 | 首屏 | `Hero` | 巨字描边 PORTFOLIO + 设计 / 未来 + 1400 版心，原图叠 40% 品牌蓝 |
+| 2 | 关于我 | `HomeAbout` | 左侧竖向照片占位，右侧七项基本信息、三组专业技能及本地软件标识 |
+| 3 | 精选作品 | `SelectedWorks` | 上方两张并排、第三张通栏的铺图卡片；标题/方向/标签叠图，保留真实作品与详情跳转 |
+| 4 | 工作经验 | `Practice` | 参考 Career & Experience 的蓝色光线滚动树，桌面中轴双栏、手机左轴堆叠；保留三个真实项目，无 pin |
+| 5 | 影像实验室 | `Explorations` | 横向视觉叙事 + 灯箱 |
 
-品牌渐变 `--grad-accent`：`linear-gradient(120deg, #6FB6FF, #2686ED 48%, #1B52C9)`（蓝色调），只用于 1px 描边 / 光带 / 进度条 / 导航镀层。
+全局：`ViewportGlows` 视口左上/右下双角品牌蓝光晕（固定 body portal、不拦截点击）、`Backdrop` 网格/噪点装饰层、`Navbar` 悬浮胶囊导航、`ContactFooter` 页脚；加载结束后由 [App.tsx](<src/App.tsx>) 在动画路由外唯一挂载 `WorkCursorHalo`，portal 到 body，跨首页/作品/详情/关于/404 保持。触控、粗指针及减少动态效果时禁用。
 
-### 字体
+首页作品标签各断点均为 `14px` 字号、局部 `4px` 圆角；标签与箭头同为 `32px` 高；标签左右 padding 和标签间 gap 均为 `16px`，窄屏标签可换行、箭头底对齐。默认矩形仍为全局 `12px`，详见 [design.md](<design.md>)。
 
-中文统一 **思源黑体 Source Han Sans CN**，字体文件内嵌在 `src/assets/fonts/source-han-sans/`（481 片 woff2，按 unicode-range 按需加载，首屏实测只拉 22 片），不依赖任何外链字体，离线可用。
-英文小标签 / 序号 / 数字走 `--font-mono`（大写 + 宽字距）。
+路由：`/` 首页、`/works` 作品档案、`/works/:id` 作品详情、`/about` 关于、`*` 404。
 
-品牌主色 `#2686ED` 定义为全局变量 `--brand-rgb`（CSS）/ `brand-*`（Tailwind），是唯一来源；`--accent` 与之同色，全站不再出现第二种强调色相。
+首页五屏统一由 [HomePage.css](<src/pages/HomePage.css>) 设置外层 `padding: 0 0 128px`；内层保留响应式版心。关于我、精选作品、工作经验分别使用01/02/03同款章节头。新增第二屏的照片、姓名、联系方式等资料保留占位，从 [profile.ts](<src/data/profile.ts>) 回填；软件图标[来源说明](<public/images/tools/SOURCES.md>)随项目本地保存。
 
-### 材质与组件类
+## 数据与素材
 
-- 玻璃三档：`.glass-sm` / `.glass` / `.glass-lg`，配套 `.glass-hover`（hover 仅提亮边框 + 内高光，不加外发光）
-- 按钮：`.btn` + `.btn-primary` / `.btn-ghost` / `.btn-outline`
-- 排版基元：`.type-display` / `.type-h2` / `.type-h3` / `.type-body` / `.type-label` / `.type-num`
-- 装饰层：`.bg-grid` / `.mask-radial` / `.noise` / `.glow-cyan` / `.glow-magenta` / `.hairline`
-- 图片容器：`.media-crop`（裁掉生成图右下角水印）
+- 作品数据：`src/data/works.ts`（三件作品，`pageImages` 页面陈列 + `originalImages` 原稿灯箱）
+- 作品图片：`public/images/works/{original-ip,mivox,art-studio}/`，共 61 张 JPG / 25 MB
+- 首屏背景：`public/images/hero-desk.jpg`（1672×941）
+- 个人资料占位：`src/data/profile.ts`（姓名 / 学校 / 邮箱等均为「待补充」）
 
-### 圆角体系
+## 未挂载的备用章节
 
-交互件 `9999px` 全圆 / 卡片 `20px` / 输入 `12px`。不允许混用。
+`ProfileIntro.tsx`（`01 关于我`）与 `ProfileContact.tsx`（联系信息）是五屏改版的产物，当前首页**未挂载**，与 `docs/superpowers` 里的方案一起保留待用。首页因此只有四段结构；导航「联系我」直达 `mailto:`。
 
-### 动效
+## 约定
 
-- token：`--d-*`（时长，进慢出快）、`--e-*`（缓动，含 spring 过冲）
-- 编排归属：GSAP 管首屏入场 / 视差 / 跑马灯；Framer Motion 管进入视口 / 微交互 / 灯箱；纯 CSS 管常驻循环
-- 全部动画尊重 `prefers-reduced-motion`；`prefers-reduced-transparency` 时玻璃降级为不透明
-
-## 页面结构
-
-**路由式漫游（HashRouter）**：加载屏（仅首载）→ 全局导航 → 路由页 → 全局页脚；路由切换有页面转场（blur + 位移）并强制回顶。
-
-**加载策略**：加载屏只等首屏大图（`fetch` 流式读字节 → 真实百分比，解码完成后才放行）；作品 / 影像图全部 `loading="lazy"` + `fetchPriority="low"`，进入页面后再异步拉取。
-
-| 路由 | 页面 | 组成 |
-|---|---|---|
-| `/` | `HomePage` | Hero 巨字（240px 描边 PORTFOLIO + 设计 / 未来 + 1400 版心 + 原图叠 40% 品牌蓝）→ `SelectedWorks` 精选作品 Bento（跳详情）→ `Explorations` 影像实验室 → `Clients` 客户墙 |
-| `/works` | `WorksPage` | 巨字刊头 + 统计卡 + 分类筛选 + 不对称大卡（封面 7 列 / 信息 5 列奇偶交替） |
-| `/works/:id` | `WorkDetailPage` | 面包屑 → 头牌（元数据 4 卡）→ 设计理念 → 页面陈列 → 原稿灯箱 → 相关作品 |
-| `/about` | `AboutPage` | 巨字刊头 → `AboutCapabilities`（创作理念 + 能力网格）→ 经历时间线 |
-
-全局：`Backdrop` 固定装饰层、`Navbar` 路由胶囊导航、`ContactFooter`（跑马灯 + 联系 CTA + 快捷链接）。
-作品数据统一在 `src/data/works.ts`。
-
-## 占位符约定
-
-所有真实姓名 / 头衔 / 简介 / 作品 / 能力 / 客户数据已移除，统一使用 `［ ］` 包裹的占位符。回填真实内容时只改文案，不动结构。
-
-## 无障碍与降级
-
-- 全部动画尊重 `prefers-reduced-motion`（入场直呈终态、无限循环暂停、视差关闭）
-- `prefers-reduced-transparency: reduce` 时玻璃面板降为不透明
-- 焦点环全站可见（`#2686ED`）
-- 390px 宽度无横向滚动，Bento / 能力网格降为单列
-- 装饰元素一律 `aria-hidden` + `pointer-events: none`
-
-## 目录
-
-```
-├── design.md                   # 全站设计规则（单一事实来源）
-├── index.html
-├── tailwind.config.js
-└── src/
-    ├── App.tsx                 # 外壳：加载屏 → Routes + 页面转场 → 全局页脚
-    ├── main.tsx                # 入口（HashRouter + StrictMode）
-    ├── index.css               # Token → 基础 → 玻璃材质 → 组件类 → 动效 → 降级
-    ├── data/
-    │   └── works.ts            # 作品数据源（works / categories / getWorkById / getRelatedWorks）
-    ├── pages/
-    │   ├── HomePage.tsx        # / 首页漫游
-    │   ├── WorksPage.tsx       # /works 作品档案馆
-    │   ├── WorkDetailPage.tsx  # /works/:id 详情（原稿灯箱）
-    │   └── AboutPage.tsx       # /about 关于（能力 + 经历时间线）
-    └── components/
-        ├── Backdrop.tsx        # 全站固定装饰层
-        ├── LoadingScreen.tsx
-        ├── Navbar.tsx          # 路由链接导航（active 由 pathname 判定）
-        ├── Hero.tsx            # 巨字首屏（active 触发入场）
-        ├── SelectedWorks.tsx   # 数据驱动，跳 /works/:id
-        ├── AboutCapabilities.tsx
-        ├── Explorations.tsx
-        ├── Clients.tsx
-        ├── ContactFooter.tsx   # 含快捷路由链接
-        └── SectionHeader.tsx   # 统一章节头（eyebrow 可选，全站 ≤ 2 处）
-```
-
-## 图片素材
-
-`public/images/` 下共 7 张占位素材：首屏背景 `hero-desk.jpg`（1672×941，238KB），其余为 AI 生成的占位图（`hero-tunnel` + `work-01..04` + `study-01`）。
-换成真实作品图时保持同名同比例即可，`.media-crop` 会自动按 4:3 / 1:1 裁切。
+- 主色唯一来源 `--brand-rgb`（`#2686ED`），全站不出现第二种强调色相
+- 中文统一思源黑体 `Source Han Sans CN`，481 片 woff2 内嵌，不依赖外链
+- 所有动画尊重 `prefers-reduced-motion`；装饰元素 `aria-hidden` + `pointer-events: none`
+- 390px / 1440px 均无横向滚动

@@ -6,17 +6,22 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      /* ---------- 配色（HSL 分量 + alpha 通道，见 design.md §2） ---------- */
+      /* HSL neutrals, RGB accent/material channels, complete HEX muted; see COLOR-SYSTEM.md. */
       colors: {
         bg: 'hsl(var(--bg) / <alpha-value>)',
         'bg-elev': 'hsl(var(--bg-elev) / <alpha-value>)',
         surface: 'hsl(var(--surface) / <alpha-value>)',
         'text-primary': 'hsl(var(--text) / <alpha-value>)',
-        muted: 'hsl(var(--muted) / <alpha-value>)',
+        muted: 'var(--muted)',
         stroke: 'hsl(var(--stroke) / <alpha-value>)',
-        accent: 'hsl(var(--accent) / <alpha-value>)',
-        'accent-strong': 'hsl(var(--accent-strong) / <alpha-value>)',
-        'accent-2': 'hsl(var(--accent-2) / <alpha-value>)',
+        accent: 'rgb(var(--accent) / <alpha-value>)',
+        'accent-strong': 'rgb(var(--accent-strong) / <alpha-value>)',
+        'accent-2': 'rgb(var(--accent-2) / <alpha-value>)',
+        'accent-soft': 'rgb(var(--accent-soft-rgb) / <alpha-value>)',
+        paper: 'rgb(var(--paper-rgb) / <alpha-value>)',
+        ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
+        'inverse-text': 'rgb(var(--on-light-rgb) / <alpha-value>)',
+        'surface-light': 'rgb(var(--surface-light-rgb) / <alpha-value>)',
         /* 品牌主色 #2686ED（全局变量来自 --brand-rgb） */
         brand: 'rgb(var(--brand-rgb) / <alpha-value>)',
       },
@@ -29,9 +34,16 @@ export default {
 
       /* ---------- 圆角体系（见 design.md §5） ---------- */
       borderRadius: {
-        card: '20px',
-        panel: '24px',
-        field: '12px',
+        DEFAULT: 'var(--radius-rect)',
+        sm: 'var(--radius-rect)',
+        md: 'var(--radius-rect)',
+        lg: 'var(--radius-rect)',
+        xl: 'var(--radius-rect)',
+        '2xl': 'var(--radius-rect)',
+        '3xl': 'var(--radius-rect)',
+        card: 'var(--radius-rect)',
+        panel: 'var(--radius-rect)',
+        field: 'var(--radius-rect)',
       },
 
       /* ---------- 关键帧 ---------- */

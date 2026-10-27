@@ -2,38 +2,51 @@ import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 
 /* ============================================================
-   SectionHeader · 统一章节头
-   纵向堆叠：可选 eyebrow（英文 mono 小标）+ 中文标题 + 副标
-   - 全站 eyebrow 最多 2 处（design.md §7.6）
-   - 禁止「左标题 + 右小段落」分栏式章节头
+   SectionHeader · 编辑式章节头（对齐 portfolio-test 的版式）
+   结构：序号 — 分隔线 — 中英标签 ／ 巨型标题 ／ 副标 ／ 右侧动作
+   - 序号用等宽字体、低透明度，只做版式锚点，不抢标题
+   - 标题允许两行，行距收紧；副标限宽 62ch
    ============================================================ */
 
 type Props = {
+  index?: string
+  label?: string
+  /* 兼容旧调用（Clients 等未挂载组件）：等价于 label，不带序号 */
   eyebrow?: string
   title: ReactNode
-  subtitle?: string
+  subtitle?: ReactNode
+  action?: ReactNode
 }
 
 export const HEADER_VIEWPORT = { once: true, margin: '-100px' } as const
 export const HEADER_TRANSITION = { duration: 0.9, ease: [0.22, 1, 0.36, 1] } as const
 
-export default function SectionHeader({ eyebrow, title, subtitle }: Props) {
+export default function SectionHeader({ index, label, eyebrow, title, subtitle, action }: Props) {
+  const labelText = label ?? eyebrow
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={HEADER_VIEWPORT}
       transition={HEADER_TRANSITION}
-      className="flex max-w-3xl flex-col items-start gap-4"
+      className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between md:gap-14"
     >
-      {eyebrow && (
-        <span className="inline-flex items-center gap-3">
-          <span className="h-px w-8 bg-white/20" aria-hidden="true" />
-          <span className="type-label">{eyebrow}</span>
-        </span>
-      )}
-      <h2 className="type-h2 text-text-primary">{title}</h2>
-      {subtitle && <p className="type-body max-w-[62ch]">{subtitle}</p>}
+      <div className="min-w-0 md:flex-1">
+        {(index || labelText) && (
+          <div className="flex items-center gap-4 md:gap-5">
+            {index && (
+              <span aria-hidden="true" className="font-mono text-[clamp(2.4rem,4.4vw,3.6rem)] font-semibold leading-none tracking-[-0.04em] text-muted">
+                {index}
+              </span>
+            )}
+            <span aria-hidden="true" className="h-px w-10 bg-paper/25 md:w-16" />
+            {labelText && <span className="type-label text-[11px] text-muted">{labelText}</span>}
+          </div>
+        )}
+        <h2 className="mt-7 max-w-[26ch] text-[clamp(2.2rem,4.6vw,4.6rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-text-primary text-balance">{title}</h2>
+        {subtitle && <p className="mt-6 max-w-[32rem] text-base leading-8 text-muted text-pretty">{subtitle}</p>}
+      </div>
+      {action && <div className="flex-none md:pb-2">{action}</div>}
     </motion.div>
   )
 }

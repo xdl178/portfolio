@@ -1,0 +1,58 @@
+/* BorderGlow 的边缘距离和方向反馈，按本项目设计规范改为唯一品牌蓝。 */
+.pointer-glow {
+  --edge-proximity: 0;
+  --cursor-angle: 0deg;
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  height: 100%;
+  border: 1px solid rgb(var(--paper-rgb) / .14);
+  border-radius: var(--radius-rect);
+  background: linear-gradient(135deg, rgb(var(--paper-rgb) / .06), rgb(var(--paper-rgb) / .02)), hsl(var(--surface));
+  box-shadow: inset 0 1px 0 rgb(var(--paper-rgb) / .12);
+  transition: border-color var(--d-fast) var(--e-smooth), box-shadow var(--d-fast) var(--e-smooth);
+}
+
+.pointer-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 2px;
+  /* Absolute pointer coordinates and a hollow mask keep the peak under the mouse,
+     independent of the rectangle aspect ratio. No angular/conic approximation. */
+  background: radial-gradient(280px circle at var(--pointer-x) var(--pointer-y),
+    rgb(var(--accent-soft-rgb)) 0%, rgb(var(--accent-strong-rgb)) 20%, var(--brand) 45%, rgb(var(--brand-rgb) / .4) 72%, transparent 100%);
+  opacity: clamp(0, calc((var(--edge-proximity) - 28) / 48), 1);
+  -webkit-mask: linear-gradient(rgb(var(--paper-rgb)) 0 0) content-box, linear-gradient(rgb(var(--paper-rgb)) 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(rgb(var(--paper-rgb)) 0 0) content-box, linear-gradient(rgb(var(--paper-rgb)) 0 0);
+  mask-composite: exclude;
+  transition: opacity var(--d-fast) var(--e-smooth);
+}
+
+.pointer-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(230px circle at var(--pointer-x) var(--pointer-y), rgb(var(--brand-rgb) / .12), transparent 72%);
+  opacity: clamp(0, calc((var(--edge-proximity) - 25) / 55), .5);
+  transition: opacity var(--d-fast) var(--e-smooth);
+}
+
+.pointer-glow__content { position: relative; z-index: 1; height: 100%; border-radius: inherit; overflow: hidden; }
+.pointer-glow:focus-within { border-color: rgb(var(--accent) / .7); box-shadow: inset 0 0 0 1px rgb(var(--accent) / .22); }
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .pointer-glow::before, .pointer-glow::after { display: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .pointer-glow { background: hsl(var(--surface)); }
+}

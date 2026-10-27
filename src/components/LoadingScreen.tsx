@@ -1,159 +1,121 @@
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-
-/* ============================================================
-   LoadingScreen · 全屏加载屏（真实进度）
-   - progress 由 App 的真实预加载驱动（fetch + ReadableStream 读字节）
-   - 计数器做「追赶」缓动，避免字节跳动导致数字乱跳
-   - ready = 首屏大图已解码完成，稍作停留后回调 onComplete
-   ============================================================ */
-
-const WORDS = ['构思', '设计', '交付']
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { LOADING_MIN_DURATION_MS } from '../config/loading'
+import './LoadingScreen.css'
 
 type Props = {
-  /** 真实加载进度 0..1 */
+  /** App's real byte progress, 0..1; visual effects never invent resource progress. */
   progress: number
-  /** 首屏关键资源是否已就绪 */
   ready: boolean
   onComplete: () => void
 }
 
+const STARS = Array.from({ length: 140 }, (_, i) => ({
+  x: (i * 149 + 53) % 1440,
+  y: (i * 227 + 97) % 900,
+  r: i % 11 === 0 ? 1 : .45,
+  opacity: .16 + (i % 5) * .09,
+}))
+const BOKEH = Array.from({ length: 48 }, (_, i) => ({
+  x: (i * 343 + 91) % 1440,
+  y: (i * 197 + 41) % 900,
+  r: i % 9 === 0 ? 13 : 3 + (i % 5) * 1.5,
+  start: .03 + (i % 8) * .09,
+  opacity: .24 + (i % 4) * .14,
+}))
+
 export default function LoadingScreen({ progress, ready, onComplete }: Props) {
+  const reduceMotion = useReducedMotion()
   const [count, setCount] = useState(0)
-  const [wordIndex, setWordIndex] = useState(0)
+  const [introDone, setIntroDone] = useState(false)
   const countRef = useRef(0)
   const firedRef = useRef(false)
+  const target = Math.min(ready ? 100 : 99, Math.max(0, Math.round(progress * 100)))
+  const canEnter = ready && count === 100 && introDone
 
-  /* 数字追赶真实进度（只增不减，到点即停，不空转） */
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      countRef.current = Math.round(progress * 100)
+    const timer = window.setTimeout(() => setIntroDone(true), reduceMotion ? 0 : LOADING_MIN_DURATION_MS)
+    return () => window.clearTimeout(timer)
+  }, [reduceMotion])
+
+  useEffect(() => {
+    if (reduceMotion) {
+      countRef.current = Math.max(countRef.current, target)
       setCount(countRef.current)
       return
     }
-    let rafId = 0
+    let frame = 0
     const tick = () => {
-      const target = Math.round(progress * 100)
-      if (countRef.current < target) {
-        const step = Math.max(1, Math.ceil((target - countRef.current) * 0.15))
-        countRef.current = Math.min(target, countRef.current + step)
-        setCount(countRef.current)
-        rafId = requestAnimationFrame(tick)
-      }
+      const delta = target - countRef.current
+      if (delta <= 0) return
+      countRef.current = Math.min(target, countRef.current + Math.max(1, Math.ceil(delta * .065)))
+      setCount(countRef.current)
+      if (countRef.current < target) frame = window.requestAnimationFrame(tick)
     }
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
-  }, [progress])
+    frame = window.requestAnimationFrame(tick)
+    return () => window.cancelAnimationFrame(frame)
+  }, [target, reduceMotion])
 
-  /* 就绪后停留一拍再退出，避免"闪一下" */
+  const complete = useCallback(() => {
+    if (!canEnter || firedRef.current) return
+    firedRef.current = true
+    onComplete()
+  }, [canEnter, onComplete])
+
   useEffect(() => {
-    if (!ready || firedRef.current) return
-    const t = window.setTimeout(() => {
-      if (firedRef.current) return
-      firedRef.current = true
-      onComplete()
-    }, 420)
-    return () => window.clearTimeout(t)
-  }, [ready, onComplete])
+    if (!canEnter) return
+    const timer = window.setTimeout(complete, reduceMotion ? 0 : 300)
+    return () => window.clearTimeout(timer)
+  }, [canEnter, complete, reduceMotion])
 
-  /* 轮播词：加载中才转，就绪即停 */
-  useEffect(() => {
-    if (ready || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const id = window.setInterval(() => {
-      setWordIndex((i) => (i + 1) % WORDS.length)
-    }, 800)
-    return () => window.clearInterval(id)
-  }, [ready])
-
-  const display = String(count).padStart(3, '0')
+  const stage = canEnter ? '一切就绪' : ready ? '即将就绪' : count < 30 ? '唤醒灵感' : count < 75 ? '准备视觉' : '整理细节'
 
   return (
     <motion.div
-      className="fixed inset-0 z-[9999] flex flex-col justify-between overflow-hidden bg-bg"
+      data-loading-screen
+      data-state={canEnter ? 'ready' : 'loading'}
+      className="loading-screen"
+      style={{ '--loading-progress': count / 100 } as CSSProperties}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loading-title"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      role="status"
-      aria-live="polite"
-      aria-label={`加载中 ${count}%`}
+      transition={{ duration: reduceMotion ? .15 : .65, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* 装饰层 */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="bg-grid mask-radial animate-grid-pan absolute inset-0 opacity-30" />
-        <span
-          className="glow glow-brand"
-          style={{
-            width: '40rem',
-            height: '40rem',
-            left: '50%',
-            top: '45%',
-            transform: 'translate(-50%, -50%)',
-            opacity: 0.5,
-          }}
-        />
-      </div>
-
-      {/* 左上：品牌标签 */}
-      <motion.span
-        className="type-label absolute left-6 top-6 md:left-10 md:top-10"
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-      >
-        ［工作室名称］ / PORTFOLIO
-      </motion.span>
-
-      {/* 中心：轮播词 */}
-      <div className="flex flex-1 items-center justify-center">
-        <div className="relative flex h-[1.4em] items-center justify-center px-6">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={WORDS[wordIndex]}
-              className="text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none tracking-[0.12em] text-text-primary/90"
-              initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -18, filter: 'blur(8px)' }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {WORDS[wordIndex]}
-            </motion.span>
-          </AnimatePresence>
+      <div className="loading-scene" aria-hidden="true">
+        <svg className="loading-stars" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          {STARS.map((star, i) => <circle key={i} cx={star.x} cy={star.y} r={star.r} opacity={star.opacity} />)}
+        </svg>
+        <svg data-loader-bokeh className="loading-bokeh" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="loading-star-glow">
+              <stop offset="0" stopColor="rgb(var(--accent-soft-rgb))" stopOpacity=".95" />
+              <stop offset=".22" stopColor="rgb(var(--accent-strong-rgb))" stopOpacity=".6" />
+              <stop offset=".55" stopColor="var(--brand)" stopOpacity=".16" />
+              <stop offset="1" stopColor="var(--brand)" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          {BOKEH.map((spot, i) => <ellipse key={i} cx={spot.x} cy={spot.y} rx={spot.r} ry={spot.r} fill="url(#loading-star-glow)" style={{ opacity: Math.min(1, Math.max(0, (count / 100 - spot.start) / .3)) * spot.opacity }} />)}
+        </svg>
+        <div className="loading-halo" />
+        <div className="loading-ripples">
+          <span data-loader-ring /><span data-loader-ring /><span data-loader-ring />
         </div>
+        <span className="loading-spark" />
       </div>
-
-      {/* 右下：计数器 */}
-      <motion.div
-        className="absolute bottom-6 right-6 md:bottom-10 md:right-10"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-      >
-        <span className="type-num text-6xl font-semibold leading-none text-text-primary md:text-8xl lg:text-9xl">
-          {display}
-        </span>
-      </motion.div>
-
-      {/* 左下：加载对象说明 */}
-      <motion.span
-        className="type-label absolute bottom-8 left-6 hidden text-[10px] md:left-10 md:bottom-10 md:block"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7, delay: 0.35 }}
-      >
-        {ready ? 'READY' : 'PRELOADING / HERO IMAGE'}
-      </motion.span>
-
-      {/* 底部：进度条 */}
-      <div className="absolute inset-x-0 bottom-0">
-        <div className="h-[2px] w-full overflow-hidden bg-white/10">
-          <div
-            className="grad-accent h-full w-full origin-left"
-            style={{
-              transform: `scaleX(${count / 100})`,
-              boxShadow: '0 0 12px rgba(38, 134, 237, 0.55)',
-              transition: 'transform 120ms linear',
-            }}
-          />
+      <header className="loading-identity">
+        <h2 id="loading-title">设计未来</h2>
+        <p>VISUAL &amp; INTERACTION</p>
+      </header>
+      <p className="loading-caption">每一次探索，从一个灵感开始。</p>
+      <div className="loading-meter">
+        <div className="loading-track" role="progressbar" aria-label="首屏资源加载进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={count}>
+          <span style={{ transform: `scaleX(${count / 100})` }} />
+        </div>
+        <div className="loading-readout">
+          <span role="status" aria-live="polite">{stage}</span>
+          <span className="loading-percent" aria-hidden="true">{String(count).padStart(2, '0')}<span>%</span></span>
         </div>
       </div>
     </motion.div>

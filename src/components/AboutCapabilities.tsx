@@ -1,67 +1,33 @@
-import { motion } from 'framer-motion'
-import { HEADER_TRANSITION, HEADER_VIEWPORT } from './SectionHeader'
+import SectionHeader from './SectionHeader'
 
-/* ============================================================
-   AboutCapabilities · 关于 / 能力
-   - 非对称两栏：左「关于」叙述，右「能力」玻璃卡网格
-   - 能力名称与说明均为占位符（design.md §3）
-   ============================================================ */
-
-type Capability = { name: string; code: string; desc: string }
-
-const CAPABILITIES: Capability[] = [
-  { name: '［能力名称 01］', code: 'CAPABILITY 01', desc: '［一句话说明］' },
-  { name: '［能力名称 02］', code: 'CAPABILITY 02', desc: '［一句话说明］' },
-  { name: '［能力名称 03］', code: 'CAPABILITY 03', desc: '［一句话说明］' },
-  { name: '［能力名称 04］', code: 'CAPABILITY 04', desc: '［一句话说明］' },
-  { name: '［能力名称 05］', code: 'CAPABILITY 05', desc: '［一句话说明］' },
-  { name: '［能力名称 06］', code: 'CAPABILITY 06', desc: '［一句话说明］' },
+const capabilities = [
+  { title: '品牌与视觉系统', text: '从品牌基调、角色形象到可复用的视觉规范，让每一次表达保持清晰。', en: 'Brand System' },
+  { title: '数字产品体验', text: '梳理信息架构、交互流程与关键反馈，为复杂场景建立好用的界面。', en: 'Product UX' },
+  { title: '网页与响应式设计', text: '让品牌叙事与产品信息在不同屏幕上保持同一节奏。', en: 'Web & Responsive' },
+  { title: '动态影像与 AI 工作流', text: '把动态反馈、三维表达与辅助创作工具纳入完整的设计流程。', en: 'Motion & AI' },
 ]
 
 export default function AboutCapabilities() {
   return (
-    <section id="capabilities" className="relative bg-bg py-24 md:py-32">
-      <div className="mx-auto max-w-[1240px] px-6 md:px-10 lg:px-16">
-        <div className="grid grid-cols-1 gap-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20">
-          {/* 左：关于 */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={HEADER_VIEWPORT}
-            transition={HEADER_TRANSITION}
-            className="lg:sticky lg:top-28 lg:self-start"
-          >
-            <h2 className="type-h2 mb-6 text-text-primary">
-              创作<span className="text-gradient">理念</span>
-            </h2>
-            <p className="type-body mb-5 max-w-[52ch]">
-              ［创作理念］我们是一家专注数字体验的独立工作室，服务［服务对象］的品牌与产品团队。
-            </p>
-            <p className="type-body max-w-[52ch]">
-              相信秩序、材质与光的克制使用，能让复杂系统变得直觉可读。
-            </p>
-          </motion.div>
-
-          {/* 右：能力 */}
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {CAPABILITIES.map((item, i) => (
-              <motion.li
-                key={item.name}
-                initial={{ opacity: 0, y: 26 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={HEADER_VIEWPORT}
-                transition={{ ...HEADER_TRANSITION, delay: i * 0.06 }}
-                className="glass glass-hover group relative overflow-hidden rounded-card p-6"
-              >
-                <span className="type-num block text-xs text-accent/80">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 className="type-h3 mt-5 text-text-primary">{item.name}</h3>
-                <p className="type-label mt-1.5">{item.code}</p>
-                <p className="type-body mt-4 text-sm">{item.desc}</p>
-              </motion.li>
-            ))}
-          </ul>
+    <section id="capabilities" className="bg-bg py-28 md:py-40">
+      <div className="mx-auto max-w-[1380px] px-5 md:px-10 lg:px-16">
+        <SectionHeader
+          index="02"
+          label="能力 · CAPABILITIES"
+          title={<>设计，不只负责<span className="text-gradient whitespace-nowrap">好看。</span></>}
+          subtitle={<>四条能力线互相咬合：<br className="md:hidden" />从视觉定调，到动态与 AI 提效。</>}
+        />
+        <div className="mt-14 grid grid-flow-dense gap-px overflow-hidden rounded-card border border-paper/10 bg-paper/10 md:mt-20 md:grid-cols-2">
+          {capabilities.map((item, i) => (
+            <article key={item.title} className="group min-h-[240px] bg-[rgb(var(--surface-card-rgb))] p-8 transition-colors duration-300 hover:bg-[rgb(var(--surface-card-hover-rgb))] md:min-h-[280px] md:p-12">
+              <div className="flex items-start justify-between gap-6">
+                <span aria-hidden="true" className="font-mono text-[10px] tracking-[0.18em] text-muted">{String(i + 1).padStart(2, '0')}</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted">{item.en}</span>
+              </div>
+              <h3 className="mt-12 text-2xl font-semibold text-text-primary">{item.title}</h3>
+              <p className="mt-4 max-w-[36ch] text-sm leading-7 text-muted">{item.text}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>

@@ -35,25 +35,21 @@
 
 ## 2. 色彩 Token
 
-定义在 `src/index.css` 的 `:root`（HSL 分量，无 `hsl()` 包裹，Tailwind 自动补）。Tailwind 侧同时暴露 `bg / surface / text-primary / muted / stroke / accent / accent-2`。
+完整变量表、写法、审计结果及开发检查见 [COLOR-SYSTEM.md](<COLOR-SYSTEM.md>)。原始值只定义在 [index.css](<src/index.css>) 的 `:root`，Tailwind 只做语义映射。
 
-| Token | HSL | 近似 HEX | 用途 |
-|---|---|---|---|
-| `--bg` | `222 47% 4%` | `#05070D` | 页面底色（近黑深蓝） |
-| `--bg-elev` | `222 40% 7%` | `#0A0F19` | 抬升底色 / 区块交替 |
-| `--surface` | `220 36% 10%` | `#101827` | 玻璃面板基底 |
-| `--text` | `210 40% 98%` | `#F7FAFF` | 主文字（近白，非纯白） |
-| `--muted` | `215 22% 64%` | `#93A2B8` | 次级文字 / 元信息 |
-| `--stroke` | `213 28% 20%` | `#26303F` | 描边 / 分隔线 |
-| `--accent` | `211 85% 54%` | `#2686ED` | 主强调（= 品牌主色，全文强调、链接、焦点、光晕） |
-| `--accent-strong` | `211 88% 62%` | `#499BF4` | 强调亮端 / hover |
-| `--accent-2` | `224 78% 58%` | `#406DE7` | 强调深端（仅渐变末端与副光晕） |
-| `--brand` | `--brand-rgb: 38 134 237` | `#2686ED` | **品牌主色**（全局唯一来源 == `--accent`；Tailwind `brand-*` 读 `--brand-rgb`） |
+| 用途 | Token / 格式 | 使用 |
+|---|---|---|
+| 页面/面板/主文字/普通描边 | `--bg` / `--bg-elev` / `--surface` / `--text` / `--stroke`，保留 HSL 分量 | `hsl(var(--token))`，对应 Tailwind 语义类 |
+| **所有副文本** | **`--muted: #BBC9DB`，完整 HEX** | **`text-muted` 或 `color:var(--muted)`，禁止再叠色彩 alpha** |
+| 品牌蓝 | `--brand-rgb: 38 134 237`；`--accent` 引用它，RGB 分量 | `rgb(var(--accent) / .5)`；`brand` / `accent` 共享精确 `#2686ED` |
+| 明/深/蓝白光效 | `--accent-strong-rgb` / `--accent-deep-rgb` / `--accent-soft-rgb` | RGB 包裹；不作为私有副文本颜色 |
+| 中性材质 | `--paper-rgb` / `--ink-rgb` | 透明玻璃/阴影；普通文字仍用主文字或 muted |
+| 浅底反色 | `--on-light-rgb` / `--surface-light-rgb` | `text-inverse-text` / `bg-surface-light`，保证占位内容反差 |
 
 **品牌渐变（蓝色调，仅用于 1px 描边、进度条、光带、导航镀层，不用于大面积填充）：**
 
 ```css
-linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
+var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 ```
 
 **单色纪律**：全站只允许一种强调色相（`#2686ED` 及其明度派生）。禁止再出现电光青 `#2ED9F5` / `#8FEEFF` / `#5FE3FF`、品红 `#C86BFF` 等第二种色相的强调元素。
@@ -62,7 +58,7 @@ linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
 
 - 品牌蓝 `--accent`（= `#2686ED`）是全站**唯一**的交互强调色，所有区块一致，不得出现第二个功能色（不出现青/绿/橙/红按钮）。
 - 深蓝 `--accent-2` 仅出现在光晕、渐变收尾、极小的焦点光斑，单屏可见面积 < 5%。
-- 禁止纯黑 `#000` 与纯白 `#fff`：一律用 `--bg` / `--text`。
+- 普通底色/文字不直接用纯黑纯白，使用 `--bg` / `--text`。半透明材质和遮罩可引用全局 `--ink-rgb` / `--paper-rgb`，不能散写数值。
 - 禁止「AI 紫渐变铺底」「霓虹外发光糊满全屏」。光晕要有中心、有衰减、有节制。
 - **证券/涨跌语义不在本项目范围**；若未来接入数据，遵循中国市场「红涨绿跌」。
 
@@ -131,15 +127,15 @@ linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
 
 ```css
 .glass {
-  background: linear-gradient(135deg, rgb(255 255 255 / .06), rgb(255 255 255 / .02));
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border: 1px solid rgb(255 255 255 / .10);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .12), 0 24px 60px -24px rgb(0 0 0 / .75);
+  background: linear-gradient(135deg, rgb(var(--paper-rgb) / .06), rgb(var(--paper-rgb) / .02));
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgb(var(--paper-rgb) / .10);
+  box-shadow: inset 0 1px 0 rgb(var(--paper-rgb) / .12), 0 24px 60px -24px rgb(var(--ink-rgb) / .75);
 }
 ```
 
-- **边缘冷光**：hover / 聚焦时边框由 `rgb(255 255 255 / .10)` 过渡到 `rgb(46 217 245 / .45)`，同时 inset 高光变亮。这是玻璃「活过来」的唯一方式，不要加外发光阴影。
+- **边缘冷光**：hover / 聚焦时边框由 `rgb(var(--paper-rgb) / .10)` 过渡到 `rgb(var(--brand-rgb) / .45)`，同时 inset 高光变亮。这是玻璃「活过来」的唯一方式，不要加外发光阴影。
 - **降级**：`@media (prefers-reduced-transparency: reduce)` 时背景改为不透明 `--surface`，`backdrop-filter: none`。
 - **性能**：`backdrop-filter` 只用在**静态定位**的卡片/面板上；不要在滚动容器或大面积随滚动重绘的元素上叠 blur。
 
@@ -151,10 +147,10 @@ linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
 
 - **圆角体系（Shape Lock，唯一规则）**
   - 交互件（按钮、标签、胶囊）：`9999px` 全圆
-  - 卡片、面板、图片容器：`20px`（`rounded-[20px]`）
+  - 非圆形、非胶囊的矩形（卡片、面板、图片容器、输入框）：默认统一 `12px`，由全局 `--radius-rect` 驱动；使用 `rounded-card` / `rounded-panel` / `rounded-field`。
   - 输入 / 小徽章：`12px`
-  - 不允许在同一个组件里混用两套圆角。
-- **描边**：优先 1px 半透明白（`rgb(255 255 255 / .10)`）；分隔线用 `--stroke`。禁止给每个列表行都加 `border-y`；长列表用分组或卡片化。
+  - 唯一明确的局部例外：首页精选作品标签为 `4px`，只在该组件 CSS 覆盖，不改全局 token；其余组件不得自创圆角。
+- **描边**：基础玻璃边框优先 1px 半透明白（`rgb(255 255 255 / .10)`）；PointerGlow 指针局部高光为 `2px` 挖空描边（见 §7.3）；分隔线用 `--stroke`。禁止给每个列表行都加 `border-y`；长列表用分组或卡片化。
 - **间距标尺**：`4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96 / 128`（px）。区块垂直间距 `py-24 md:py-32`，大屏 `py-40`。
 - **容器**：`max-w-[1240px] mx-auto px-6 md:px-10 lg:px-16`。宽画廊可用 `max-w-[1440px]`。
 - **首屏**：`min-h-[100svh]`（禁止 `h-screen`，避免移动端地址栏跳动）；采用「巨字 + 品牌字」构图（见 §7.0），信息锚定**底部信息栏**，不做居中堆叠。
@@ -238,9 +234,9 @@ linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
 ### 7.0.1 加载屏 `LoadingScreen`（真实预加载）
 - **进度必须是真的**：由 `App` 用 `fetch` + `ReadableStream` 读 `content-length` 计算字节比，禁止用定时器伪造百分比。无 `content-length` 时退回渐近曲线，且上限锁 `0.99`，绝不虚报 100。
 - **预加载范围只有首屏图**：作品 / 影像图一律 `loading="lazy"` + `fetchPriority="low"`，进入页面后再按需拉取。禁止把全部图片塞进加载屏。
-- **放行条件**：图片 `img.decode()` 成功（真正可绘制）后才回调；加载屏最短停留 `1000ms` 防"闪一下"；`12s` 超时看门狗兜底，网络卡死也不锁住用户。
+- **放行条件**：`App` 报告首屏关键资源就绪、显示进度到 100%，且视觉开场至少 `1800ms`；`12s` 资源超时看门狗保留。自动淡出进入，无需用户输入；临时点击拦截已移除。加载画面不显示按钮、进入文案或预览标记，见 [LOADING-HANDOVER.md](<LOADING-HANDOVER.md>)。
 - **非首页直达**（`/works`、`/about`）不预加载首屏图，避免为用不到的图等带宽。
-- 计数器做"追赶"缓动（每帧补 15% 差值，只增不减，到点即停），避免字节抖动造成数字乱跳。
+- 计数器做"追赶"缓动（每帧补 6.5% 差值，只增不减，到点即停），避免字节抖动造成数字乱跳。布局改为中央紧凑文字、细进度条与百分比，背景使用随显示进度渐显的稀疏星点与分批光斑、中心蓝光及柔边径向扩散光晕，不再使用轮播词、巨型角落数字和全屏网格。`prefers-reduced-motion` 下圆环静止，不强制等待视觉开场。
 
 ### 7.1 导航 `Navbar`（透明悬浮玻璃胶囊）
 - 顶部居中悬浮，`fixed`，高度 ≤ 72px，桌面**单行**。
@@ -256,11 +252,25 @@ linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
 - 文字按钮：`--muted` → `--accent`。
 - **标签不超过 4 个汉字（或 2 个英文词）**，桌面禁止换行；同页同义 CTA 只保留一种措辞（全站统一「联系我们」）。
 
-### 7.3 作品卡 `WorkCard`
-- 玻璃容器 + 20px 圆角 + 图片铺满（`.media-crop` 裁掉生成图右下角水印）。
-- hover：图片 `scale(1.05)`、品牌蓝描边亮起、底部信息条上浮、光标跟随高光（CSS 变量 `--mx/--my` 驱动的 radial highlight）。
-- 结构：序号（mono） / 标题（中文） / 类别（英文 mono 小字）。
-- 禁止在图上叠彩色标签 pill。
+### 7.2.1 首页关于我 `HomeAbout`
+- 新第二屏，位于 Hero 后。沿用01 / 关于我 ABOUT章节头；1920px时左侧420×552竖向浅色照片占位、右侧基本信息与专业技能，900px及以下上下排列。
+- 七项资料从 [profile.ts](<src/data/profile.ts>) 回填；照片和未提供资料保留占位，不照抄参考图中的个人信息。技能分界面/视觉/动效三组，软件标识为本地原色图像，来源见[说明](<public/images/tools/SOURCES.md>)。
+- 默认照片圆角12px；小软件标识框4px为商标展示局部例外。副文本读muted，不新增私有灰色。
+- “基本信息”“专业技能”和首屏“Visual UI Design 2026”统一使用全局 [Badge](<src/components/Badge.tsx>)：11px无衬线文字、0.08em字距、6px品牌蓝圆点、全圆角、白色10%背景、20%边框、上下0.35rem/左右0.85rem内边距。默认span，分组标题使用 `as="h3"` 保留语义；调用方只提供定位类，不再维护局部胶囊尺寸或发光圆点。
+
+### 7.3 首页精选作品 `SelectedWorks`
+- 第三屏采用参考图布局：`02 / 精选作品` 紧凑标题与 EXHIBIT 装饰水印；768px 起两列，第三张通栏，手机改为三张单列。
+- 上排卡片比例约 1.6:1，下排约 2.6:1；1408px 内容宽度对应 1920px 桌面，保留现有作品原图和整卡详情链接。
+- 图片铺满 12px 圆角容器；顶部叠序号/英文方向、细分隔线和作品标题，底部叠前三个中性玻璃标签及右上箭头。不再把摘要与年份统计排到图片下方。
+- 样式在 [SelectedWorks.css](<src/components/SelectedWorks.css>)，不改共用 SectionHeader 或其他屏。方向/标签使用 muted，标题和展示序号使用主文字。
+- 标签在所有断点保持 `14px` 字号、`4px` 圆角（全局 `12px` 的明确局部例外）；每个标签与箭头由局部共享 CSS 变量统一为 `32px` 高；标签左右 padding 与标签间 gap 均为 `16px`，所有断点一致。窄屏标签允许换行，箭头与标签区底部对齐。
+- hover 轻微放大到 1.025，沿用 PointerGlow 精确局部描边：鼠标实际坐标、`280px` 径向范围、`2px` 挖空遮罩，边缘阈值/除数 `28 / 48`，衰减在 `72%` 处为 `.4`，不用中心角度近似。触控不依赖指针高光，减少动态效果时禁用位移与微缩放。
+
+### 7.3.1 第四屏经历光线树 `Practice`
+- 标题与精选作品屏共用章节头样式：左对齐 `03 / 工作经验`（经验为品牌蓝），背后叠 `EXPERIENCE`。首页五屏外层只保留底部128px padding，顶部和左右为0；内层版心不变，首屏保持100svh画布再加底部留白。
+- 参考 [Redoyanul Haque](<https://www.redoyanulhaque.me/>) 的 Career & Experience：中轴3px渐变光线与10px发光末端随滚动增长/回退，桌面双侧信息，900px及以下左轴堆叠；不 pin、不使用嵌套滚动。
+- 继续使用三个现有项目，不虚构任职/年份。光色来自全局品牌蓝，副文本为 `--muted`；减少动态效果时完整静态呈现。
+- 全局增加独立的左上/右下固定视口光晕，body portal、pointer-events:none；不替代鼠标光晕，不影响前两屏布局。实现与验证见 [CAREER-HANDOVER.md](<CAREER-HANDOVER.md>)。
 
 ### 7.4 能力卡 `CapabilityCard`
 - 玻璃卡 + 图标（线性图标，统一 `stroke-width: 1.5`）+ 中文能力名 + 英文副标 + 一行说明。
@@ -307,9 +317,11 @@ linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
 
 **路由式漫游（HashRouter，参考 portfolio-test 跳转逻辑）。** 外壳：加载屏（仅首载）→ 全局导航 → 路由页 → 全局页脚；路由切换伴随页面转场（Motion `AnimatePresence mode="wait"`，blur + 位移，0.55s）并强制回顶。
 
+**全局鼠标光晕**：[App.tsx](<src/App.tsx>) 在加载结束后、动画路由之外唯一挂载 [WorkCursorHalo](<src/components/WorkCursorHalo.tsx>)，portal 到 `document.body`，跨首页、作品、详情、关于及 404 保持；各路由不再局部挂载。直径 `260px`，品牌蓝渐变强度 `.18 / .075`，链接/作品卡缩放 `1.4 / 1.9`；保留原生光标，触控、粗指针及减少动态效果时禁用。
+
 | 路由 | 页面组件 | 内容 |
 |---|---|---|
-| `/` | `HomePage` | Hero 巨字 → 精选作品（Bento，跳详情）→ 影像实验室（视差画廊）→ 客户墙 |
+| `/` | `HomePage` | Hero 巨字 → 精选作品（上二下一铺图卡片，跳详情）→ 项目经验 → 影像实验室 |
 | `/works` | `WorksPage` | 作品档案馆：巨字刊头 + 统计卡 + 分类筛选 + 不对称大卡（封面 7 列 / 信息 5 列奇偶交替） |
 | `/works/:id` | `WorkDetailPage` | 面包屑 → 头牌（分类章 + 巨字 + 元数据 4 卡）→ 设计理念 → 页面陈列 → 原稿（灯箱）→ 相关作品 |
 | `/about` | `AboutPage` | 巨字刊头 → 创作理念 + 能力网格 → 经历时间线 |
@@ -327,7 +339,7 @@ linear-gradient(120deg, #6FB6FF 0%, #2686ED 48%, #1B52C9 100%)
 - [ ] 全站零 em-dash（`—` / `–`）
 - [ ] 主题锁定暗色，无区块反转
 - [ ] 单一强调色（品牌蓝），深蓝仅光晕
-- [ ] 圆角体系一致（按钮全圆 / 卡片 20px）
+- [ ] 圆角体系一致（圆形与胶囊保留全圆 / 默认矩形 12px / 首页精选作品标签局部 4px）
 - [ ] 字阶与字体栈统一（思源黑体内嵌），无外链字体依赖
 - [ ] 所有真实数据已替换为 `［ ］` 占位符
 - [ ] 章节 eyebrow ≤ 2 处，无分栏式章节头

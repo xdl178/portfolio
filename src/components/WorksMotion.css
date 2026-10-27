@@ -1,0 +1,23 @@
+/* Scoped to the archive/detail routes; home-page hover styles stay unchanged. */
+.original-hint {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--d-fast) var(--e-smooth), transform var(--d-fast) var(--e-smooth);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .group:hover .original-hint, .group:focus-visible .original-hint { opacity: 1; transform: translateY(0); }
+  [data-work-detail] .work-related-arrow { transition: transform var(--d-fast) var(--e-smooth); }
+  [data-work-detail] .group:hover .work-related-arrow { transform: translate(3px, -3px); }
+  [data-work-detail] #work-pages figure { transition: border-color var(--d-fast) var(--e-smooth); }
+  [data-work-detail] #work-pages figure:hover { border-color: rgb(var(--accent) / .45); }
+  [data-work-detail] #work-pages figure img { transition: transform var(--d-slow) var(--e-smooth); }
+  [data-work-detail] #work-pages figure:hover img { transform: scale(1.008); }
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  [data-works-page] .group:hover img,
+  [data-work-detail] .group:hover img,
+  [data-works-page] .group:hover [aria-hidden='true'],
+  [data-work-detail] .group:hover [aria-hidden='true'] { transform: none; }
+  .original-hint { opacity: 1; transform: none; }
+}

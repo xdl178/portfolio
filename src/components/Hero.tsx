@@ -2,10 +2,11 @@ import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import gsap from 'gsap'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import Badge from './Badge'
 
 /* ============================================================
    Hero · 巨字 + 品牌字首屏
-   概念：工作台照片原色保留，只压一层 40% 透明的品牌蓝（#2686ED）；
+   概念：工作台照片原色保留，只压一层 40% 透明的品牌蓝（brand）；
         一行 240px 的描边 PORTFOLIO 横贯版心正中作肌理，
         白「设计」压左上、蓝「未来」压右下，三块文字形成一条对角张力线。
    - 背景层：工作台照片（完整构图，不再放大裁切）+ 40% 品牌蓝 + 暗幕
@@ -107,7 +108,8 @@ export default function Hero({ active, bgSrc }: Props) {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.72], [1, 0])
 
   return (
-    <section id="home" ref={rootRef} className="relative min-h-[100svh] w-full overflow-hidden">
+    <section id="home" ref={rootRef} className="home-section relative w-full overflow-hidden">
+      <div className="relative min-h-[100svh] w-full overflow-hidden">
       <h1 className="sr-only">［工作室名称］，设计未来</h1>
 
       {/* ================= 背景层 ================= */}
@@ -127,7 +129,7 @@ export default function Hero({ active, bgSrc }: Props) {
                     className="absolute inset-0 h-full w-full object-cover object-center"
                   />
                 )}
-                {/* 品牌蓝 #2686ED · 40% 透明：轻轻压一层色调，原图颜色保留 */}
+                {/* 品牌蓝 brand · 40% 透明：轻轻压一层色调，原图颜色保留 */}
                 <div className="absolute inset-0 bg-brand/40" />
 
                 {/* ---- 桌面构图 1440×810：暗幕 + 注记（文字层在内容层） ---- */}
@@ -138,25 +140,25 @@ export default function Hero({ active, bgSrc }: Props) {
                 >
                   <defs>
                     <linearGradient id="heroVeilDV" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stopColor="#060A12" stopOpacity="0.58" />
-                      <stop offset="0.36" stopColor="#060A12" stopOpacity="0" />
-                      <stop offset="0.72" stopColor="#060A12" stopOpacity="0.76" />
-                      <stop offset="1" stopColor="#060A12" stopOpacity="0.94" />
+                      <stop offset="0" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.58" />
+                      <stop offset="0.36" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0" />
+                      <stop offset="0.72" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.76" />
+                      <stop offset="1" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.94" />
                     </linearGradient>
                     <linearGradient id="heroVeilDH" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0" stopColor="#060A12" stopOpacity="0.52" />
-                      <stop offset="0.42" stopColor="#060A12" stopOpacity="0" />
-                      <stop offset="1" stopColor="#060A12" stopOpacity="0.18" />
+                      <stop offset="0" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.52" />
+                      <stop offset="0.42" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0" />
+                      <stop offset="1" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.18" />
                     </linearGradient>
-                    <radialGradient id="heroGlyphGlowD" cx="734/1440" cy="323/810" r="0.44">
-                      <stop offset="0" stopColor="#2686ED" stopOpacity="0.5" />
-                      <stop offset="1" stopColor="#2686ED" stopOpacity="0" />
+                    <radialGradient id="heroGlyphGlowD" cx="0.51" cy="0.4" r="0.44">
+                      <stop offset="0" stopColor="rgb(var(--brand-rgb))" stopOpacity="0.5" />
+                      <stop offset="1" stopColor="rgb(var(--brand-rgb))" stopOpacity="0" />
                     </radialGradient>
                     {/* 底部压暗带（不参与镂空），给巨字与 CTA 干净地面 */}
                     <linearGradient id="heroScrimD" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0.58" stopColor="#060A12" stopOpacity="0" />
-                      <stop offset="0.78" stopColor="#060A12" stopOpacity="0.6" />
-                      <stop offset="1" stopColor="#060A12" stopOpacity="0.92" />
+                      <stop offset="0.58" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0" />
+                      <stop offset="0.78" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.6" />
+                      <stop offset="1" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.92" />
                     </linearGradient>
                   </defs>
 
@@ -171,13 +173,13 @@ export default function Hero({ active, bgSrc }: Props) {
                   {/* 文字全部交给内容层（HTML + 1400 版心），此处只保留注记 */}
 
                   {/* 注记（英文 mono 点缀） */}
-                  <g fontFamily={FONT_MONO} fill="rgba(163,178,199,0.6)">
+                  <g fontFamily={FONT_MONO} fill="var(--muted)">
                     <text
                       className="hero-anno"
                       x="452"
                       y="492"
                       fontSize="20"
-                      fill="#2686ED"
+                      fill="rgb(var(--brand-rgb))"
                       fontFamily={FONT_SANS}
                     >
                       ✦
@@ -187,7 +189,7 @@ export default function Hero({ active, bgSrc }: Props) {
                   {/* HUD 角标 */}
                   <g
                     className="hero-anno"
-                    stroke="rgba(255,255,255,0.2)"
+                    stroke="rgb(var(--paper-rgb)/0.2)"
                     strokeWidth="1"
                     fill="none"
                   >
@@ -206,19 +208,19 @@ export default function Hero({ active, bgSrc }: Props) {
                 >
                   <defs>
                     <linearGradient id="heroVeilMV" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stopColor="#060A12" stopOpacity="0.58" />
-                      <stop offset="0.4" stopColor="#060A12" stopOpacity="0" />
-                      <stop offset="0.72" stopColor="#060A12" stopOpacity="0.8" />
-                      <stop offset="1" stopColor="#060A12" stopOpacity="0.94" />
+                      <stop offset="0" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.58" />
+                      <stop offset="0.4" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0" />
+                      <stop offset="0.72" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.8" />
+                      <stop offset="1" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.94" />
                     </linearGradient>
-                    <radialGradient id="heroGlyphGlowM" cx="194/390" cy="336/844" r="0.5">
-                      <stop offset="0" stopColor="#2686ED" stopOpacity="0.46" />
-                      <stop offset="1" stopColor="#2686ED" stopOpacity="0" />
+                    <radialGradient id="heroGlyphGlowM" cx="0.5" cy="0.4" r="0.5">
+                      <stop offset="0" stopColor="rgb(var(--brand-rgb))" stopOpacity="0.46" />
+                      <stop offset="1" stopColor="rgb(var(--brand-rgb))" stopOpacity="0" />
                     </radialGradient>
                     <linearGradient id="heroScrimM" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0.56" stopColor="#060A12" stopOpacity="0" />
-                      <stop offset="0.76" stopColor="#060A12" stopOpacity="0.62" />
-                      <stop offset="1" stopColor="#060A12" stopOpacity="0.94" />
+                      <stop offset="0.56" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0" />
+                      <stop offset="0.76" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.62" />
+                      <stop offset="1" stopColor="rgb(var(--hero-veil-rgb))" stopOpacity="0.94" />
                     </linearGradient>
                   </defs>
                   <g className="hero-veil">
@@ -226,7 +228,7 @@ export default function Hero({ active, bgSrc }: Props) {
                     <rect width="390" height="844" fill="url(#heroGlyphGlowM)" />
                     <rect width="390" height="844" fill="url(#heroScrimM)" />
                   </g>
-                  <g className="hero-anno" stroke="rgba(255,255,255,0.2)" strokeWidth="1" fill="none">
+                  <g className="hero-anno" stroke="rgb(var(--paper-rgb)/0.2)" strokeWidth="1" fill="none">
                     <path d="M14 26 V14 H26" />
                     <path d="M364 14 H376 V26" />
                     <path d="M14 818 V830 H26" />
@@ -292,18 +294,18 @@ export default function Hero({ active, bgSrc }: Props) {
               className="absolute inset-x-0 top-1/2 flex justify-center overflow-hidden"
               style={{ transform: 'translateY(-50%)' }}
             >
-              <span className="hero-line block whitespace-nowrap text-center font-extrabold leading-[0.78] tracking-[-0.01em] text-transparent [font-size:13.5vw] [-webkit-text-stroke:1.4px_rgba(255,255,255,0.42)] md:[font-size:min(15.5vw,15rem)] lg:[font-size:min(16.7vw,15rem)]">
+              <span className="hero-line block whitespace-nowrap text-center font-extrabold leading-[0.78] tracking-[-0.01em] text-transparent [font-size:13.5vw] [-webkit-text-stroke:1.4px_rgb(var(--paper-rgb)/0.42)] md:[font-size:min(15.5vw,15rem)] lg:[font-size:min(16.7vw,15rem)]">
                 PORTFOLIO
               </span>
             </div>
 
             {/* 设计：白，版心左上 */}
-            <span className="hero-line absolute left-8 top-[30%] md:left-[12%] block font-extrabold leading-[0.9] tracking-[-0.01em] text-[#F7FAFF] [font-size:clamp(3.2rem,12vw,11.5rem)] [text-shadow:0_12px_56px_rgba(0,0,0,0.55)] md:top-[30%]">
+            <span className="hero-line absolute left-8 top-[30%] md:left-[12%] block font-extrabold leading-[0.9] tracking-[-0.01em] text-text-primary [font-size:clamp(3.2rem,12vw,11.5rem)] [text-shadow:0_12px_56px_rgb(var(--ink-rgb)/0.55)] md:top-[30%]">
               设计
             </span>
 
             {/* 未来：蓝渐变，版心右下 */}
-            <span className="hero-line absolute bottom-[30%] right-8 md:right-[12%] block bg-[linear-gradient(166deg,#8CC4FF_0%,#4E9BF5_28%,#2686ED_64%,#1B52C9_100%)] bg-clip-text text-right font-extrabold leading-[0.9] tracking-[-0.01em] text-transparent [font-size:clamp(3.2rem,12vw,11.5rem)] md:bottom-[30%]">
+            <span className="hero-line absolute bottom-[30%] right-8 md:right-[12%] block bg-[linear-gradient(166deg,rgb(var(--hero-highlight-rgb))_0%,rgb(var(--hero-mid-rgb))_28%,rgb(var(--brand-rgb))_64%,rgb(var(--accent-deep-rgb))_100%)] bg-clip-text text-right font-extrabold leading-[0.9] tracking-[-0.01em] text-transparent [font-size:clamp(3.2rem,12vw,11.5rem)] md:bottom-[30%]">
               未来
             </span>
           </div>
@@ -312,13 +314,10 @@ export default function Hero({ active, bgSrc }: Props) {
         {/* 顶栏：左引文 ｜ 右标签（1400 版心） */}
         <div className="absolute inset-x-0 top-0">
           <div className="mx-auto flex max-w-[1400px] flex-col-reverse items-start gap-3 px-5 pt-[4.5rem] md:flex-row md:items-start md:justify-between md:gap-5 md:px-8 md:pt-28">
-            <p className="hero-quote w-full min-w-0 max-w-full break-words text-[11px] leading-[1.85] tracking-[0.03em] text-muted/90 md:w-auto md:text-[13px]">
+            <p className="hero-quote w-full min-w-0 max-w-full break-words text-[11px] leading-[1.85] tracking-[0.03em] text-muted md:w-auto md:text-[13px]">
               / 每个音符都带着一种固执的确信：<br className="md:hidden" />自己绝不会是跑调的那一个。 /
             </p>
-            <span className="chip hero-ui flex-none self-end whitespace-nowrap font-sans normal-case tracking-[0.08em] md:self-auto">
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand" />
-              Visual UI Design 2026
-            </span>
+            <Badge className="hero-ui flex-none self-end md:self-auto">Visual UI Design 2026</Badge>
           </div>
         </div>
 
@@ -326,12 +325,12 @@ export default function Hero({ active, bgSrc }: Props) {
         <div className="absolute inset-x-0 bottom-0">
           <div className="hero-ui mx-auto flex max-w-[1400px] flex-wrap items-end gap-x-12 gap-y-4 px-5 pb-8 md:gap-x-16 md:px-8 md:pb-10">
             <div>
-              <p className="text-[9px] uppercase tracking-[0.3em] text-muted/55">BASE</p>
-              <p className="mt-1.5 text-[13px] text-text-primary/85">［城市 · 中国］</p>
+              <p className="text-[9px] uppercase tracking-[0.3em] text-muted">BASE</p>
+              <p className="mt-1.5 text-[13px] text-muted">［城市 · 中国］</p>
             </div>
             <div>
-              <p className="text-[9px] uppercase tracking-[0.3em] text-muted/55">STATUS</p>
-              <p className="mt-1.5 flex items-center gap-2 text-[13px] text-text-primary/85">
+              <p className="text-[9px] uppercase tracking-[0.3em] text-muted">STATUS</p>
+              <p className="mt-1.5 flex items-center gap-2 text-[13px] text-muted">
                 <span
                   aria-hidden="true"
                   className="pulse-dot h-1.5 w-1.5 flex-none rounded-full bg-brand"
@@ -352,6 +351,7 @@ export default function Hero({ active, bgSrc }: Props) {
           </div>
         </div>
       </motion.div>
+      </div>
     </section>
   )
 }

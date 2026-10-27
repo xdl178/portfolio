@@ -1,21 +1,23 @@
 # HANDOVER.md — 交接文档
 
-> 交接时间：2026-10-22
-> 代码基线：本地 `72b3b80`（tag `deployed-2026-10-22`）
-> 线上版本：https://xdl178.github.io/portfolio/ ，commit `7fee1bb`，Actions run `39746491398` 成功
+> 交接时间：2026-10-23（增量同步 `portfolio-landing-next`）
+> 代码基线：本地同步后提交（回退点 tag `pre-sync-2026-10-23` = `395201d`）
+> 线上版本：https://xdl178.github.io/portfolio/ ，commit `7fee1bb`，Actions run `39746491398` 成功（**尚未包含 10-23 同步的内容**）
 > 视觉规范：`design.md` ｜ 架构说明：`ARCHITECTURE.md`
 
 ---
 
 ## 1. 三十秒看懂当前状态
 
-**这是什么**：一个独立工作室作品集单页站（React 19 + Vite + TS + Tailwind），HashRouter 四页漫游，蓝黑磨砂玻璃风格，首屏是 240px 描边 `PORTFOLIO` + 白「设计」/蓝「未来」的巨字构图。
+**这是什么**：一个独立作品集单页站（React 19 + Vite + TS + Tailwind），HashRouter 五路由（含 404），蓝黑磨砂玻璃风格，首屏是 240px 描边 `PORTFOLIO` + 白「设计」/蓝「未来」的巨字构图。首页四段：首屏 → 精选作品 → 项目经验 → 影像实验室。
 
-**现在能跑吗**：能。`tsc -b` 与 `vite build` 均 0 error；1440 / 1920 / 1280 / 900 / 390 / 360 六视口横向溢出为 0；滚轮与加载屏都正常。
+**现在能跑吗**：能。`tsc -b` 与 `vite build` 均 0 error；1440 / 390 实测横向溢出 0；加载屏 2.3s 撤除、首屏图 1672×941 到位、思源黑体命中、`/works`、`/works/original-ip`、`/about`、404 均正常、无破图。
 
 **线上和本地一致吗**：内容一致，**历史不一致**。2026-10-22 已通过 Git Data API 上线，远端 HEAD 是 `7fee1bb`（一个快照提交，父提交 `c11aae0`）；本地 `main` 是 6 个细粒度提交，二者**树哈希相同**（`56729b6`）但 commit sha 不同。所以后续 `git push` 会被判 non-fast-forward——继续用 §4.2 的脚本推送即可，或用 `git push --force-with-lease` 覆盖为本地历史（内容相同，无数据风险）。
 
-**能直接上线吗**：能，但**内容全是占位符**。所有姓名 / 头衔 / 简介 / 作品 / 客户 / 能力都是 `［ ］` 包起来的假数据，`index.html` 的 `<title>` 也是 `［工作室名称］`。要真对外发布必须先回填文案（见 §7）。
+**能直接上线吗**：**能**，但要先确认两件事。① 三件作品与项目经验用的是真实客户 / 城市名（深圳前湾公园、长沙智谷、北京博大公园、Mivox 等），对外发布前需确认素材与案例授权；② 首屏 `BASE ［城市 · 中国］` 与 `<h1>` 里的「［工作室名称］」仍是占位（见 §7）。
+
+**10-23 同步了什么**：从 `D:/backup/Documents/deepseek-harness/portfolio-landing-next` 增量同步了 `src/`、`public/`、`docs/`、`README.md`、`index.html`（`src`/`public`/`docs` 与源逐字节一致，仅 `ContactFooter` 修了一次死链）。主要变化：作品换成三件真实案例 + 61 张图（25 MB）、新增「项目经验」区（GSAP 钉标题）、导航文案改「精选作品 / 关于我」+「联系我」mailto、新增 404 路由与 `MotionConfig reducedMotion="user"`、`SectionHeader` 变大标题、依赖新增 `@gsap/react`。源项目五屏改版已被回滚（`#about-intro` / `#contact` 不挂载），本仓库跟随该状态。
 
 ---
 
@@ -144,15 +146,14 @@ node .shots/live-check.mjs        # 加载屏真实进度 + 首屏截图
 
 ## 5. 上线前必做清单
 
-- [ ] **回填所有占位符**（`［` 全站搜索，见 §7）
-- [ ] `index.html` 的 `<title>` 与 `<meta description>` 换成真实工作室名
+- [ ] **回填剩余占位符**（只剩 4 处：`Hero.tsx` 的 `<h1>` 与 `BASE ［城市 · 中国］`、`Clients.tsx` 的客户名）
+- [x] `index.html` 的 `<title>` 与 `<meta description>` 已换成真实文案（「设计未来 | 视觉与 UI/UX 作品集」）
 - [ ] `public/favicon.svg` 换成真实 logo
-- [ ] 首屏背景 `public/images/hero-desk.jpg` 换成真图（约 16:9、≤300 KB）
-- [ ] `ContactFooter` 的邮箱（`hello@studio.example`）与社交链接（目前全是 `#`）
-- [ ] `Navbar` 的 CTA 邮箱
-- [ ] 作品图替换（`work-01..04.png` / `study-01.png` 是 AI 占位插画，单张 1.5–2.2 MB，建议压到 300 KB 内并转 WebP）
+- [ ] **确认作品与案例授权**（真实客户 / 城市名 + 61 张作品图，发布前需拿到展示许可）
+- [ ] 作品图压缩：`public/images/works` 61 张共 25 MB，建议转 WebP + `srcset`，单张控制在 300 KB 内
+- [ ] 清理 11 MB 旧占位图（`work-01..04.png` / `study-01.png` / `hero-tunnel.png`，已无引用）
 - [ ] 跑一遍 `design.md §11` 的 Pre-Flight 自检
-- [ ] 六视口截图确认无溢出
+- [ ] 1440 / 390 截图确认无溢出（本次已验证，改样式后需重跑）
 - [ ] 推送并确认 Actions 绿灯
 
 ---
@@ -161,9 +162,11 @@ node .shots/live-check.mjs        # 加载屏真实进度 + 首屏截图
 
 | 级别 | 问题 | 说明 / 建议 |
 |---|---|---|
-| 高 | **全站占位符** | 不能直接对外发布。`grep -rn "［" src` 可列出全部 |
+| 高 | **真实客户名与素材授权待确认** | 「项目经验」区写的是深圳前湾公园 / 长沙智谷 / 北京博大公园，作品区是真实案例与 61 张图；对外发布前需确认可公开 |
 | 中 | **远端历史是单次快照提交** | 远端 HEAD 是 API 生成的快照提交，与本地细粒度提交内容相同（树哈希一致）但 sha 不同；`git push` 会 non-fast-forward。要么继续用 §4.2 脚本，要么 `--force-with-lease` 覆盖为本地历史 |
-| 中 | **作品图未优化** | 6 张 PNG 共 11 MB，单张 1.5–2.2 MB。已 `loading="lazy"`，但移动端 4G 上仍慢。建议 WebP + `srcset` |
+| 中 | **作品图未优化** | `public/images/works` 61 张 JPG 共 25 MB（单张 0.3–1.2 MB）。已 `loading="lazy"`，移动端 4G 仍偏慢。建议 WebP + `srcset` |
+| 中 | **旧占位图仍占 11 MB** | `work-01..04.png` / `study-01.png` / `hero-tunnel.png` 已无任何引用，可删除（源项目同样保留，故本次未动） |
+| 中 | **未挂载的五屏组件** | `ProfileIntro.tsx` / `ProfileContact.tsx` / `profile.ts` 是五屏改版遗留，当前无引用。保留待用或整体删除，别让它们误导后来者 |
 | 中 | **CSS 325.7 KB（gzip 127 KB）** | 体积几乎全来自 481 条 `@font-face`。若在意首屏 CSS，可把 `fonts.css` 拆成动态注入，或只保留 300–800 常用字重 |
 | 中 | **仓库 37 MB** | 字体 24 MB 直接入库。换来的是构建稳定（不动 lockfile）。可接受，但 clone 偏慢 |
 | 中 | **hls.js 与 esbuild 在 dependencies 里但代码没用到** | `grep -rn "hls" src` 为空。可从 `package.json` 移除（注意同步 lock，且要在干净目录重生成以防 rollup 平台包缺失） |
@@ -172,24 +175,25 @@ node .shots/live-check.mjs        # 加载屏真实进度 + 首屏截图
 | 低 | **无测试** | 纯视觉项目，靠截图回归。若加真实数据层可考虑对 `works.ts` 的派生函数补单测 |
 | 低 | **`tailwind.config.js` 注释仍写 `#1F51D6`** | 只是注释，实际值读 `--brand-rgb`（`#2686ED`） |
 | 低 | **灯箱不写 URL** | 原稿灯箱是组件内 state，刷新即丢。可接受 |
+| 低 | **SVG 渐变控制台告警** | `Hero.tsx` 的 `radialGradient` 写了 `cx="734/1440"` 这类非法长度（应写成 `0.51` 这类比例），Chrome 报 4 条 attribute 错误但不影响渲染。因首屏要求逐字节保持，本次未改 |
 | 低 | **`design.md` 与实际存在轻微落差** | 文档多轮修订，个别措辞可能与代码不完全同步。以代码为准，顺手修正文档 |
 
 ---
 
 ## 7. 占位符回填指引
 
-所有假数据都用全角方括号包裹：`［ … ］`。搜索定位：
+剩余占位符只有 4 处，用全角方括号包裹：`［ … ］`。搜索定位：
 
 ```bash
-grep -rn "［" src index.html
+grep -rn "［" src --include=*.ts --include=*.tsx index.html
 ```
 
 回填位置：
 
 | 文件 | 需要改的内容 |
 |---|---|
-| `index.html` | `<title>`、`<meta name="description">` |
-| `src/data/works.ts` | 4 件作品的 `title / titleEn / role / tags / shortDesc / concept / description / details`；想改分类结构就一并改 `categories` |
+| `index.html` | 已回填，无需改动 |
+| `src/data/works.ts` | 三件作品已是真实内容；换案例时改 `title / titleEn / role / tags / shortDesc / concept / description / details` 与对应图片目录 |
 | `src/pages/AboutPage.tsx` | 顶部 `TIMELINE` 常量（公司 / 角色 / 时间 / 要点） |
 | `src/components/AboutCapabilities.tsx` | `CAPABILITIES` 常量（能力名 / 说明）+ 左侧创作理念段落 |
 | `src/components/Clients.tsx` | `CLIENTS` 常量（客户名，目前只有 `sr-only` 与 monogram 字母） |

@@ -1,206 +1,100 @@
 import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion } from 'framer-motion'
+import SectionHeader from './SectionHeader'
 
-gsap.registerPlugin(ScrollTrigger)
+/* 影像实验室：手风琴画廊（对齐 portfolio-test 的 AccordionGallery 版式）
+   桌面 → 三块横向面板，悬停 / 聚焦时该块变宽；移动端 → 纵向堆叠
+   点击任意面板进入灯箱，键盘 ← → / Esc 可切换与关闭 */
 
-/* ============================================================
-   Explorations · 滚动驱动视差画廊
-   - min-h-[300vh] 容器制造滚动空间
-   - 中心文案层被 ScrollTrigger pin（pinSpacing: false）
-   - 左右两列图片以不同幅度做视差位移 + 旋转
-   - 点击卡片打开 Lightbox
-   ============================================================ */
-
-type Item = { title: string; image: string; rotate: number }
-
-const COLUMN_LEFT: Item[] = [
-  { title: '［影像标题 01］', image: 'work-01.png', rotate: -4 },
-  { title: '［影像标题 02］', image: 'study-01.png', rotate: 3 },
-  { title: '［影像标题 03］', image: 'work-03.png', rotate: -2 },
-]
-
-const COLUMN_RIGHT: Item[] = [
-  { title: '［影像标题 04］', image: 'work-02.png', rotate: 4 },
-  { title: '［影像标题 05］', image: 'work-04.png', rotate: -3 },
-  { title: '［影像标题 06］', image: 'hero-tunnel.png', rotate: 2 },
+type Item = { title: string; image: string; description: string; index: string }
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`
+const images: Item[] = [
+  { index: '01', title: '角色叙事', image: 'images/works/original-ip/Frame-8.jpg', description: '从一个角色出发，延伸出一整套表达语言。' },
+  { index: '02', title: '品牌构图', image: 'images/works/art-studio/Frame-14.jpg', description: '在作品和空间之间，找到恰好的阅读节奏。' },
+  { index: '03', title: '产品语言', image: 'images/works/mivox/Frame-7.jpg', description: '把抽象的技术能力，转译为可感知的产品体验。' },
 ]
 
 export default function Explorations() {
-  const rootRef = useRef<HTMLElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const leftRef = useRef<HTMLDivElement>(null)
-  const rightRef = useRef<HTMLDivElement>(null)
-  const [lightbox, setLightbox] = useState<Item | null>(null)
+  const root = useRef<HTMLElement>(null)
+  const [active, setActive] = useState<number | null>(null)
 
   useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) return
-
-    const ctx = gsap.context(() => {
-      /* 中心层固定，pinSpacing: false 让两列继续在其上方滚动 */
-      ScrollTrigger.create({
-        trigger: rootRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        pin: contentRef.current,
-        pinSpacing: false,
-      })
-
-      /* 左列向下漂移，右列向上漂移 → 形成反向视差 */
-      gsap.fromTo(
-        leftRef.current,
-        { y: 120 },
-        {
-          y: -180,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: rootRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
-        },
-      )
-      gsap.fromTo(
-        rightRef.current,
-        { y: -80 },
-        {
-          y: 220,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: rootRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
-        },
-      )
-
-      /* 渐入 */
-      gsap.from(contentRef.current, {
-        opacity: 0,
-        filter: 'blur(12px)',
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: rootRef.current, start: 'top 70%' },
-      })
-    }, rootRef)
-
-    return () => ctx.revert()
-  }, [])
-
-  /* Lightbox：锁定滚动 + Esc 关闭 */
-  useEffect(() => {
-    if (!lightbox) return
-    const prev = document.body.style.overflow
+    if (active === null) return
+    const previous = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setLightbox(null)
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setActive(null)
+      if (event.key === 'ArrowRight') setActive((current) => current === null ? 0 : (current + 1) % images.length)
+      if (event.key === 'ArrowLeft') setActive((current) => current === null ? 0 : (current - 1 + images.length) % images.length)
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [lightbox])
-
-  const renderCard = (item: Item, i: number) => (
-    <button
-      key={item.title}
-      type="button"
-      onClick={() => setLightbox(item)}
-      style={{ transform: `rotate(${item.rotate}deg)` }}
-      className="glass glass-hover group block w-full max-w-[320px] overflow-hidden rounded-card text-left transition-transform duration-500 ease-out hover:!rotate-0 hover:scale-[1.03]"
-      aria-label={`查看 ${item.title}`}
-    >
-      <span className="media-crop relative block aspect-square">
-        <img
-          src={`${import.meta.env.BASE_URL}images/${item.image}`}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-        />
-      </span>
-      <span className="flex items-center justify-between gap-3 px-4 py-3">
-        <span className="text-sm text-text-primary">{item.title}</span>
-        <span className="type-num text-[11px] text-muted">0{i + 1}</span>
-      </span>
-    </button>
-  )
+    return () => { document.body.style.overflow = previous; window.removeEventListener('keydown', onKey) }
+  }, [active])
 
   return (
-    <section ref={rootRef} className="relative min-h-[300vh] bg-bg" id="gallery">
-      {/* 第 1 层：钉住的中心文案（z-10） */}
-      <div
-        ref={contentRef}
-        className="pointer-events-none relative z-10 flex h-[100svh] flex-col items-center justify-center px-6 text-center"
-      >
-        <h2 className="type-h2 text-text-primary">
-          影像<span className="text-gradient">实验室</span>
-        </h2>
-        <p className="type-body mt-6 max-w-md">［副标］实验性的视觉、材质与动效研究。</p>
-      </div>
+    <section id="gallery" ref={root} className="home-section relative bg-bg">
+      <div className="mx-auto max-w-[1380px] px-5 md:px-10 lg:px-16">
+        <SectionHeader
+          index="03"
+          label="影像实验室 · VISUAL LAB"
+          title={<>视觉，是<span className="whitespace-nowrap">另一种</span><span className="text-gradient whitespace-nowrap">思考方式。</span></>}
+          subtitle="打开一幅画面，看看设计如何从概念走向界面。"
+          action={<p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">Hover to expand · 点击放大</p>}
+        />
 
-      {/* 第 2 层：视差双列（z-20） */}
-      <div className="pointer-events-none absolute inset-0 z-20">
-        <div className="mx-auto grid h-full max-w-[1440px] grid-cols-2 gap-6 px-6 py-[20vh] md:gap-40 md:px-10">
-          <div
-            ref={leftRef}
-            className="pointer-events-auto flex flex-col items-start gap-16 md:gap-40"
-          >
-            {COLUMN_LEFT.map(renderCard)}
-          </div>
-          <div
-            ref={rightRef}
-            className="pointer-events-auto mt-[30vh] flex flex-col items-end gap-16 md:gap-40"
-          >
-            {COLUMN_RIGHT.map(renderCard)}
-          </div>
+        <div className="mt-14 flex flex-col gap-4 md:mt-20 md:h-[62vh] md:min-h-[480px] md:flex-row md:gap-3">
+          {images.map((item, i) => (
+            <button
+              key={item.title}
+              type="button"
+              onClick={() => setActive(i)}
+              aria-label={`放大查看${item.title}`}
+              className="group relative flex flex-none flex-col overflow-hidden rounded-card border border-paper/10 bg-surface text-left transition-[flex-grow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent/40 focus-visible:border-accent/60 md:min-w-0 md:flex-1 md:grow md:hover:grow-[1.8] md:focus-visible:grow-[1.8]"
+            >
+              <div className="relative aspect-[4/3] w-full overflow-hidden md:absolute md:inset-0 md:aspect-auto">
+                <img
+                  src={asset(item.image)}
+                  alt={item.title}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                />
+                <div aria-hidden="true" className="absolute inset-0 hidden bg-gradient-to-t from-bg/95 via-bg/25 to-transparent md:block" />
+                <span aria-hidden="true" className="absolute left-5 top-4 font-mono text-sm tracking-[0.16em] text-muted">{item.index}</span>
+                <span aria-hidden="true" className="absolute right-5 top-4 grid h-9 w-9 place-items-center rounded-full border border-paper/30 bg-bg/25 text-sm text-text-primary backdrop-blur-md transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">↗</span>
+              </div>
+              <div className="relative border-t border-paper/10 bg-[rgb(var(--surface-card-rgb))] p-5 md:absolute md:inset-x-0 md:bottom-0 md:border-0 md:bg-transparent md:p-8">
+                <h3 className="text-[clamp(1.4rem,1.8vw,1.9rem)] font-semibold tracking-[-0.03em] text-text-primary">{item.title}</h3>
+                <p className="mt-2 max-w-[34ch] text-sm leading-7 text-muted md:opacity-0 md:transition-opacity md:duration-500 md:group-hover:opacity-100 md:group-focus-visible:opacity-100">{item.description}</p>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Lightbox */}
       <AnimatePresence>
-        {lightbox && (
+        {active !== null && (
           <motion.div
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-6 backdrop-blur-md"
+            role="dialog"
+            aria-modal="true"
+            aria-label={images[active].title}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-[rgb(var(--gallery-overlay-rgb)/0.95)] p-5 backdrop-blur-xl md:p-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            onClick={() => setLightbox(null)}
-            role="dialog"
-            aria-modal="true"
-            aria-label={lightbox.title}
+            onClick={() => setActive(null)}
           >
-            <motion.div
-              className="glass-lg relative w-full max-w-4xl rounded-panel p-3"
-              initial={{ opacity: 0, scale: 0.96, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.97, y: 10 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={`${import.meta.env.BASE_URL}images/${lightbox.image}`}
-                alt=""
-                className="max-h-[72vh] w-full rounded-field object-cover"
-              />
-              <p className="px-2 pb-1 pt-4 text-center text-base text-text-primary">
-                {lightbox.title}
-              </p>
-              <button
-                type="button"
-                onClick={() => setLightbox(null)}
-                aria-label="关闭"
-                className="glass absolute -right-3 -top-3 grid h-10 w-10 place-items-center rounded-full text-lg leading-none text-text-primary transition-transform duration-300 hover:scale-110"
-              >
-                ×
-              </button>
-            </motion.div>
+            <div className="relative w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
+              <div className="mb-4 flex items-center justify-between text-text-primary">
+                <p>{images[active].title} <span className="ml-2 text-muted">{active + 1} / {images.length}</span></p>
+                <button type="button" onClick={() => setActive(null)} autoFocus aria-label="关闭画廊" className="grid h-11 w-11 place-items-center rounded-full border border-paper/30 text-2xl hover:border-accent">×</button>
+              </div>
+              <img src={asset(images[active].image)} alt={images[active].title} className="max-h-[72dvh] w-full rounded-card object-contain" />
+              <div className="mt-5 flex justify-between">
+                <button type="button" onClick={() => setActive((active - 1 + images.length) % images.length)} className="btn btn-outline">← 上一张</button>
+                <button type="button" onClick={() => setActive((active + 1) % images.length)} className="btn btn-outline">下一张 →</button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

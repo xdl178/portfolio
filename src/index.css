@@ -10,21 +10,38 @@
 
 /* ---------- 1. Design Tokens ---------- */
 :root {
-  /* 配色（HSL 分量，无 hsl() 包裹；Tailwind 侧补 alpha 通道） */
+  /* Surface/text neutrals use HSL channels; muted is a complete HEX color.
+     Brand/material colors below use RGB channels. See COLOR-SYSTEM.md. */
   --bg: 222 47% 4%;
   --bg-elev: 222 40% 7%;
   --surface: 220 36% 10%;
   --text: 210 40% 98%;
-  --muted: 215 22% 64%;
+  --muted: #BBC9DB;
   --stroke: 213 28% 20%;
-  /* 主色 #2686ED：accent / accent-2 / 光晕 / 焦点环全部由它派生，页面不再出现青绿或品红 */
-  --accent: 211 85% 54%;
-  --accent-strong: 211 88% 62%;
-  --accent-2: 224 78% 58%;
-
-  /* 品牌主色 #2686ED（全局唯一来源：Tailwind 的 brand-* 全部读这里） */
+  /* RGB channels: brand/accent share one source; do not wrap these in hsl(). */
   --brand-rgb: 38 134 237;
-  --brand: #2686ed;
+  --brand: rgb(var(--brand-rgb));
+  --accent: var(--brand-rgb);
+  --accent-soft-rgb: 209 232 255;
+  --accent-strong-rgb: 111 182 255;
+  --accent-deep-rgb: 27 82 201;
+  --accent-strong: var(--accent-strong-rgb);
+  --accent-2: var(--accent-deep-rgb);
+  --paper-rgb: 255 255 255;
+  --ink-rgb: 0 0 0;
+  /* Material/photographic exceptions, never alternate secondary text colors. */
+  --bg-loading-rgb: 3 6 11;
+  --surface-card-rgb: 11 20 34;
+  --surface-card-hover-rgb: 16 30 49;
+  --gallery-overlay-rgb: 5 7 13;
+  --nav-glass-rgb: 10 15 25;
+  --hero-veil-rgb: 6 10 18;
+  --hero-highlight-rgb: 140 196 255;
+  --hero-mid-rgb: 78 155 245;
+  --surface-light-rgb: 209 213 220;
+  --on-light-rgb: 48 61 80;
+  --scrollbar-thumb: 213 28% 22%;
+  --scrollbar-hover: 213 28% 30%;
 
   /* 字体：思源黑体 Source Han Sans CN（已内嵌 woff2 分片，见 assets/fonts） */
   --font-sans: 'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', 'PingFang SC',
@@ -49,8 +66,9 @@
   --e-morph: cubic-bezier(0.32, 1.25, 0.4, 1);
 
   /* 品牌渐变（蓝色调）：浅蓝 → 主蓝 #2686ED → 深蓝，仅用于描边 / 光带 / 进度条 */
-  --grad-accent: linear-gradient(120deg, #6fb6ff 0%, #2686ed 48%, #1b52c9 100%);
+  --grad-accent: linear-gradient(120deg, rgb(var(--accent-strong-rgb)) 0%, var(--brand) 48%, rgb(var(--accent-deep-rgb)) 100%);
 
+  --radius-rect: 12px;
   --nav-h: 64px;
 }
 
@@ -73,18 +91,20 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    /* clip 而不是 hidden：hidden 会把 overflow-y 计算成 auto，
+       body 变成第二个滚动容器，页面上会出现两条竖向滚动条 */
+    overflow-x: clip;
   }
 
   ::selection {
-    background: hsl(var(--accent) / 0.28);
+    background: rgb(var(--accent) / 0.28);
     color: hsl(var(--text));
   }
 
   :focus-visible {
-    outline: 2px solid #2686ed;
+    outline: 2px solid var(--brand);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: var(--radius-rect);
   }
 
   ::-webkit-scrollbar {
@@ -95,12 +115,12 @@
     background: hsl(var(--bg));
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(213 28% 22%);
+    background: hsl(var(--scrollbar-thumb));
     border-radius: 999px;
     border: 2px solid hsl(var(--bg));
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(213 28% 30%);
+    background: hsl(var(--scrollbar-hover));
   }
 }
 
@@ -111,22 +131,22 @@
   .glass,
   .glass-lg {
     position: relative;
-    background: linear-gradient(135deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02));
+    background: linear-gradient(135deg, rgb(var(--paper-rgb) / 0.06), rgb(var(--paper-rgb) / 0.02));
     backdrop-filter: blur(16px) saturate(160%);
     -webkit-backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid rgb(255 255 255 / 0.1);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 24px 60px -24px rgb(0 0 0 / 0.75);
+    border: 1px solid rgb(var(--paper-rgb) / 0.1);
+    box-shadow: inset 0 1px 0 rgb(var(--paper-rgb) / 0.12), 0 24px 60px -24px rgb(var(--ink-rgb) / 0.75);
   }
   .glass-sm {
     backdrop-filter: blur(12px) saturate(150%);
     -webkit-backdrop-filter: blur(12px) saturate(150%);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 12px 32px -18px rgb(0 0 0 / 0.7);
+    box-shadow: inset 0 1px 0 rgb(var(--paper-rgb) / 0.1), 0 12px 32px -18px rgb(var(--ink-rgb) / 0.7);
   }
   .glass-lg {
-    background: linear-gradient(135deg, rgb(255 255 255 / 0.075), rgb(255 255 255 / 0.025));
+    background: linear-gradient(135deg, rgb(var(--paper-rgb) / 0.075), rgb(var(--paper-rgb) / 0.025));
     backdrop-filter: blur(24px) saturate(170%);
     -webkit-backdrop-filter: blur(24px) saturate(170%);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 40px 90px -30px rgb(0 0 0 / 0.8);
+    box-shadow: inset 0 1px 0 rgb(var(--paper-rgb) / 0.14), 0 40px 90px -30px rgb(var(--ink-rgb) / 0.8);
   }
 
   /* 玻璃「活过来」：仅边框亮起 + 内高光增强，不加外发光 */
@@ -136,9 +156,9 @@
   }
   .glass-hover:hover,
   .glass-hover:focus-visible {
-    border-color: hsl(var(--accent) / 0.45);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22),
-      inset 0 0 0 1px hsl(var(--accent) / 0.12), 0 30px 70px -26px rgb(0 0 0 / 0.8);
+    border-color: rgb(var(--accent) / 0.45);
+    box-shadow: inset 0 1px 0 rgb(var(--paper-rgb) / 0.22),
+      inset 0 0 0 1px rgb(var(--accent) / 0.12), 0 30px 70px -26px rgb(var(--ink-rgb) / 0.8);
   }
 
   /* --- 按钮 --- */
@@ -161,37 +181,37 @@
     transform: scale(0.97);
   }
   .btn-primary {
-    background: hsl(var(--accent));
+    background: rgb(var(--accent));
     color: hsl(var(--bg));
-    box-shadow: 0 14px 40px -14px hsl(var(--accent) / 0.7);
+    box-shadow: 0 14px 40px -14px rgb(var(--accent) / 0.7);
   }
   .btn-primary:hover {
-    background: hsl(var(--accent-strong));
+    background: rgb(var(--accent-strong));
     transform: translateY(-1px);
-    box-shadow: 0 20px 52px -14px hsl(var(--accent) / 0.85);
+    box-shadow: 0 20px 52px -14px rgb(var(--accent) / 0.85);
   }
   .btn-ghost {
-    background: rgb(255 255 255 / 0.04);
-    border: 1px solid rgb(255 255 255 / 0.12);
+    background: rgb(var(--paper-rgb) / 0.04);
+    border: 1px solid rgb(var(--paper-rgb) / 0.12);
     color: hsl(var(--text));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
   .btn-ghost:hover {
-    border-color: hsl(var(--accent) / 0.5);
-    color: hsl(var(--accent));
-    background: hsl(var(--accent) / 0.06);
+    border-color: rgb(var(--accent) / 0.5);
+    color: rgb(var(--accent));
+    background: rgb(var(--accent) / 0.06);
   }
   /* 玻璃容器内部使用：仅描边，不再叠一层 backdrop-filter */
   .btn-outline {
     background: transparent;
-    border: 1px solid rgb(255 255 255 / 0.14);
+    border: 1px solid rgb(var(--paper-rgb) / 0.14);
     color: hsl(var(--text));
   }
   .btn-outline:hover {
-    border-color: hsl(var(--accent) / 0.5);
-    color: hsl(var(--accent));
-    background: hsl(var(--accent) / 0.08);
+    border-color: rgb(var(--accent) / 0.5);
+    color: rgb(var(--accent));
+    background: rgb(var(--accent) / 0.08);
   }
 
   /* --- 小标签 / 胶囊 --- */
@@ -205,9 +225,9 @@
     font-size: 0.6875rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: hsl(var(--muted));
-    background: rgb(255 255 255 / 0.04);
-    border: 1px solid rgb(255 255 255 / 0.1);
+    color: var(--muted);
+    background: rgb(var(--paper-rgb) / 0.15);
+    border: 1px solid rgb(var(--paper-rgb) / 0.2);
   }
 
   /* --- 排版基元（design.md §3） --- */
@@ -231,14 +251,14 @@
   .type-body {
     font-size: 1rem;
     line-height: 1.75;
-    color: hsl(var(--muted));
+    color: var(--muted);
   }
   .type-label {
     font-family: var(--font-mono);
     font-size: 0.6875rem;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: hsl(var(--muted));
+    color: var(--muted);
   }
   .type-num {
     font-family: var(--font-mono);
@@ -260,21 +280,21 @@
     opacity: 0.5;
   }
   .glow-brand {
-    background: radial-gradient(circle, hsl(var(--accent) / 0.55), transparent 68%);
+    background: radial-gradient(circle, rgb(var(--accent) / 0.55), transparent 68%);
   }
   .glow-indigo {
-    background: radial-gradient(circle, hsl(var(--accent-2) / 0.32), transparent 70%);
+    background: radial-gradient(circle, rgb(var(--accent-2) / 0.32), transparent 70%);
   }
 
   /* --- 网格 / 噪点装饰层 --- */
   .bg-grid {
-    background-image: linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgb(var(--paper-rgb) / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--paper-rgb) / 0.05) 1px, transparent 1px);
     background-size: 64px 64px;
   }
   .mask-radial {
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 78%);
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, rgb(var(--ink-rgb)) 30%, transparent 78%);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, rgb(var(--ink-rgb)) 30%, transparent 78%);
   }
   .noise {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -284,7 +304,7 @@
   /* --- 1px 冷光发丝线 --- */
   .hairline {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.16), transparent);
+    background: linear-gradient(90deg, transparent, rgb(var(--paper-rgb) / 0.16), transparent);
   }
 
   /* --- 图片容器：裁掉生成图右下角水印（见 design.md §7.3） --- */
@@ -335,7 +355,7 @@
     border-radius: inherit;
     background: radial-gradient(
       240px circle at var(--mx, 50%) var(--my, 50%),
-      hsl(var(--accent) / 0.16),
+      rgb(var(--accent) / 0.16),
       transparent 62%
     );
     opacity: 0;
@@ -363,12 +383,13 @@
 
   /* --- 导航：滚动后提升边界对比（不加外发光） --- */
   .glass-nav {
-    transition: border-color var(--d-fast) var(--e-smooth),
-      background-color var(--d-fast) var(--e-smooth);
+    background: rgb(var(--nav-glass-rgb) / 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: border-color var(--d-fast) var(--e-smooth);
   }
   .glass-nav[data-scrolled='true'] {
-    border-color: rgb(255 255 255 / 0.16);
-    background-color: rgb(10 15 25 / 0.55);
+    border-color: rgb(var(--paper-rgb) / 0.16);
   }
 }
 
@@ -377,7 +398,7 @@
   position: absolute;
   bottom: -12px;
   border-radius: 9999px;
-  background: hsl(var(--accent) / 0.5);
+  background: rgb(var(--accent) / 0.5);
   filter: blur(1px);
   animation: particle-rise linear infinite;
   will-change: transform, opacity;
@@ -448,6 +469,21 @@
   }
 }
 
+/* 后续章节使用更克制的排版节奏，首屏样式保持原项目不变。 */
+#main-content section:not(#home) { scroll-margin-top: 6rem; }
+#main-content section:not(#home) h2 { text-wrap: balance; }
+#main-content section:not(#home) img { background-color: hsl(var(--surface)); }
+#main-content section:not(#home) { position: relative; isolation: isolate; }
+#main-content section:not(#home)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(ellipse at 62% 35%, rgb(var(--brand-rgb) / 0.055), transparent 47%);
+}
+#main-content section:not(#home) .gallery-frame img { filter: saturate(.88); }
+
 /* ---------- 5. 无障碍 / 能力降级 ---------- */
 @media (prefers-reduced-transparency: reduce) {
   .glass-sm,
@@ -463,6 +499,8 @@
     background: hsl(var(--surface));
   }
 }
+
+#about-intro, #work, #practice, #contact { scroll-margin-top: 5.5rem; }
 
 @media (prefers-reduced-motion: reduce) {
   html {
