@@ -4,7 +4,7 @@
 
 ## 1. 核心规则
 
-1. **所有普通副文本统一为 `--muted: #BBC9DB`**。包括说明、英文副标题、眉题、元数据标签与值、序号、图注、面包屑、页脚、未激活导航、加载状态及百分比。HTML 用 `text-muted`，CSS/SVG 用 `var(--muted)`。
+1. **普通副文本统一为 `--muted: #BBC9DB`**。首页资料信息项标题及采用同一层级的专业技能英文标签为用户指定的语义例外，使用全局 `--secondary: #8692A3`，不影响其余muted。包括说明、英文副标题、眉题、元数据标签与值、序号、图注、面包屑、页脚、未激活导航、加载状态及百分比。HTML 用 `text-muted`，CSS/SVG 用 `var(--muted)`。
 2. 不再用 `text-white/35`、`text-text-primary/80`、`text-muted/55`、私有灰蓝色模拟层级。副文本不额外叠颜色透明度；层级用字号、字重、间距表达。
 3. 标题、主要统计值、重要正文/定义值、主要操作使用 `text-text-primary`；交互反馈、状态点、装饰箭头使用 `accent` 系列。不能把所有内容机械地改为 muted。
 4. 品牌唯一源是 `--brand-rgb: 38 134 237`（`#2686ED`）。`--brand`、`--accent`、Tailwind `brand` / `accent` 均从它引用；禁止在别处重复写蓝色色号。
@@ -20,6 +20,7 @@
 | 面板底色 | `--surface: 220 36% 10%` | `bg-surface` | 卡片/图片占位 |
 | 主文字 | `--text: 210 40% 98%` | `text-text-primary` | 浏览器实际约 `#F8FAFC`；不再另写 `#F7FAFF` |
 | **统一副文本** | **`--muted: #BBC9DB`** | **`text-muted` / `var(--muted)`** | 完整色值，无 HSL/RGB 包裹，无 `/80` 等色彩 alpha |
+| 资料项标题 | `--secondary: #8692A3` | `text-secondary` / `var(--secondary)` | 首页姓名、所在地等dt及专业技能英文标签，14px，不叠alpha；定义内容/技能中文名称为16px主文字 |
 | 普通分隔线 | `--stroke: 213 28% 20%` | `border-stroke` | 玻璃高光边另用 paper alpha |
 | 品牌 / 交互 | `--brand-rgb: 38 134 237`；`--accent` 为其别名 | `text-accent` / `bg-brand/40` | 主色为精确 `#2686ED` |
 | 蓝白高光 | `--accent-soft-rgb: 209 232 255` | `text-accent-soft` / `rgb(var(--accent-soft-rgb))` | 光斑核心、描边峰值，不用于副标题 |
@@ -40,7 +41,7 @@ color: hsl(var(--text));
 border-color: rgb(var(--accent) / .45);
 box-shadow: 0 16px 40px rgb(var(--ink-rgb) / .4);
 
-/* 完整色值：muted 和 brand */
+/* 完整色值：muted、secondary 和 brand */
 color: var(--muted);
 background: var(--brand);
 ```
@@ -97,4 +98,4 @@ npm run test:loading
 npm run test:works
 ```
 
-[colors.spec.mjs](<colors.spec.mjs>) 检查：原始色号只能出现在 `:root`、禁止旧副文本色彩 alpha、各路由静态副文本实际为 `rgb(187, 201, 219)`，以及修改 `--muted` 后消费者会同步变化。图片、字体资产不参与文本 token 扫描。新增特殊颜色必须先确认已有语义无法表达，再集中定义并补本文档，不得通过削弱测试放过散落色号。
+[colors.spec.mjs](<colors.spec.mjs>) 检查：原始色号只能出现在 `:root`、禁止旧副文本色彩 alpha、各路由静态副文本实际为 `rgb(187, 201, 219)`，以及修改 `--muted` 后消费者会同步变化。图片、字体资产不参与文本 token 扫描。用户新增的资料标题secondary由 [profile-contact回归](<profile-contact.spec.mjs>) 检查精确值及实时变量联动。新增特殊颜色必须先确认已有语义无法表达，再集中定义并补本文档，不得通过削弱测试放过散落色号。

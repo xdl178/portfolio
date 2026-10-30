@@ -1,0 +1,32 @@
+/* Work labels share the homepage's compact, rectangular badge treatment. */
+.work-tag {
+  --work-tag-height: 32px;
+  --work-tag-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: var(--work-tag-height);
+  border: 1px solid rgb(var(--paper-rgb) / .24);
+  border-radius: var(--work-tag-radius);
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  color: var(--muted);
+  background: rgb(var(--paper-rgb) / .08);
+  backdrop-filter: blur(12px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-tag {
+    transition: background-color var(--d-hover) var(--e-feedback), border-color var(--d-hover) var(--e-feedback);
+  }
+  .work-tag:hover { background: rgb(var(--paper-rgb) / .15); border-color: transparent; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .work-tag, .work-tag:hover {
+    backdrop-filter: none;
+    background: hsl(var(--surface));
+  }
+}

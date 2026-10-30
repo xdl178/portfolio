@@ -1,4 +1,4 @@
-.career-container { max-width: 1536px; padding: 0 64px; margin: 0 auto; }
+.career-container { max-width: var(--container-home); padding: 0 var(--gutter-home); margin: 0 auto; }
 .career-header { margin-bottom: 80px; }
 .career-tree { --career-progress: 1; position: relative; padding: 36px 0; }
 .career-rail { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; transform: translateX(-50%); border-radius: 999px; background: rgb(var(--paper-rgb) / .08); pointer-events: none; }
@@ -13,10 +13,7 @@
 .career-description h4 { margin-bottom: 14px; font-size: 19px; font-weight: 500; line-height: 1.5; color: hsl(var(--text)); }
 .career-description > p { font-size: 14px; line-height: 1.9; color: var(--muted); }
 .career-description .career-skills { margin-top: 20px; font-size: 11px; letter-spacing: .06em; line-height: 1.9; }
-.career-footer { margin-top: 84px; text-align: center; }
-.career-footer a { display: inline-flex; align-items: center; gap: 20px; padding-bottom: 8px; border-bottom: 1px solid rgb(var(--paper-rgb) / .25); font-size: 14px; color: hsl(var(--text)); transition: color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out); }
-.career-footer a:hover { color: rgb(var(--accent-strong-rgb)); border-color: var(--brand); }
-@media (max-width: 1023px) { .career-container { padding-inline: 40px; } .career-entry { column-gap: 10%; } .career-identity { gap: 16px; } .career-sequence { font-size: 36px; } }
+@media (max-width: 1023px) { .career-container { padding-inline: var(--gutter-home); } .career-entry { column-gap: 10%; } .career-identity { gap: 16px; } .career-sequence { font-size: 36px; } }
 @media (max-width: 900px) {
   .career-header { margin-bottom: 72px; }
   .career-rail { left: 0; }
@@ -26,12 +23,11 @@
   .career-description { max-width: 42rem; }
 }
 @media (max-width: 767px) {
-  .career-container { padding-inline: 20px; }
+  .career-container { padding-inline: var(--gutter-home); }
   .career-header { margin-bottom: 64px; }
   .career-entry { padding-left: 28px; }
   .career-role h3 { font-size: 27px; }
   .career-sequence { font-size: 32px; }
   .career-description h4 { font-size: 17px; }
-  .career-footer { margin-top: 64px; }
 }
-@media (prefers-reduced-motion: reduce) { .career-tree { --career-progress: 1 !important; } .career-entry { opacity: 1 !important; transform: none !important; } .career-footer a { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .career-tree { --career-progress: 1 !important; } .career-entry { opacity: 1 !important; transform: none !important; } }

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import gsap from 'gsap'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { useReducedMotion } from '../hooks/useReducedMotion'
 import Badge from './Badge'
 
 /* ============================================================
@@ -35,12 +36,13 @@ const PARTICLES = [
 type Props = { active: boolean; bgSrc: string | null }
 
 export default function Hero({ active, bgSrc }: Props) {
+  const reduceMotion = useReducedMotion()
   const rootRef = useRef<HTMLElement>(null)
   const playedRef = useRef(false)
 
   /* 鼠标视差：整层（照片 + 暗幕）一起位移，保证剪影窗不脱离屏幕 */
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (reduceMotion) return
     const root = rootRef.current
     const layer = root?.querySelector('.hero-p-bg')
     if (!root || !layer) return
@@ -56,12 +58,14 @@ export default function Hero({ active, bgSrc }: Props) {
       yTo(ny * -9)
     }
     root.addEventListener('mousemove', onMove)
-    return () => root.removeEventListener('mousemove', onMove)
-  }, [])
+    return () => { root.removeEventListener('mousemove', onMove); xTo.tween.kill(); yTo.tween.kill(); gsap.set(layer, { clearProps: 'transform' }) }
+  }, [reduceMotion])
 
   /* 入场编排：由 App 的 active（加载屏结束）触发，只播一次 */
   useEffect(() => {
-    if (!active || playedRef.current) return
+    if (!active) return
+    if (reduceMotion) return
+    if (playedRef.current) return
     playedRef.current = true
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -96,7 +100,7 @@ export default function Hero({ active, bgSrc }: Props) {
         )
     }, rootRef)
     return () => ctx.revert()
-  }, [active])
+  }, [active, reduceMotion])
 
   /* 滚动离场：背景微放大，内容上移淡出 */
   const { scrollYProgress } = useScroll({
@@ -115,7 +119,7 @@ export default function Hero({ active, bgSrc }: Props) {
       {/* ================= 背景层 ================= */}
       <div className="absolute inset-0" aria-hidden="true">
         {/* 滚动缩放 */}
-        <motion.div className="absolute inset-0" style={{ scale: bgScale }}>
+        <motion.div className="absolute inset-0" style={{ scale: reduceMotion ? 1 : bgScale }}>
           {/* 鼠标视差（整层统一） */}
           <div className="hero-p-bg absolute inset-0">
             {/* 入场层 */}
@@ -285,10 +289,10 @@ export default function Hero({ active, bgSrc }: Props) {
       </div>
 
       {/* ================= 内容层 ================= */}
-      <motion.div className="absolute inset-0 z-10" style={{ y: contentY, opacity: contentOpacity }}>
+      <motion.div className="absolute inset-0 z-10" style={reduceMotion ? { transform: 'none', opacity: 1 } : { y: contentY, opacity: contentOpacity }}>
         {/* 文字组：PORTFOLIO / 设计 / 未来，全部收在 1400px 版心内 */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="relative mx-auto h-full w-full max-w-[1400px] px-5 md:px-8">
+          <div className="relative mx-auto h-full w-full max-w-[var(--container-hero)] px-5 md:px-8">
             {/* PORTFOLIO：整站唯一一行，240px，描边，压在版心正中 */}
             <div
               className="absolute inset-x-0 top-1/2 flex justify-center overflow-hidden"
@@ -313,17 +317,17 @@ export default function Hero({ active, bgSrc }: Props) {
 
         {/* 顶栏：左引文 ｜ 右标签（1400 版心） */}
         <div className="absolute inset-x-0 top-0">
-          <div className="mx-auto flex max-w-[1400px] flex-col-reverse items-start gap-3 px-5 pt-[4.5rem] md:flex-row md:items-start md:justify-between md:gap-5 md:px-8 md:pt-28">
+          <div className="mx-auto flex max-w-[var(--container-hero)] flex-col-reverse items-start gap-3 px-5 pt-[4.5rem] md:flex-row md:items-start md:justify-between md:gap-5 md:px-8 md:pt-28">
             <p className="hero-quote w-full min-w-0 max-w-full break-words text-[11px] leading-[1.85] tracking-[0.03em] text-muted md:w-auto md:text-[13px]">
               / 每个音符都带着一种固执的确信：<br className="md:hidden" />自己绝不会是跑调的那一个。 /
             </p>
-            <Badge className="hero-ui flex-none self-end md:self-auto">Visual UI Design 2026</Badge>
+            <Badge className="hero-ui flex-none self-end text-[12px] md:self-auto">Visual UI Design 2026</Badge>
           </div>
         </div>
 
         {/* 底栏：BASE / STATUS（1400 版心） */}
         <div className="absolute inset-x-0 bottom-0">
-          <div className="hero-ui mx-auto flex max-w-[1400px] flex-wrap items-end gap-x-12 gap-y-4 px-5 pb-8 md:gap-x-16 md:px-8 md:pb-10">
+          <div className="hero-ui mx-auto flex max-w-[var(--container-hero)] flex-wrap items-end gap-x-12 gap-y-4 px-5 pb-8 md:gap-x-16 md:px-8 md:pb-10">
             <div>
               <p className="text-[9px] uppercase tracking-[0.3em] text-muted">BASE</p>
               <p className="mt-1.5 text-[13px] text-muted">［城市 · 中国］</p>

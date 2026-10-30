@@ -1,54 +1,50 @@
-.home-about { --profile-tool-radius: 4px; }
-.home-about-container { max-width: 1536px; padding: 0 64px; margin: 0 auto; }
-.home-about-layout { display: grid; grid-template-columns: 420px minmax(0, 1fr); align-items: start; gap: 90px; margin: 96px 0 0 90px; }
-.home-about-portrait { width: 100%; aspect-ratio: 35 / 46; background: rgb(var(--surface-light-rgb)); border-radius: var(--radius-rect); }
-.home-about-details { min-width: 0; }
-.home-about-fields { display: flex; flex-direction: column; gap: 24px; margin-top: 24px; }
-.home-about-field-row { display: flex; flex-wrap: wrap; column-gap: 36px; row-gap: 24px; align-items: start; }
+.home-about { --profile-row-gap: 32px; }
+.home-about-container { max-width: var(--container-home); padding: 0 var(--gutter-home); margin: 0 auto; }
+.home-about-layout { display: grid; grid-template-columns: 528px minmax(0, 1fr); align-items: start; gap: 72px; margin-top: 96px; }
+.home-about-profile-card { container: profile-card / inline-size; min-width: 0; padding: 24px 32px 32px; border: 1px solid rgb(var(--paper-rgb) / .15); border-radius: var(--radius-rect); background: rgb(var(--paper-rgb) / .08); }
+.home-about-profile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.home-about-portrait { flex: none; width: 80px; height: 80px; border-radius: 50%; background: rgb(var(--surface-light-rgb)); }
+/* Reuse the shared glow without replacing the profile card's original paper material. */
+.home-about-profile-card.pointer-glow { height: auto; border: 1px solid rgb(var(--paper-rgb) / .15); border-radius: var(--radius-rect); background: rgb(var(--paper-rgb) / .08); box-shadow: none; }
+.home-about-profile-card.pointer-glow > * { position: relative; z-index: 1; }
+.home-about-name { margin-top: 24px; font-size: 28px; font-weight: 500; line-height: 1.2; color: hsl(var(--text)); overflow-wrap: anywhere; }
+.home-about-position { margin-top: 12px; font-size: 16px; line-height: 1.5; color: var(--muted); overflow-wrap: anywhere; }
+.home-about-info { margin-top: 24px; padding-top: 24px; border-top: 1px solid rgb(var(--paper-rgb) / .1); }
+.home-about-fields { display: flex; flex-direction: column; row-gap: var(--profile-row-gap); }
+.home-about-field-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+.home-about-field-row--triple { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.home-about-field-row--double { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .home-about-field { min-width: 0; max-width: 100%; }
-.home-about-field--wide { flex: 1; min-width: min(100%, 200px); }
-.home-about-field dt { margin-bottom: 5px; font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--muted); }
-.home-about-field dd { font-size: clamp(17px, 1.15vw, 22px); line-height: 1.55; color: hsl(var(--text)); overflow-wrap: anywhere; }
-.home-about-skills { margin-top: 38px; }
-.home-about-skill-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr); gap: 26px 32px; margin-top: 24px; }
-.home-about-skill { display: flex; align-items: center; gap: 20px; min-width: 0; }
-.home-about-skill-label { flex: 1; min-width: 0; }
-.home-about-skill-label h4 { font-family: var(--font-mono); font-size: 14px; font-weight: 400; line-height: 1.6; letter-spacing: .02em; color: var(--muted); white-space: nowrap; }
-.home-about-skill-label p { margin-top: 4px; font-size: 20px; line-height: 1.5; color: hsl(var(--text)); }
-.home-about-skill-divider { color: var(--muted); font-size: 16px; font-weight: 300; }
-.home-about-tools { display: flex; flex: none; align-items: center; gap: 16px; }
-.home-about-tool { display: grid; place-items: center; width: 36px; height: 36px; padding: 3px; border: 1px solid rgb(var(--paper-rgb) / .6); border-radius: var(--profile-tool-radius); }
-.home-about-tool img { display: block; width: 100%; height: 100%; object-fit: contain; }
-@media (min-width: 901px) and (max-width: 1599px) {
-  .home-about-layout { grid-template-columns: 360px minmax(0, 1fr); margin-left: 40px; gap: 56px; }
+.home-about-field dt { margin-bottom: 5px; font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--secondary); }
+.home-about-field dd { font-size: 16px; line-height: 1.55; color: hsl(var(--text)); overflow-wrap: anywhere; }
+.home-about-keywords { display: flex; flex-wrap: wrap; gap: 16px; }
+.home-about-details { min-width: 0; }
+.home-about-bio-heading { font-size: 16px; font-weight: 500; line-height: 1.5; color: var(--secondary); }
+.home-about-bio .type-body { margin-top: 16px; color: hsl(var(--text)); }
+.home-about-bio p + p { margin-top: 12px; }
+.home-about-skills { margin-top: 32px; }
+.home-about-skills > h3 { font-family: var(--font-mono); font-size: 14px; font-weight: 500; line-height: 1.5; letter-spacing: .02em; color: var(--secondary); }
+.home-about-skill-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 16px; }
+.home-about-tool { display: flex; align-items: center; }
+.home-about-tool img { display: block; flex: none; width: 36px; height: 36px; object-fit: contain; }
+.home-about-tool-name { min-width: 0; font-size: 16px; font-weight: 500; line-height: 1.5; color: hsl(var(--text)); overflow-wrap: anywhere; }
+@container profile-card (max-width: 380px) {
+  .home-about-field-row--triple { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 1399px) { .home-about-skill-grid { grid-template-columns: minmax(0, 1fr); max-width: 470px; } }
-@media (max-width: 1199px) {
-  .home-about-layout { grid-template-columns: minmax(240px, .8fr) minmax(0, 1.2fr); margin-left: 0; gap: 48px; }
-  .home-about-field-row { column-gap: 24px; }
+@media (max-width: 1399px) {
+  .home-about-layout { grid-template-columns: minmax(320px, .9fr) minmax(0, 1.3fr); gap: 48px; }
+  .home-about-skill-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 1023px) { .home-about-container { padding-inline: 40px; } }
 @media (max-width: 900px) {
   .home-about-layout { grid-template-columns: minmax(0, 1fr); margin-top: 56px; gap: 40px; }
-  .home-about-portrait { max-width: 360px; justify-self: center; }
-  .home-about-skill-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
-  .home-about-skill { flex-wrap: wrap; gap: 16px; }
-  .home-about-skill-label { flex-basis: calc(100% - 32px); }
-  .home-about-tools { flex-wrap: wrap; }
+  .home-about-profile-card { width: 100%; }
 }
-@media (max-width: 767px) {
-  .home-about-container { padding-inline: 20px; }
+@media (max-width: 599px) {
   .home-about-layout { margin-top: 40px; }
-  .home-about-portrait { max-width: 320px; }
-  .home-about-field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
-  .home-about-field--wide { grid-column: 1 / -1; }
-  .home-about-field dt { font-size: 12px; }
-  .home-about-skills { margin-top: 32px; }
-  .home-about-skill-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; }
-  .home-about-skill { flex-wrap: nowrap; gap: 16px; }
-  .home-about-skill-label { flex: 1; min-width: 108px; }
-  .home-about-skill-label h4 { font-size: 12px; }
-  .home-about-skill-label p { font-size: 18px; }
-  .home-about-tools { flex: 0 1 auto; min-width: 68px; gap: 8px; max-width: 148px; }
-  .home-about-tool { width: 30px; height: 30px; }
+  .home-about-profile-card { padding: 24px 20px 32px; }
+  .home-about-field-row--triple { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-about-skill-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}
+@media (max-width: 359px) {
+  .home-about-field-row { grid-template-columns: minmax(0, 1fr); }
 }

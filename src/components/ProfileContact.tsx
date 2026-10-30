@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { useReducedMotion } from '../hooks/useReducedMotion'
 import { Link } from 'react-router-dom'
 import { profileFields } from '../data/profile'
 

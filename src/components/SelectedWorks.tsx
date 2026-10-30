@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { useReducedMotion } from '../hooks/useReducedMotion'
 import PointerGlow from './PointerGlow'
+import WorkTag from './WorkTag'
 import { works } from '../data/works'
+import { useMotionTokens } from '../hooks/useMotionTokens'
 import './SelectedWorks.css'
 
 const DIRECTIONS: Record<string, string> = {
@@ -12,12 +15,13 @@ const DIRECTIONS: Record<string, string> = {
 
 export default function SelectedWorks() {
   const reduceMotion = useReducedMotion()
+  const tokens = useMotionTokens()
   const reveal = reduceMotion ? false : { opacity: 0, y: 24 }
-  const transition = { duration: reduceMotion ? 0 : .65, ease: [0.22, 1, 0.36, 1] as const }
+  const transition = reduceMotion ? { duration: 0 } : tokens.reveal
 
   return (
     <section id="work" aria-labelledby="selected-works-title" className="home-section selected-works relative bg-bg">
-      <div className="mx-auto max-w-[1536px] px-5 md:px-10 lg:px-16">
+      <div className="container-home">
         <motion.header className="selected-works-heading" initial={reveal} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={transition}>
           <span className="selected-works-chapter" aria-hidden="true">02</span>
           <div className="selected-works-heading-copy">
@@ -43,7 +47,7 @@ export default function SelectedWorks() {
                   </div>
                   <div className="selected-work-bottom">
                     <ul data-work-tags className="selected-work-tags" aria-label="作品标签">
-                      {work.tags.slice(0, 3).map(tag => <li key={tag}>{tag}</li>)}
+                      {work.tags.slice(0, 3).map(tag => <WorkTag as="li" key={tag}>{tag}</WorkTag>)}
                     </ul>
                     <span className="selected-work-arrow" aria-hidden="true">
                       <svg data-work-arrow viewBox="0 0 24 24" fill="none"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>

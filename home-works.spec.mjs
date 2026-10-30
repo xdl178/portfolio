@@ -29,7 +29,7 @@ try{
      assert.ok(tagBox.x+tagBox.width<=arrowBox.x+1,'wrapped tags never overlap the arrow')
    }
    assert.equal(await page.locator('nav[aria-label="主导航"] a[aria-label="返回首页"]').innerText(),'XD')
-    assert.equal(await page.locator('#home .chip.hero-ui').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(255, 255, 255, 0.1)')
+    assert.equal(await page.locator('#home .chip.hero-ui').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(255, 255, 255, 0.08)')
     const [a,b,c]=boxes
    if(width>=768){assert.ok(Math.abs(a.y-b.y)<2);assert.ok(b.x>a.x+a.width);assert.ok(c.y>a.y+a.height);assert.ok(Math.abs(c.width-(b.x+b.width-a.x))<2,'third card spans both columns')}
    else{assert.ok(b.y>a.y+a.height&&c.y>b.y+b.height);assert.ok(Math.abs(a.width-c.width)<2)}

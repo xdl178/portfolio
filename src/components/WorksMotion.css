@@ -21,3 +21,14 @@
   [data-work-detail] .group:hover [aria-hidden='true'] { transform: none; }
   .original-hint { opacity: 1; transform: none; }
 }
+
+.archive-cover-transition { transition-duration: var(--d-archive-cover); }
+.work-lightbox-content { --lightbox-inset: 20px; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 16px; height: calc(100dvh - var(--lightbox-inset) - var(--lightbox-inset)); min-height: 0; overflow-y: auto; }
+.work-lightbox-heading { min-width: 0; gap: 16px; }
+.work-lightbox-heading > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.work-lightbox-heading > button { flex: none; }
+.work-lightbox-image { display: block; align-self: center; width: 100%; height: 100%; min-height: 0; max-height: 72dvh; }
+.work-lightbox-toolbar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.work-lightbox-toolbar > * { min-width: 0; justify-content: center; }
+@media (min-width: 768px) { .work-lightbox-content { --lightbox-inset: 40px; } }
+@media (max-width: 639px) { .work-lightbox-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .work-lightbox-toolbar > a { grid-column: 1 / -1; grid-row: 2; } .work-lightbox-toolbar > button:last-child { grid-column: 2; grid-row: 1; } }

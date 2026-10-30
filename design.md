@@ -28,7 +28,7 @@
 由此推导三条不可动摇的视觉法则：
 
 1. **光来自深处** —— 页面亮度由「中心/远端的径向光晕」提供，不是靠把背景调亮。背景永远接近纯黑（`--bg`），发光靠 `radial-gradient` + 高光描边 + `blur` 光斑。
-2. **一切表面都是玻璃** —— 卡片、导航、按钮、弹窗统一使用 §4 的玻璃配方；没有纯色实心卡片。层级靠「模糊深度 + 边框亮度」表达，不靠重投影。
+2. **玻璃为主，语义材质为例外** —— 导航/浮层沿用§4玻璃配方；关于页能力/经历卡允许全局 `--surface-card-rgb` / `--surface-card-hover-rgb` 不透明材质，共用按钮允许描边、品牌蓝实心反馈及文字变体。不得另造私有灰色。层级不靠重投影。
 3. **品牌蓝是唯一的「活」色** —— `#2686ED` 代表可交互/在线/强调；深蓝只在**光晕和渐变尖端**出现，用量 < 5%，永不单独作为第二种功能色。
 
 ---
@@ -40,9 +40,10 @@
 | 用途 | Token / 格式 | 使用 |
 |---|---|---|
 | 页面/面板/主文字/普通描边 | `--bg` / `--bg-elev` / `--surface` / `--text` / `--stroke`，保留 HSL 分量 | `hsl(var(--token))`，对应 Tailwind 语义类 |
-| **所有副文本** | **`--muted: #BBC9DB`，完整 HEX** | **`text-muted` 或 `color:var(--muted)`，禁止再叠色彩 alpha** |
+| **普通副文本** | **`--muted: #BBC9DB`，完整 HEX** | **`text-muted` 或 `color:var(--muted)`，禁止再叠色彩 alpha** |
 | 品牌蓝 | `--brand-rgb: 38 134 237`；`--accent` 引用它，RGB 分量 | `rgb(var(--accent) / .5)`；`brand` / `accent` 共享精确 `#2686ED` |
 | 明/深/蓝白光效 | `--accent-strong-rgb` / `--accent-deep-rgb` / `--accent-soft-rgb` | RGB 包裹；不作为私有副文本颜色 |
+| 资料项标题 | `--secondary: #8692A3`，完整HEX | 首页dt使用此色及14px，dd为16px主文字；其余副文本保持muted |
 | 中性材质 | `--paper-rgb` / `--ink-rgb` | 透明玻璃/阴影；普通文字仍用主文字或 muted |
 | 浅底反色 | `--on-light-rgb` / `--surface-light-rgb` | `text-inverse-text` / `bg-surface-light`，保证占位内容反差 |
 
@@ -115,7 +116,7 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 
 ## 4. 玻璃材质（核心配方）
 
-全站唯一的表面语言。三档，禁止自创第四档。
+玻璃表面的三档配方；不透明能力/经历卡与图片材质是已批准的语义例外，来源见 COLOR-SYSTEM.md，不要求强行改成玻璃。
 
 | 档位 | 类 | 用途 |
 |---|---|---|
@@ -146,13 +147,13 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 ## 5. 圆角、描边、间距
 
 - **圆角体系（Shape Lock，唯一规则）**
-  - 交互件（按钮、标签、胶囊）：`9999px` 全圆
+  - 圆形/显式胶囊：全圆；普通矩形按钮默认12px，文字按钮仅保留下划线，不作为矩形容器。
   - 非圆形、非胶囊的矩形（卡片、面板、图片容器、输入框）：默认统一 `12px`，由全局 `--radius-rect` 驱动；使用 `rounded-card` / `rounded-panel` / `rounded-field`。
   - 输入 / 小徽章：`12px`
-  - 唯一明确的局部例外：首页精选作品标签为 `4px`，只在该组件 CSS 覆盖，不改全局 token；其余组件不得自创圆角。
+  - 明确局部例外：首页作品标签/箭头及软件标识框为4px；只在组件覆盖，不改全局token，其余矩形不得自创圆角。
 - **描边**：基础玻璃边框优先 1px 半透明白（`rgb(255 255 255 / .10)`）；PointerGlow 指针局部高光为 `2px` 挖空描边（见 §7.3）；分隔线用 `--stroke`。禁止给每个列表行都加 `border-y`；长列表用分组或卡片化。
-- **间距标尺**：`4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96 / 128`（px）。区块垂直间距 `py-24 md:py-32`，大屏 `py-40`。
-- **容器**：`max-w-[1240px] mx-auto px-6 md:px-10 lg:px-16`。宽画廊可用 `max-w-[1440px]`。
+- **间距标尺**：`4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96 / 128`（px）。当前首页主区块仅底部、全局页脚上下均使用 `var(--section-space)`（默认128px）；内页按章节保留独立垂直编排。
+- **容器**：root集中定义 `--container-home:1536px`（首页/页脚）、`--container-hero:1400px`、`--container-page:1380px`（档案/详情/关于）；`--gutter-home` 随断点为64/40/20px。不同版心是语义变体；重复侧边距不再散写。
 - **首屏**：`min-h-[100svh]`（禁止 `h-screen`，避免移动端地址栏跳动）；采用「巨字 + 品牌字」构图（见 §7.0），信息锚定**底部信息栏**，不做居中堆叠。
 - 高变差（variance ≥ 8）的栅格在 `< 768px` **必须**塌陷为单列（`grid-cols-1` + `w-full`）。
 
@@ -174,7 +175,7 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 | `--d-slow` | 400ms | 面板打开、内容揭示 |
 | `--d-very-slow` | 500ms | 强调时刻（徽章出现、文本揭示） |
 
-**铁律：进慢出快**（打开 250ms、关闭 150ms）。
+基础控件采用进慢出快；共享语义时长另集中于root：揭示650ms、详情700ms、章节900ms、路由550ms、外壳800ms、图片700ms/档案900ms。CSS→Motion通过 `useMotionTokens` 转换，Tailwind常用duration/ease及循环读同一root。Hero独特分镜、局部错开和spring物理参数保留用途明确的编排值。
 
 ### 6.2 缓动
 
@@ -203,7 +204,7 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 - **`prefers-reduced-motion: reduce` 全量降级**：入场直呈终态、无限循环暂停、视差关闭、跑马灯静止、`scroll-behavior: auto`。
 - ScrollTrigger 用规范骨架：`start: 'top top'` + `pin: true` + 正确 `scrub`；`useEffect` 必须有 cleanup（`ctx.revert()`）。
 - 只动 `transform` 与 `opacity`。
-- **跑马灯全站最多 1 处**（本版放在页脚）。
+- **跑马灯全站最多 1 处**（本版未启用，页脚旧文字带已移除）。
 
 ---
 
@@ -214,7 +215,7 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 - **概念**：工作台照片**保留原色**，只压一层 40% 透明的品牌蓝；一行 240px 的描边 `PORTFOLIO` 横贯版心正中作肌理，纯白「设计」压左上、蓝渐变「未来」压右下，三块文字形成一条对角张力线。
 - **版心纪律（硬性）**：首屏**所有文字**（三块巨字 + 左上引文 + 右上标签 + 左下 BASE/STATUS + 居中 SCROLL）都收进 `max-w-[1400px]` 版心；「设计」「未来」在版心内左右各缩进 `12%`（桌面 `left-[12%] / right-[12%]`），纵向分别从上下边缘内收 `30%`（`top-[30%] / bottom-[30%]`），两块字关于中线对称。禁止用 `vw` 从视口边缘起排。
 - **字号纪律**：`PORTFOLIO` 桌面固定 `min(16.7vw, 15rem)`（= 1440 下 240px），思源黑体下实测宽 1374px，落在 1400 版心内；移动端 `13.5vw`。字距 `-0.01em`（换思源黑体后拉丁更宽，需负字距收回到版心）。
-- **只出现一次**：`PORTFOLIO` 全站仅此一处。禁止重复多行描边（曾用 `.repeat(3)` 三行，视觉噪音过大，已废弃）。
+- **首屏只出现一次**：首屏不重复多行描边PORTFOLIO；全局页脚采用居中五层CTA，不再重复PORTFOLIO巨字。
 - **字重**：三块统一 `font-weight: 800`（`font-extrabold`；思源可变字体支持 250–900，800 为真字重）。
 - **背景调色（保留原色，只染一层）**：图片原样铺底，其上叠 `<div class="absolute inset-0 bg-brand/40" />`。**禁止**整图 `mix-blend-luminosity` 单色化、禁止 `hue-rotate`——那会把台灯暖光一起吃掉。
 - **背景尺寸（强制铺满）**：图片 `absolute inset-0 h-full w-full object-cover`，**必须铺满整屏**，禁止留边、禁止做「小尺寸主图 + 模糊底衬」的画中画——那会让 40% 蓝色色层看起来没盖住图（图外露出的底衬与图内色差肉眼可见）。
@@ -247,30 +248,47 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 - 右侧 CTA：「联系我们」（mailto），hover 浮现渐变描边。
 
 ### 7.2 按钮
-- 主按钮：品牌蓝实底 + 深色文字（保证 4.5:1 对比），hover 微放大 + 亮度提升。
-- 次按钮：玻璃 + 1px 描边，hover 边框变品牌蓝。
-- 文字按钮：`--muted` → `--accent`。
+- 统一使用 ActionButton；button/a/Router Link保持原生语义，outline/ghost/text为变体，不再维护第二套btn样式。
+- 默认描边到品牌蓝实心，深色反色文字；精细指针下图标左右换位、文字左移，移出反向恢复，时长400ms读 `--d-slow` / `--e-button`。不改变按钮宽度。
+- ghost保留玻璃底，text保留下划线与右侧图标，不强制文字操作变成实心大按钮。尺寸default/compact/regular，默认矩形12px，显式pill保留胶囊；禁用、焦点、触控和reduce统一降级。
 - **标签不超过 4 个汉字（或 2 个英文词）**，桌面禁止换行；同页同义 CTA 只保留一种措辞（全站统一「联系我们」）。
 
 ### 7.2.1 首页关于我 `HomeAbout`
-- 新第二屏，位于 Hero 后。沿用01 / 关于我 ABOUT章节头；1920px时左侧420×552竖向浅色照片占位、右侧基本信息与专业技能，900px及以下上下排列。
-- 七项资料从 [profile.ts](<src/data/profile.ts>) 回填；照片和未提供资料保留占位，不照抄参考图中的个人信息。技能分界面/视觉/动效三组，软件标识为本地原色图像，来源见[说明](<public/images/tools/SOURCES.md>)。
-- 默认照片圆角12px；小软件标识框4px为商标展示局部例外。副文本读muted，不新增私有灰色。
-- “基本信息”“专业技能”和首屏“Visual UI Design 2026”统一使用全局 [Badge](<src/components/Badge.tsx>)：11px无衬线文字、0.08em字距、6px品牌蓝圆点、全圆角、白色10%背景、20%边框、上下0.35rem/左右0.85rem内边距。默认span，分组标题使用 `as="h3"` 保留语义；调用方只提供定位类，不再维护局部胶囊尺寸或发光圆点。
+- 位于Hero后，保留01 / 关于我 ABOUT章节头。按用户图片改为左侧资料卡、右侧基本介绍与Design Tools；1400px起资料卡528px/间隔72px，中屏弹性双列/间隔48px，900px及以下上下排列。版心与章节底留白不变。
+- 资料卡沿用全局12px圆角，80px圆形照片占位、基本信息胶囊、局部28px姓名标题（不改全局type-h3）、其下margin-top12px的岗位/任职占位及七项原资料；桌面和手机底部padding均32px。姓名、履历和联系方式不复制参考人物；右侧简介从 [profile.ts](<src/data/profile.ts>) 复用原AboutPage两段介绍。用户最新指定右侧基本信息标题为--secondary、其下type-body为hsl(var(--text))；仅此处覆盖通用type-body的muted配色，不改字号。
+- 原资料dt保持14px/secondary，dd保持16px/主文字；新卡片内取消旧40px左缩进与48px横距，改为24px列距、32px行组距、四组3/2/1/1布局。资料卡内容宽≤380px时首组三列改两列；手机≤599px为两列，<360px单列，防止占位内容孤字换行。
+- 八个原软件均保留本地原色图像与正确全称，来源见[说明](<public/images/tools/SOURCES.md>)；改为36px图标＋16px文字的Design Tools列表，卡片padding12px/gap12px/用户指定8px圆角（其余矩形仍遵循全局12px）。1400px起三列、600–1399px两列、<600px单列。参考 [Khanittha](<https://portfolio-khanitthahemsamak.vercel.app/>)：仅背景paper4%→8%、边框paper10%→25%的300ms颜色反馈，无悬停位移/阴影/光斑。首次入场32px上移归位、560ms、逐项60ms，由root时长与反馈曲线读取；触屏无粘滞hover，减少动态效果静态直呈。
+- 首屏、资料卡、页脚及作品档案/作品详情/关于页的展示胶囊统一使用全局 [Badge](<src/components/Badge.tsx>)：**默认14px（首页Visual UI Design 2026为12px）、line-height1.5、上下6px/左右16px、gap8px**，0.08em字距、6px品牌蓝圆点、全圆角。默认paper8%背景/20%边框，fine-pointer hover为paper15%背景＋透明边框（保留1px几何尺寸），200ms `--e-feedback:cubic-bezier(.16,1,.3,1)`；无蓝色悬停描边、位移/缩放/阴影。重新实测参考站证明此处accent为深灰而非本站品牌蓝，按用户要求采用描边淡出；不复制其技能事实。图片上的胶囊使用组件共享surface="image"，ink70%→78%背景确保亮图可读，不在页面散写样式。筛选使用as="button"保留type/aria-pressed/键盘交互；选中态品牌背景12%→16%、品牌文字，确保14px对比度≥4.5。其余展示仍span/h3，导航/返回/灯箱行动按钮保留各自原生语义及ActionButton组件，不伪装成标签。减少动态效果取消过渡，触屏不触发hover。
+- 内页审核同步修正：详情返回链接复用ActionButton，404/未找到作品使用container-page响应式边距；封面装饰序号用100%主文字色，保留图像mix-blend-difference作为图像注记例外，不用文字透明度。--font-mono中具体等宽字体后、通用字体前补齐嵌入思源黑体回退，拉丁元数据保持等宽，中文实际渲染使用内嵌字体。内页编辑式大标题与上下留白为既有语义变体，不强改为首页尺寸。
+
+- 首页资料卡的“能力关键词”从profileFields原三项拆成全局WorkTag，dd保留原生说明语义并以16px gap自然换行。整张原生motion.article通过共享usePointerGlow复用鼠标渐变发光描边，不增加包装；12px圆角、paper8%底色/15%描边、原内边距和32px底留白保持不变，直接内容层在光晕之上；触屏及减少动态效果不触发光效。
+
+### 7.2.2 全局信息卡与作品档案排版
+- [SurfaceCard](<src/components/SurfaceCard.tsx>) 与[共享样式](<src/components/SurfaceCard.css>) 从首页Design Tools抽取，复用于首页工具、作品/关于页统计及作品档案Role/Year信息卡：8px圆角、12px内边距、paper4%底色/10%描边，fine-pointer hover为8%/25%，300ms反馈，基础工具/统计卡不增加光斑/位移/阴影。原有信息卡使用glow=true，在同一个原生根节点恢复PointerGlow的鼠标跟随渐变发光描边，不增加嵌套包装；保留280px径向范围、2px挖空遮罩及边缘距离反馈，触屏/减少动态效果停用。
+- 默认首次入场为32px上移归位、560ms、逐项60ms，读取既有root时长/反馈曲线；显式初始style避免路由AnimatePresence initial=false吞掉首次入场。减少动态效果静态直呈，触屏无假hover。已由父级项目容器入场的信息卡使用reveal=false，避免重复位移；as="li"保留工具列表原生语义，其余普通div。
+- 作品档案h1取消分行，保持单行且整体居中，移除“档案”后的句号及右上角The Archive说明。该页footer以外可见字号至少12px（含导航XD）；N·01和统计说明均12px，数字保留既有大字号。统计标记独占顶行靠右，窄屏说明均衡换行，避免与数字重叠；footer字号及影像外框12px圆角不随信息卡例外改变。
+
+- 作品方向筛选保持原生Badge按钮组，组外无背景与描边（含减少透明效果模式）、padding0/gap8；[WorksFilters](<src/pages/WorksFilters.css>) 仅作用于该筛选，默认muted文字/透明底，选中为主文字色＋品牌蓝渐变底板/浅色内沿。底板由共享layoutId跟随当前按钮，沿用导航380/32物理spring；减少动态效果直接切换。桌面横排、手机2×2，按钮仍14px/6×16px/gap8px，aria-pressed、键盘Enter/Space、live count与筛选结果保持原生；结果容器以grid gap80/128代替space-y，移除父/行双层layout projection与popLayout退出节点保留，防止绝对定位退出项仍触发兄弟margin。首次页面滚动入场保留显式24px初始transform（适配route initial=false），任何筛选后直接提交最终零位移，避免重复入场回弹；RAF测试逐帧验证普通/快速交替筛选的首行相对位置与每行文档坐标。其他chip仍为默认8%→15%悬停。
 
 ### 7.3 首页精选作品 `SelectedWorks`
 - 第三屏采用参考图布局：`02 / 精选作品` 紧凑标题与 EXHIBIT 装饰水印；768px 起两列，第三张通栏，手机改为三张单列。
 - 上排卡片比例约 1.6:1，下排约 2.6:1；1408px 内容宽度对应 1920px 桌面，保留现有作品原图和整卡详情链接。
 - 图片铺满 12px 圆角容器；顶部叠序号/英文方向、细分隔线和作品标题，底部叠前三个中性玻璃标签及右上箭头。不再把摘要与年份统计排到图片下方。
 - 样式在 [SelectedWorks.css](<src/components/SelectedWorks.css>)，不改共用 SectionHeader 或其他屏。方向/标签使用 muted，标题和展示序号使用主文字。
-- 标签在所有断点保持 `14px` 字号、`4px` 圆角（全局 `12px` 的明确局部例外）；每个标签与箭头由局部共享 CSS 变量统一为 `32px` 高；标签左右 padding 与标签间 gap 均为 `16px`，所有断点一致。窄屏标签允许换行，箭头与标签区底部对齐。
+- 作品多标签统一使用全局 [WorkTag](<src/components/WorkTag.tsx>) 与其[样式](<src/components/WorkTag.css>)：所有断点保持14px字号、32px高、4px圆角、左右padding16px、paper8%底色、paper24%描边与muted文字，无品牌圆点；标签间gap16px。fine-pointer悬停与chip一致：背景paper8%→15%、描边淡出至透明，200ms反馈曲线，无自身位移；减少透明度偏好保留实色底。首页用as="li"保留直接列表项，档案页保留li包裹和既有“# ”内容，详情页保留dd内普通span。窄屏自然换行，箭头独立保持32px高并与标签区底部对齐；不再在SelectedWorks散写标签外观。状态/年份/分类和筛选仍用Badge，两者语义不同。
 - hover 轻微放大到 1.025，沿用 PointerGlow 精确局部描边：鼠标实际坐标、`280px` 径向范围、`2px` 挖空遮罩，边缘阈值/除数 `28 / 48`，衰减在 `72%` 处为 `.4`，不用中心角度近似。触控不依赖指针高光，减少动态效果时禁用位移与微缩放。
 
 ### 7.3.1 第四屏经历光线树 `Practice`
-- 标题与精选作品屏共用章节头样式：左对齐 `03 / 工作经验`（经验为品牌蓝），背后叠 `EXPERIENCE`。首页五屏外层只保留底部128px padding，顶部和左右为0；内层版心不变，首屏保持100svh画布再加底部留白。
+- 标题与精选作品屏共用章节头样式：左对齐 `03 / 工作经验`（经验为品牌蓝），背后叠 `EXPERIENCE`。首页四个主区块外层只保留底部128px padding，顶部和左右为0；内层版心不变，首屏保持100svh画布再加底部留白。
 - 参考 [Redoyanul Haque](<https://www.redoyanulhaque.me/>) 的 Career & Experience：中轴3px渐变光线与10px发光末端随滚动增长/回退，桌面双侧信息，900px及以下左轴堆叠；不 pin、不使用嵌套滚动。
 - 继续使用三个现有项目，不虚构任职/年份。光色来自全局品牌蓝，副文本为 `--muted`；减少动态效果时完整静态呈现。
 - 全局增加独立的左上/右下固定视口光晕，body portal、pointer-events:none；不替代鼠标光晕，不影响前两屏布局。实现与验证见 [CAREER-HANDOVER.md](<CAREER-HANDOVER.md>)。
+
+### 7.3.2 关于我内页 `AboutPage`
+- 按用户指定的portfolio-test实际About路由迁移内容、功能及模块拓扑，使用当前深色品牌蓝/Source Han Sans/全局版心，不复制参考站粗野红色、贴纸、撕纸与硬偏移阴影。指定参考页的两段介绍、四项05+/03/02/14+概览、宣言、五项奖项、四项优势及16条要点、联系方式/六项资料归入独立[about数据](<src/data/about.ts>)；不改全局profile、首页及footer的占位资料，未另造履历。
+- [AboutPage](<src/pages/AboutPage.tsx>) 与[局部样式](<src/pages/AboutPage.css>) 使用与WorksPage一致的页顶128/160px、14px Designer胶囊、单行居中h1、clamp(2.8rem,11vw,8.4rem)/1.04/-0.05em、mt40、12列7/5导读布局；右侧参考概览为2×2共享统计卡。正文下依次为个人宣言、奖项、优势、联系，不再保留旧侧栏资料和经历光线模块。
+- 宣言/五奖项/四优势/联系卡复用8px SurfaceCard与可选原鼠标渐变发光描边，奖项等级复用WorkTag、Honored与Statement复用默认14px Badge；普通元信息须命名class，不能用宽泛span选择器覆盖胶囊。奖项桌面3列/平板2列/手机1列；[AboutCapabilities](<src/components/AboutCapabilities.tsx>) 以参考四项优势替换旧四行，使用2列/1列原生ul>li，保留完整摘要及要点，不伪装导航。
+- 联系区域桌面7/5双栏、窄屏单列，左侧介绍/原生Router作品入口/地点与到岗时间，右侧整卡原生mailto/tel及原生dl资料组；当前文字联系动作继续共享scrollToContact，保持footer-channels焦点。条目入场统一SurfaceCard560ms/32px/stagger60ms，减少动态效果静态直呈，触屏禁用指针光效。章节留白读取--section-space，元信息至少12px，Body14/16/18分层。
 
 ### 7.4 能力卡 `CapabilityCard`
 - 玻璃卡 + 图标（线性图标，统一 `stroke-width: 1.5`）+ 中文能力名 + 英文副标 + 一行说明。
@@ -321,14 +339,14 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 
 | 路由 | 页面组件 | 内容 |
 |---|---|---|
-| `/` | `HomePage` | Hero 巨字 → 精选作品（上二下一铺图卡片，跳详情）→ 项目经验 → 影像实验室 |
+| `/` | `HomePage` | Hero 巨字 → 关于我 → 精选作品（上二下一铺图卡片，跳详情）→ 工作经验 → 全局居中CTA页脚 |
 | `/works` | `WorksPage` | 作品档案馆：巨字刊头 + 统计卡 + 分类筛选 + 不对称大卡（封面 7 列 / 信息 5 列奇偶交替） |
 | `/works/:id` | `WorkDetailPage` | 面包屑 → 头牌（分类章 + 巨字 + 元数据 4 卡）→ 设计理念 → 页面陈列 → 原稿（灯箱）→ 相关作品 |
-| `/about` | `AboutPage` | 巨字刊头 → 创作理念 + 能力网格 → 经历时间线 |
+| `/about` | `AboutPage` | 作品页同规范刊头 → 介绍/四项概览 → 个人宣言 → 五项奖项 → 四项优势 → 联系方式/个人资料 |
 
 **数据层**：`src/data/works.ts` 是唯一作品数据源（`works / categories / getWorkById / getRelatedWorks`），字段与 portfolio-test 对齐（`serial / pageImages / originalImages / concept / details`）。
 
-**跳转逻辑**：导航与页脚快捷链接均为 `Link` 路由跳转（`首页 / 作品 / 关于`），active 由 `useLocation().pathname` 判定（`/` 精确，其余 `startsWith`）；作品卡 → `/works/:id`；CTA「联系我们」全站统一 mailto。
+**跳转逻辑**：导航与页脚快捷链接均为 `Link` 路由跳转（`首页 / 作品 / 关于`），active 由 `useLocation().pathname` 判定（`/` 精确，其余 `startsWith`）；作品卡 → `/works/:id`；联系入口统一滚动并聚焦全局页脚命名区域 `section#footer-channels`（tabIndex=-1），不改变当前路由；联系通道按用户最新要求为可选择占位文本，无链接/禁用状态/通道顶部分隔/未配置说明，不使用参考个人邮箱；回顶为右下44px圆形，滚动>500px显示、正常平滑/减少动态即时滚动。新页脚按 [Khanittha参考站](<https://portfolio-khanitthahemsamak.vercel.app/>) 采用居中五层CTA，无外层圆角卡片：方向胶囊、用户指定英文标题与说明、原有四个滚动箭头导航、Email/Phone/Behance三项联系网格（桌面三列，700px及以下单列）。沿用全局type-h2/type-body、品牌蓝、精确muted、版心/侧边距与上下128px留白；保留版权和悬浮回顶，移除旧巨字/身份说明/跑马灯，详见 [FOOTER-HANDOVER.md](<FOOTER-HANDOVER.md>)。
 
 **滚动纪律（防 StrictMode 坑）**：锁滚动只写 `hidden`，解锁只写 `''`，**禁止"保存旧值再恢复"**（StrictMode 二次执行会把 `hidden` 存为旧值，页面永久锁死、鼠标滚轮失效）。
 
@@ -345,7 +363,7 @@ var(--grad-accent) /* :root 集中定义，勿在组件重复色号 */
 - [ ] 章节 eyebrow ≤ 2 处，无分栏式章节头
 - [ ] 首屏视口内完整可见（标题 ≤ 2 行、副文案 ≤ 20 字、CTA 无需滚动）
 - [ ] 导航桌面单行、高度 ≤ 72px
-- [ ] 跑马灯全站 1 处
+- [ ] 跑马灯全站至多1处（本版未启用）
 - [ ] 每个动画都有理由，`prefers-reduced-motion` 全量降级
 - [ ] 无 `window.addEventListener('scroll')`，GSAP/Motion 不操作同一元素
 - [ ] 玻璃材质三档内，`reduced-transparency` 有降级

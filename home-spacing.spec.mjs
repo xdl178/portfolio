@@ -11,7 +11,7 @@ try{
    assert.equal(await page.locator('#practice .selected-works-exhibit').innerText(),'EXPERIENCE')
    assert.equal(await page.locator('#practice .selected-works-chapter').innerText(),'03')
    const paddings=await page.locator('main section[id]').evaluateAll(nodes=>nodes.map(el=>({id:el.id,padding:[getComputedStyle(el).paddingTop,getComputedStyle(el).paddingRight,getComputedStyle(el).paddingBottom,getComputedStyle(el).paddingLeft]})))
-   assert.equal(paddings.length,5)
+   assert.equal(paddings.length,4)
    for(const item of paddings)assert.deepEqual(item.padding,['0px','0px','128px','0px'],item.id)
    const headings=await page.locator('#work .selected-works-heading,#practice .selected-works-heading').evaluateAll(nodes=>nodes.map(el=>({x:el.getBoundingClientRect().x,size:getComputedStyle(el.querySelector('h2')).fontSize,align:getComputedStyle(el).alignItems})))
    assert.equal(headings.length,2);assert.deepEqual(headings[0],headings[1])

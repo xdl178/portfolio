@@ -1,0 +1,18 @@
+/* The archive filter is a native button group, not a second Badge variant. */
+.works-filter-tabs { display: flex; flex-wrap: wrap; gap: 8px; width: fit-content; max-width: 100%; margin: 36px 0; padding: 0; border: 0; background: transparent; isolation: isolate; }
+.works-filter-tabs .works-filter-tab { position: relative; isolation: isolate; background: transparent; border-color: transparent; color: var(--muted); transition: color var(--d-hover) var(--e-feedback), background-color var(--d-hover) var(--e-feedback); }
+.works-filter-tabs .works-filter-tab[aria-pressed='true'] { color: hsl(var(--text)); background: transparent; border-color: transparent; }
+.works-filter-tab > :first-child, .works-filter-label { position: relative; z-index: 1; }
+.works-filter-tabs .works-filter-indicator { position: absolute; inset: -1px; z-index: 0; pointer-events: none; border: 1px solid rgb(var(--paper-rgb) / .18); border-radius: inherit; background: linear-gradient(135deg, rgb(var(--brand-rgb) / .3), rgb(var(--accent-deep-rgb) / .18)); box-shadow: inset 0 1px 0 rgb(var(--paper-rgb) / .12), 0 4px 12px rgb(var(--ink-rgb) / .16); }
+@media (hover: hover) and (pointer: fine) {
+  .works-filter-tabs .works-filter-tab:not([aria-pressed='true']):hover { color: hsl(var(--text)); background: rgb(var(--paper-rgb) / .06); border-color: transparent; }
+  .works-filter-tabs .works-filter-tab[aria-pressed='true']:hover { color: hsl(var(--text)); background: transparent; border-color: transparent; }
+}
+@media (max-width: 599px) {
+  .works-filter-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .works-filter-tabs .works-filter-tab { justify-content: center; }
+}
+/* Container spacing is independent of article presence and reveal transforms. */
+.works-results { display: grid; row-gap: 80px; }
+@media (min-width: 768px) { .works-results { row-gap: 128px; } }
+@media (prefers-reduced-transparency: reduce) { .works-filter-tabs { background: transparent; } }

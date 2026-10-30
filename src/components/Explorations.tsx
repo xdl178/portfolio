@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
+import ActionButton from './ActionButton'
 
 /* 影像实验室：手风琴画廊（对齐 portfolio-test 的 AccordionGallery 版式）
    桌面 → 三块横向面板，悬停 / 聚焦时该块变宽；移动端 → 纵向堆叠
@@ -49,7 +50,7 @@ export default function Explorations() {
               type="button"
               onClick={() => setActive(i)}
               aria-label={`放大查看${item.title}`}
-              className="group relative flex flex-none flex-col overflow-hidden rounded-card border border-paper/10 bg-surface text-left transition-[flex-grow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent/40 focus-visible:border-accent/60 md:min-w-0 md:flex-1 md:grow md:hover:grow-[1.8] md:focus-visible:grow-[1.8]"
+              className="group relative flex flex-none flex-col overflow-hidden rounded-card border border-paper/10 bg-surface text-left transition-[flex-grow,border-color] duration-700 [transition-timing-function:var(--e-smooth)] hover:border-accent/40 focus-visible:border-accent/60 md:min-w-0 md:flex-1 md:grow md:hover:grow-[1.8] md:focus-visible:grow-[1.8]"
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden md:absolute md:inset-0 md:aspect-auto">
                 <img
@@ -57,7 +58,7 @@ export default function Explorations() {
                   alt={item.title}
                   loading={i === 0 ? 'eager' : 'lazy'}
                   decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform [transition-duration:var(--d-experiment-cover)] ease-out group-hover:scale-105"
                 />
                 <div aria-hidden="true" className="absolute inset-0 hidden bg-gradient-to-t from-bg/95 via-bg/25 to-transparent md:block" />
                 <span aria-hidden="true" className="absolute left-5 top-4 font-mono text-sm tracking-[0.16em] text-muted">{item.index}</span>
@@ -91,8 +92,8 @@ export default function Explorations() {
               </div>
               <img src={asset(images[active].image)} alt={images[active].title} className="max-h-[72dvh] w-full rounded-card object-contain" />
               <div className="mt-5 flex justify-between">
-                <button type="button" onClick={() => setActive((active - 1 + images.length) % images.length)} className="btn btn-outline">← 上一张</button>
-                <button type="button" onClick={() => setActive((active + 1) % images.length)} className="btn btn-outline">下一张 →</button>
+                <ActionButton size="regular" pill onClick={() => setActive((active - 1 + images.length) % images.length)}>上一张</ActionButton>
+                <ActionButton size="regular" pill onClick={() => setActive((active + 1) % images.length)}>下一张</ActionButton>
               </div>
             </div>
           </motion.div>

@@ -2,7 +2,6 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { Link } from 'react-router-dom'
 import './SelectedWorks.css'
 import './Practice.css'
 
@@ -73,7 +72,6 @@ export default function Practice() {
             ))}
           </ol>
         </div>
-        <div className="career-footer"><Link to="/about">了解我的工作方式 <span aria-hidden="true">↗</span></Link></div>
       </div>
     </section>
   )

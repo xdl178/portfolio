@@ -13,6 +13,7 @@ export default {
         surface: 'hsl(var(--surface) / <alpha-value>)',
         'text-primary': 'hsl(var(--text) / <alpha-value>)',
         muted: 'var(--muted)',
+        secondary: 'var(--secondary)',
         stroke: 'hsl(var(--stroke) / <alpha-value>)',
         accent: 'rgb(var(--accent) / <alpha-value>)',
         'accent-strong': 'rgb(var(--accent-strong) / <alpha-value>)',
@@ -46,6 +47,9 @@ export default {
         field: 'var(--radius-rect)',
       },
 
+      transitionDuration: { DEFAULT: 'var(--d-quick)', 200: 'var(--d-hover)', 300: 'var(--d-ui)', 500: 'var(--d-very-slow)', 700: 'var(--d-image-hover)' },
+      transitionTimingFunction: { DEFAULT: 'var(--e-standard)', out: 'var(--e-decelerate)', 'in-out': 'var(--e-standard)', linear: 'var(--e-linear)' },
+
       /* ---------- 关键帧 ---------- */
       keyframes: {
         'scroll-cue': {
@@ -74,12 +78,12 @@ export default {
         },
       },
       animation: {
-        'scroll-cue': 'scroll-cue 1.6s cubic-bezier(.22,1,.36,1) infinite',
-        'role-fade-in': 'role-fade-in .45s cubic-bezier(.22,1,.36,1) both',
-        'float-slow': 'float-slow 11s ease-in-out infinite',
-        shimmer: 'shimmer 2.4s linear infinite',
-        'grid-pan': 'grid-pan 24s linear infinite',
-        'pulse-soft': 'pulse-soft 2.6s ease-in-out infinite',
+        'scroll-cue': 'scroll-cue var(--loop-scroll) var(--e-smooth) infinite',
+        'role-fade-in': 'role-fade-in var(--d-role) var(--e-smooth) both',
+        'float-slow': 'float-slow var(--loop-float) var(--e-io) infinite',
+        shimmer: 'shimmer var(--loop-shimmer) var(--e-linear) infinite',
+        'grid-pan': 'grid-pan var(--loop-grid) var(--e-linear) infinite',
+        'pulse-soft': 'pulse-soft var(--loop-pulse) var(--e-io) infinite',
       },
     },
   },

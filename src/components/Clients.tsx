@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import SectionHeader, { HEADER_TRANSITION, HEADER_VIEWPORT } from './SectionHeader'
+import SectionHeader, { getHeaderTransition, HEADER_VIEWPORT } from './SectionHeader'
 
 /* ============================================================
    Clients · 合作客户
@@ -33,7 +33,7 @@ export default function Clients() {
               initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={HEADER_VIEWPORT}
-              transition={{ ...HEADER_TRANSITION, delay: (i % 6) * 0.05 }}
+              transition={{ ...getHeaderTransition(), delay: (i % 6) * 0.05 }}
               className="glass-sm glass-hover group grid h-24 place-items-center rounded-card"
             >
               <span className="sr-only">{client.name}</span>

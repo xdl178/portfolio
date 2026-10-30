@@ -2,8 +2,9 @@ import { useEffect, useRef, type CSSProperties, type PointerEvent, type ReactNod
 import './PointerGlow.css'
 
 /** 鼠标靠近边缘才出现冷蓝描边；鼠标轨迹写 CSS 变量，不触发 React 重渲染。 */
-export default function PointerGlow({ children, className = '' }: { children: ReactNode; className?: string }) {
-  const root = useRef<HTMLDivElement>(null)
+export function usePointerGlow() {
+  const root = useRef<HTMLElement | null>(null)
+  const ref = (element: HTMLElement | null) => { root.current = element }
   const frame = useRef<number>(0)
   const pending = useRef<{ x: number; y: number } | null>(null)
 
@@ -11,7 +12,7 @@ export default function PointerGlow({ children, className = '' }: { children: Re
     if (frame.current) window.cancelAnimationFrame(frame.current)
   }, [])
 
-  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+  const onPointerMove = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
     pending.current = { x: event.clientX, y: event.clientY }
@@ -44,8 +45,13 @@ export default function PointerGlow({ children, className = '' }: { children: Re
     root.current?.style.setProperty('--edge-proximity', '0')
   }
 
+  return { ref, onPointerMove, onPointerLeave }
+}
+
+export default function PointerGlow({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const { ref, onPointerMove, onPointerLeave } = usePointerGlow()
   return (
-    <div ref={root} data-pointer-glow data-glow-active="false" onPointerMove={onPointerMove} onPointerLeave={onPointerLeave} className={`pointer-glow ${className}`} style={{ '--edge-proximity': '0', '--cursor-angle': '0deg' } as CSSProperties}>
+    <div ref={ref} data-pointer-glow data-glow-active="false" onPointerMove={onPointerMove} onPointerLeave={onPointerLeave} className={`pointer-glow ${className}`} style={{ '--edge-proximity': '0', '--cursor-angle': '0deg' } as CSSProperties}>
       <div className="pointer-glow__content">{children}</div>
     </div>
   )

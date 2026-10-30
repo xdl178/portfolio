@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, useMotionValueEvent, useScroll } from 'framer-motion'
+import { scrollToContact } from '../utils/scrollToContact'
+import ActionButton from './ActionButton'
 
 const NAV_LINKS = [
   { to: '/', label: '首页' },
@@ -21,7 +23,7 @@ export default function Navbar() {
       <nav aria-label="主导航" data-scrolled={scrolled} className="glass glass-nav inline-flex items-center gap-1 rounded-full p-1.5 pl-2">
         <Link to="/" aria-label="返回首页" className="group relative h-9 w-9 flex-none rounded-full transition-transform duration-300 hover:scale-110">
           <span aria-hidden="true" className="grad-accent absolute inset-0 rounded-full transition-transform duration-500 group-hover:rotate-180" />
-          <span aria-hidden="true" className="absolute inset-[1.5px] grid place-items-center rounded-full bg-bg"><span className="font-mono text-[11px] font-semibold tracking-wider text-text-primary">XD</span></span>
+          <span aria-hidden="true" className="absolute inset-[1.5px] grid place-items-center rounded-full bg-bg"><span className="font-mono text-xs font-semibold tracking-wider text-text-primary">XD</span></span>
         </Link>
         <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-paper/10 sm:block" />
         <ul className="flex items-center">
@@ -35,7 +37,7 @@ export default function Navbar() {
           ))}
         </ul>
         <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-paper/10 sm:block" />
-        <a href="mailto:3112516515@qq.com" className="btn btn-outline whitespace-nowrap px-3 py-2 text-xs sm:px-4 sm:text-[13px]">联系我 <span aria-hidden="true">↗</span></a>
+        <ActionButton compact pill onClick={scrollToContact}>联系我</ActionButton>
       </nav>
     </header>
   )

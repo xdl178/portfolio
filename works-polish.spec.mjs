@@ -57,11 +57,11 @@ try {
       assert.ok(peak.maximum > 180, `${side}: visible edge highlight`)
     }
   })
-  await check('all rectangular cards use 12px while capsules remain fully rounded', async () => {
+  await check('shared surfaces keep their 8px exception, legacy rectangles 12px and navigation stays rounded', async () => {
     for (const route of ['works/original-ip', 'works', 'about', '']) {
       await page.goto(`${base}#/${route}`, { waitUntil: 'networkidle' })
       await page.waitForTimeout(1300)
-      const invalid = await page.locator('.rounded-card, .rounded-panel, .rounded-field, [data-pointer-glow]').evaluateAll(elements => elements.filter(el => getComputedStyle(el).borderTopLeftRadius !== '12px').map(el => ({ tag: el.tagName, radius: getComputedStyle(el).borderTopLeftRadius })))
+      const invalid = await page.locator('.rounded-card, .rounded-panel, .rounded-field, [data-pointer-glow]').evaluateAll(elements => elements.filter(el => getComputedStyle(el).borderTopLeftRadius !== (el.matches('[data-surface-card]') ? '8px' : '12px')).map(el => ({ tag: el.tagName, radius: getComputedStyle(el).borderTopLeftRadius })))
       assert.deepEqual(invalid, [], route)
       const nav = await page.locator('nav[aria-label="主导航"]').evaluate(el => getComputedStyle(el).borderTopLeftRadius)
       assert.ok(parseFloat(nav) > 100, 'navigation retains capsule radius')

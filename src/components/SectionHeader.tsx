@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion'
+import { useReducedMotion } from '../hooks/useReducedMotion'
+import { readMotionTokens, useMotionTokens } from '../hooks/useMotionTokens'
 import type { ReactNode } from 'react'
 
 /* ============================================================
@@ -19,16 +21,18 @@ type Props = {
 }
 
 export const HEADER_VIEWPORT = { once: true, margin: '-100px' } as const
-export const HEADER_TRANSITION = { duration: 0.9, ease: [0.22, 1, 0.36, 1] } as const
+export const getHeaderTransition = () => readMotionTokens().section
 
 export default function SectionHeader({ index, label, eyebrow, title, subtitle, action }: Props) {
   const labelText = label ?? eyebrow
+  const reduce = useReducedMotion()
+  const tokens = useMotionTokens()
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={reduce ? false : { opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={HEADER_VIEWPORT}
-      transition={HEADER_TRANSITION}
+      transition={reduce ? { duration: 0 } : tokens.section}
       className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between md:gap-14"
     >
       <div className="min-w-0 md:flex-1">

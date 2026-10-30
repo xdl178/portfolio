@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useReducedMotion } from './hooks/useReducedMotion'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import NotFoundPage from './pages/NotFoundPage'
 import Backdrop from './components/Backdrop'
@@ -12,6 +13,7 @@ import HomePage from './pages/HomePage'
 import WorksPage from './pages/WorksPage'
 import WorkDetailPage from './pages/WorkDetailPage'
 import AboutPage from './pages/AboutPage'
+import { useMotionTokens } from './hooks/useMotionTokens'
 
 const HERO_IMAGE = `${import.meta.env.BASE_URL}images/hero-desk.jpg`
 const MIN_VISIBLE = 1000
@@ -24,7 +26,8 @@ export default function App() {
   const [bootAt] = useState(() => performance.now())
   const location = useLocation()
   const reduceMotion = useReducedMotion()
-  const reduceWorksMotion = reduceMotion && location.pathname.startsWith('/works')
+  const tokens = useMotionTokens()
+  const reduceRouteMotion = reduceMotion
   const [entryPath] = useState(() => location.pathname)
   const handleComplete = useCallback(() => setIsLoading(false), [])
 
@@ -99,14 +102,14 @@ export default function App() {
       <AnimatePresence>
         {isLoading && <LoadingScreen progress={progress} ready={assetsReady} onComplete={handleComplete} />}
       </AnimatePresence>
-      <motion.div inert={isLoading} aria-hidden={isLoading} initial={{ opacity: 0 }} animate={{ opacity: isLoading ? 0 : 1 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} className="relative min-h-[100svh] overflow-x-clip bg-bg text-text-primary">
+      <motion.div inert={isLoading} aria-hidden={isLoading} initial={{ opacity: 0 }} animate={{ opacity: isLoading ? 0 : 1 }} transition={reduceMotion ? { duration: 0 } : tokens.entry} className="relative min-h-[100svh] overflow-x-clip bg-bg text-text-primary">
         <Backdrop />
         <div className="relative z-10 flex min-h-[100svh] flex-col">
           <Navbar />
           <div className="flex-1">
             <main id="main-content" className="w-full max-w-full">
               <AnimatePresence mode="wait" initial={false}>
-                <motion.div key={location.pathname} initial={reduceWorksMotion ? false : { opacity: 0, y: 18, filter: 'blur(8px)' }} animate={reduceWorksMotion ? { opacity: 1, transform: 'none', filter: 'none' } : { opacity: 1, y: 0, filter: 'blur(0px)' }} exit={reduceWorksMotion ? { opacity: 0 } : { opacity: 0, y: -14, filter: 'blur(6px)' }} transition={{ duration: reduceWorksMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}>
+                <motion.div key={location.pathname} initial={reduceRouteMotion ? false : { opacity: 0, y: 18, filter: 'blur(8px)' }} animate={reduceRouteMotion ? { opacity: 1, transform: 'none', filter: 'none' } : { opacity: 1, y: 0, filter: 'blur(0px)' }} exit={reduceRouteMotion ? { opacity: 0 } : { opacity: 0, y: -14, filter: 'blur(6px)' }} transition={reduceRouteMotion ? { duration: 0 } : tokens.route}>
                   <Routes location={location}>
                     <Route path="/" element={<HomePage heroActive={!isLoading} heroBg={heroBg} />} />
                     <Route path="/works" element={<WorksPage />} />

@@ -13,8 +13,15 @@ try{
    await page.waitForTimeout(750)
    const halo=page.locator('[data-work-halo]');assert.equal(await halo.count(),1,route)
    assert.equal(await halo.evaluate(el=>{const marked=document.querySelector('[data-halo-identity]');if(!marked){el.setAttribute('data-halo-identity','true');return true}return marked===el}),true,'same portal node survives routing')
-   await page.mouse.move(510,390);await page.waitForTimeout(600)
-   const box=await halo.boundingBox();assert.ok(Math.abs(box.x+box.width/2-510)<2&&Math.abs(box.y+box.height/2-390)<2)
+   await page.mouse.move(510,390)
+   // The halo converges per animation frame, not per wall-clock millisecond.
+   // Keep the same 2px invariant while allowing bounded frame contention.
+   try {
+    await page.waitForFunction(()=>{const el=document.querySelector('[data-work-halo]');if(!el)return false;const b=el.getBoundingClientRect();return Math.abs(b.x+b.width/2-510)<2&&Math.abs(b.y+b.height/2-390)<2},null,{timeout:5000})
+   } catch(error) {
+    throw new Error(`halo did not settle on /${route} (${page.url()}): rect=${JSON.stringify(await halo.boundingBox())}; target=(510,390), tolerance<2px; ${error.message}`)
+   }
+   const box=await halo.boundingBox();assert.ok(Math.abs(box.x+box.width/2-510)<2&&Math.abs(box.y+box.height/2-390)<2,`halo center on /${route} (${page.url()}): rect=${JSON.stringify(box)}; target=(510,390), tolerance<2px`)
    assert.equal(await halo.evaluate(el=>getComputedStyle(el).pointerEvents),'none')
    assert.notEqual(await page.locator('body').evaluate(el=>getComputedStyle(el).cursor),'none')
   }

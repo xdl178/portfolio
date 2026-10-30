@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { useReducedMotion } from '../hooks/useReducedMotion'
 import { LOADING_MIN_DURATION_MS } from '../config/loading'
+import { useMotionTokens } from '../hooks/useMotionTokens'
 import './LoadingScreen.css'
 
 type Props = {
@@ -26,6 +28,7 @@ const BOKEH = Array.from({ length: 48 }, (_, i) => ({
 
 export default function LoadingScreen({ progress, ready, onComplete }: Props) {
   const reduceMotion = useReducedMotion()
+  const tokens = useMotionTokens()
   const [count, setCount] = useState(0)
   const [introDone, setIntroDone] = useState(false)
   const countRef = useRef(0)
@@ -81,7 +84,7 @@ export default function LoadingScreen({ progress, ready, onComplete }: Props) {
       aria-labelledby="loading-title"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: reduceMotion ? .15 : .65, ease: [0.22, 1, 0.36, 1] }}
+      transition={reduceMotion ? tokens.quick : tokens.reveal}
     >
       <div className="loading-scene" aria-hidden="true">
         <svg className="loading-stars" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">

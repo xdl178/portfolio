@@ -1,0 +1,29 @@
+.back-top {
+  position: fixed;
+  right: max(32px, env(safe-area-inset-right));
+  bottom: max(32px, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: hsl(var(--surface));
+  border: 1px solid rgb(var(--paper-rgb) / .1);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity var(--d-medium) var(--e-smooth), visibility var(--d-medium), transform var(--d-medium) var(--e-smooth), border-color var(--d-ui) var(--e-smooth), color var(--d-ui) var(--e-smooth), box-shadow var(--d-ui) var(--e-smooth);
+}
+.back-top.is-visible { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
+.back-top svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+@media (hover: hover) and (pointer: fine) {
+  .back-top:hover { border-color: var(--brand); color: var(--brand); transform: translateY(-3px); box-shadow: 0 6px 20px rgb(var(--brand-rgb) / .25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .back-top, .back-top:hover { transition: none; transform: none; }
+}

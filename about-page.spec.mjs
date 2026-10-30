@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict'
+import {chromium} from 'playwright-core'
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true})
+const headingStyle=el=>{const s=getComputedStyle(el);return {size:s.fontSize,weight:s.fontWeight,line:s.lineHeight,spacing:s.letterSpacing,align:s.textAlign,wrap:s.whiteSpace,margin:s.marginTop}}
+try{for(const width of[1440,900,390,320]){const page=await browser.newPage({viewport:{width,height:1000},reducedMotion:'reduce'});try{
+ await page.goto('http://127.0.0.1:5180/#/about',{waitUntil:'networkidle'});await page.locator('[data-loading-screen]').waitFor({state:'detached'});
+ const about=page.locator('[data-about-page]');assert.equal(await about.locator('[data-about-award]').count(),5,'reference About has all five awards');assert.equal(await about.locator('[data-about-strength]').count(),4);assert.equal(await about.locator('[data-about-stat]').count(),4);
+ for(const size of await about.locator('[data-ui-badge]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).fontSize)))assert.equal(size,'14px','all About capsules retain shared Badge typography, including Statement');
+ assert.equal((await about.locator('h1').textContent()).trim(),'关于我');const heading=await about.locator('h1').evaluate(headingStyle);const bounds=await about.locator('h1').boundingBox();assert.ok(Math.abs(bounds.x+bounds.width/2-width/2)<2,'About masthead is centered like Works');
+ const badge=about.locator('header [data-ui-badge]').first();assert.equal(await badge.isVisible(),true);assert.equal(await badge.evaluate(el=>getComputedStyle(el).fontSize),'14px');
+ for(const text of['国青杯 · 全国高校艺术设计大赛 · 一等奖','G-CROSS 创意星球 · 铜奖','BICC 中英国际创意大赛 · 铜奖','新加坡金沙艺术设计大赛 · 铜奖','中国当代大学生艺术作品年鉴 · 入围奖','全链路设计能力','项目落地实战经验','AI 工作流深度掌握','强抗压与沟通协作','做有秩序、有温度、可落地的设计','朱泓宇','华东交通大学理工学院','2026 年 06 月'])assert.ok((await about.innerText()).includes(text),`reference content retained: ${text}`);
+ assert.equal(await about.locator('a[href="mailto:3112516515@qq.com"]').count(),1);assert.equal(await about.locator('a[href="tel:13668862258"]').count(),1);assert.equal(await about.locator('[data-about-contact-info] dl > div').count(),6);
+ for(const selector of['[data-about-award]','[data-about-strength]'])for(const radius of await about.locator(selector).evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n).borderRadius)))assert.equal(radius,'8px');
+ const small=await about.evaluate(root=>[...root.querySelectorAll('*')].filter(el=>[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())&&el.getClientRects().length&&parseFloat(getComputedStyle(el).fontSize)<12).map(el=>el.textContent));assert.deepEqual(small,[]);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await about.getByRole('button',{name:'聊聊你的项目'}).click();await page.waitForFunction(()=>document.activeElement?.id==='footer-channels');await about.getByRole('link',{name:'浏览我的作品集'}).click();await page.waitForURL(/#\/works$/);await page.waitForFunction(()=>document.querySelector('[data-works-page] h1'));
+ assert.deepEqual(heading,await page.locator('[data-works-page] h1').evaluate(headingStyle),'About and Works share the exact masthead scale/weight/spacing/alignment');console.log(`PASS ${width}px reference About content, five awards/four strengths/four metrics, native contact, browse link and Works masthead parity`)
+ }finally{await page.close()}}}finally{await browser.close()}

@@ -1,0 +1,13 @@
+.about-strengths-intro { max-width: 24rem; font-size: 16px; line-height: 1.9; color: var(--muted); text-wrap: pretty; }
+.about-strengths-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin: 48px 0 0; padding: 0; list-style: none; }
+.about-strengths .surface-card.about-strength-card { padding: 32px; }
+.about-strength-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.about-strength-number { font: 500 36px/1.1 var(--font-mono); color: var(--secondary); }
+.about-strength-top > svg { flex: none; color: var(--brand); }
+.about-strength-card h3 { margin-top: 24px; font-size: 26px; line-height: 1.5; font-weight: 500; letter-spacing: -.025em; color: hsl(var(--text)); overflow-wrap: anywhere; text-wrap: balance; }
+.about-strength-en { margin-top: 8px; font: 12px/1.7 var(--font-mono); letter-spacing: .04em; color: var(--muted); overflow-wrap: anywhere; }
+.about-strength-summary { max-width: 65ch; margin-top: 28px; font-size: 16px; line-height: 1.9; color: var(--muted); text-wrap: pretty; }
+.about-strength-points { display: grid; gap: 12px; margin: 28px 0 0; padding: 24px 0 0 20px; border-top: 1px solid rgb(var(--paper-rgb) / .12); list-style: disc; }
+.about-strength-points > li { padding-left: 4px; font-size: 14px; line-height: 1.9; color: var(--muted); overflow-wrap: anywhere; }
+.about-strength-points > li::marker { color: var(--brand); }
+@media (max-width: 767px) { .about-strengths-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; margin-top: 32px; } .about-strengths .surface-card.about-strength-card { padding: 24px; } .about-strength-card h3 { font-size: 24px; } }
