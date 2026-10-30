@@ -33,3 +33,6 @@ desktop.ini
 # 本地验证脚本与临时截图
 .probe/
 .shots/
+
+# Offline design manager's local recovery copies
+.design-backups/

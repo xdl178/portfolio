@@ -32,7 +32,7 @@ try{
    const cardBox=await card.boundingBox(),detailsBox=await details.boundingBox()
    if(width>900){if(width>=1400)assert.ok(Math.abs(cardBox.width-528)<2);else assert.ok(cardBox.width>=319);assert.ok(Math.abs(detailsBox.x-cardBox.x-cardBox.width-(width>=1400?72:48))<2);assert.ok(Math.abs(cardBox.y-detailsBox.y)<2)}else assert.ok(detailsBox.y>=cardBox.y+cardBox.height+24)
    assert.equal(await details.locator('.home-about-bio h3').innerText(),'基本信息')
-   assert.deepEqual(await details.locator('.home-about-bio p').allTextContents(),['我是一名视觉与 UI/UX 设计师，工作覆盖原创 IP、品牌交互与 AI 产品官网。习惯从真实场景出发，把复杂的信息结构梳理成直觉可读的界面，并与开发一起把设计落到线上。','当前可接受新项目委托，方向包括品牌视觉系统、产品界面与动态影像。'])
+   assert.deepEqual(await details.locator('.home-about-bio p').allTextContents(),['个人简介待补充。可在此填写设计方向、创作方法与作品集介绍。','合作状态待补充。可在此说明合作方向与沟通方式。'])
    assert.equal(await details.locator('#home-about-tools-title').innerText(),'Design Tools')
    const grid=details.locator('ul.home-about-skill-grid')
    assert.equal(await grid.getAttribute('aria-labelledby'),'home-about-tools-title')
@@ -41,7 +41,7 @@ try{
    assert.equal(await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),width>=1400?3:width>=600?2:1)
    assert.equal(await grid.locator('img').count(),8)
    for(const img of await grid.locator('img').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(el=>el.decode());assert.ok(await img.evaluate(el=>el.complete&&el.naturalWidth>0),'local skill icon resolves');assert.equal(new URL(await img.getAttribute('src'),page.url()).origin,new URL(page.url()).origin,'icons must remain local')}
-   assert.doesNotMatch(await section.innerText(),/Khanittha|Hemsamak|WAI PRODUCTION|khanittha\.kkant4/i)
+   assert.equal(await section.locator('a[href^="mailto:"],a[href^="tel:"],a[href*="behance.net"],a[href*="xiaohongshu.com"]').count(),0,'placeholder profile does not link to real contact/social identities')
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))
    // Screenshots are opt-in so migration validation does not overwrite captures before the parent rebuild.
    if(process.env.CAPTURE_SHOTS==='1')await section.screenshot({path:`.shots/home-about-${width}.png`})

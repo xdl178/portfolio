@@ -17,7 +17,7 @@ try {
         await page.locator('[data-loading-screen]').waitFor({ state: 'detached' })
         const main = page.locator(scope)
         // About's one header capsule must exist outside the shared footer.
-        const badges = main.locator(route === '/about' ? 'header [data-ui-badge]' : '[data-ui-badge]')
+        const badges = main.locator(route === '/about' ? '[data-about-header] [data-ui-badge]' : '[data-ui-badge]')
         assert.ok(await badges.count() >= minimum, `${route}: route content uses shared Badge (not merely the footer)`)
         const styles = await badges.evaluateAll(nodes => nodes.map(node => {
           const css = getComputedStyle(node), dot = getComputedStyle(node.firstElementChild)

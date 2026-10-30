@@ -7,7 +7,7 @@ import { profileFields, profileIntro } from '../data/profile'
 import Badge from './Badge'
 import SurfaceCard from './SurfaceCard'
 import { useMotionTokens } from '../hooks/useMotionTokens'
-import './SelectedWorks.css'
+import SectionHeading from './SectionHeading'
 import './HomeAbout.css'
 
 const tools = [
@@ -34,13 +34,7 @@ export default function HomeAbout() {
   return (
     <section id="about-intro" className="home-section home-about relative bg-bg" aria-labelledby="home-about-title">
       <div className="home-about-container">
-        <header className="selected-works-heading">
-          <span className="selected-works-chapter" aria-hidden="true">01</span>
-          <div className="selected-works-heading-copy">
-            <span className="selected-works-exhibit" aria-hidden="true">ABOUT</span>
-            <div className="selected-works-heading-row"><span className="selected-works-slash" aria-hidden="true">/</span><h2 id="home-about-title">关于<span className="text-accent">我</span></h2></div>
-          </div>
-        </header>
+        <SectionHeading index="01" en="ABOUT" title={<>关于<span className="text-accent">我</span></>} level="h2" id="home-about-title" />
         <div className="home-about-layout">
           <motion.article ref={ref} data-pointer-glow data-glow-active="false" onPointerMove={onPointerMove} onPointerLeave={onPointerLeave} className="home-about-profile-card pointer-glow" aria-labelledby="home-about-name" initial={reveal} whileInView={visible} viewport={{ once: true, amount: .12 }} transition={reduce ? { duration: 0 } : tokens.reveal}>
             <div className="home-about-profile-top">

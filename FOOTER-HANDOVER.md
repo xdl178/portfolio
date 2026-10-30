@@ -19,8 +19,10 @@
 - 保留原contact-grid图标＋标签/内容的结构、品牌蓝悬停高亮。当前仅显示选定的三项；小红书数据不删除，但不显示在本页脚。
 - 内容来自 [profile.ts](<src/data/profile.ts>)。用户此前明确要求**占位文本，不用链接**：保留可选择的普通文本列表项，不生成mailto/tel/外链、不设置disabled/aria-disabled或禁止光标，即便填写值也只展示。
 - 无通道顶部分隔线、配置警告说明或复制参考作者资料。
-- 导航CTA、关于页CTA和页脚“联系”调用 [scrollToContact](<src/utils/scrollToContact.ts>)，保持路由，滚动并聚焦 `section#footer-channels`（tabIndex=-1、命名区域）。内部sr-only h3为列表提供名称；减少动态效果时即时跳转。
+- 导航CTA和页脚“联系”调用 [scrollToContact](<src/utils/scrollToContact.ts>)，保持路由，滚动并聚焦 `section#footer-channels`（tabIndex=-1、命名区域）。内部sr-only h3为列表提供名称；减少动态效果时即时跳转。
 - [contactChannels](<src/utils/contactChannels.ts>) 旧安全URL校验器仅保留及单测；当前页脚不调用它生成链接。
+
+关于页导读联系按钮已删除；联系区“浏览我的作品集”与页脚共用[FooterNavLink](<src/components/FooterNavLink.tsx>)和[独立样式](<src/components/FooterNavLink.css>)，保留原生Router路由。
 
 ## 页脚导航滚动反馈
 

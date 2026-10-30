@@ -1,6 +1,6 @@
 # 全局色彩规范
 
-> 本项目色彩开发入口。原始值唯一来源：[index.css](<src/index.css>) 的 `:root`；Tailwind 语义映射：[tailwind.config.js](<tailwind.config.js>)。整体视觉约束见 [design.md](<design.md>)。禁止在组件内再维护一套色板。
+> 本项目色彩开发入口。原始值唯一来源：[design-system.css](<public/design-system.css>) 的 `:root`（可由[独立管理器](<design-manager.html>)直接保存）；Tailwind 语义映射：[tailwind.config.js](<tailwind.config.js>)。整体视觉约束见 [design.md](<design.md>)。禁止在组件内再维护一套色板。
 
 ## 1. 核心规则
 

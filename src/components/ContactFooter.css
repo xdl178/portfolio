@@ -1,25 +1,18 @@
-.contact-footer { --footer-content-width: 1024px; overflow: hidden; padding-block: var(--section-space); border-top: 1px solid rgb(var(--paper-rgb) / .1); background: hsl(var(--bg)); }
+.contact-footer { overflow: hidden; padding-block: var(--section-space); border-top: 1px solid rgb(var(--paper-rgb) / .1); background: hsl(var(--bg)); }
 .contact-footer-inner { display: flex; flex-direction: column; align-items: center; max-width: var(--container-home); margin: 0 auto; padding-inline: var(--gutter-home); text-align: center; }
 .contact-footer-cta { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: var(--footer-content-width); }
-.contact-footer-title { width: 100%; margin-top: 24px; color: hsl(var(--text)); text-wrap: balance; overflow-wrap: break-word; }
-.contact-footer-description { width: 100%; margin-top: 16px; text-wrap: balance; }
-.contact-footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; width: 100%; margin-top: 32px; }
-.contact-footer-nav a, .contact-footer-nav button { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 13px; line-height: 1.5; color: hsl(var(--text)); }
-.footer-nav-roll { display: block; height: 1.5em; overflow: hidden; }
-.footer-nav-track { display: flex; flex-direction: column; }
-.footer-nav-copy { display: flex; align-items: center; flex: none; height: 1.5em; white-space: nowrap; }
-.footer-nav-arrow { width: 1em; }
-.footer-nav-arrow .footer-nav-copy { justify-content: center; }
-.footer-nav-arrow svg { display: block; width: 1em; height: 1em; fill: currentColor; }
-.contact-footer-channels { width: 100%; max-width: var(--footer-content-width); margin-top: 48px; }
+.contact-footer-title { width: 100%; margin-top: var(--footer-title-gap); color: hsl(var(--text)); text-wrap: balance; overflow-wrap: break-word; }
+.contact-footer-description { width: 100%; margin-top: var(--footer-description-gap); text-wrap: balance; }
+.contact-footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px var(--footer-nav-gap); width: 100%; margin-top: 32px; }
+.contact-footer-channels { width: 100%; max-width: var(--footer-content-width); margin-top: var(--footer-channels-gap); }
 .contact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 40px; }
 .contact-item { display: flex; align-items: center; justify-content: center; gap: 16px; min-width: 0; min-height: 44px; }
 .contact-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: hsl(var(--surface)); border: 1px solid rgb(var(--paper-rgb) / .1); color: var(--muted); transition: border-color var(--d-ui) var(--e-smooth), color var(--d-ui) var(--e-smooth); }
 .contact-icon svg { width: 17px; height: 17px; }
 .contact-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; text-align: start; }
 .contact-label { font: 12px/1.5 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.contact-value { font-size: 16px; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; color: hsl(var(--text)); user-select: text; transition: color var(--d-ui) var(--e-smooth); }
-.contact-footer-copyright { width: 100%; max-width: var(--footer-content-width); margin-top: 64px; font-family: var(--font-mono); font-size: 10px; line-height: 1.9; letter-spacing: .05em; color: var(--muted); overflow-wrap: anywhere; }
+.contact-value { font-size: var(--footer-value-size); font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; color: hsl(var(--text)); user-select: text; transition: color var(--d-ui) var(--e-smooth); }
+.contact-footer-copyright { width: 100%; max-width: var(--footer-content-width); margin-top: var(--footer-copyright-gap); font-family: var(--font-mono); font-size: 10px; line-height: 1.9; letter-spacing: .05em; color: var(--muted); overflow-wrap: anywhere; }
 @media (hover: hover) and (pointer: fine) {
   .contact-item:hover .contact-icon { border-color: var(--brand); color: var(--brand); }
   .contact-item:hover .contact-value { color: var(--brand); }

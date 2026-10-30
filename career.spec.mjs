@@ -19,7 +19,7 @@ try{
  await check('career light tree grows and rewinds with real scroll, preserving existing projects',async()=>{
   const page=await open({viewport:{width:1440,height:900}})
   const tree=page.locator('[data-career-tree]');assert.equal(await tree.count(),1)
-  const content=await page.locator('#practice').innerText();for(const name of ['深圳前湾公园','长沙智谷','北京博大公园'])assert.ok(content.includes(name))
+  const content=await page.locator('#practice').innerText();for(const name of ['项目名称待补充 01','项目名称待补充 02','项目名称待补充 03'])assert.ok(content.includes(name))
   assert.deepEqual(await page.locator('main section[id]').evaluateAll(nodes=>nodes.map(el=>el.id).slice(0,4)),['home','about-intro','work','practice'])
   const top=await tree.evaluate(el=>el.getBoundingClientRect().top+scrollY)
   const height=await tree.evaluate(el=>el.getBoundingClientRect().height)

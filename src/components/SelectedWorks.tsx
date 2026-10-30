@@ -5,6 +5,7 @@ import PointerGlow from './PointerGlow'
 import WorkTag from './WorkTag'
 import { works } from '../data/works'
 import { useMotionTokens } from '../hooks/useMotionTokens'
+import SectionHeading from './SectionHeading'
 import './SelectedWorks.css'
 
 const DIRECTIONS: Record<string, string> = {
@@ -22,13 +23,7 @@ export default function SelectedWorks() {
   return (
     <section id="work" aria-labelledby="selected-works-title" className="home-section selected-works relative bg-bg">
       <div className="container-home">
-        <motion.header className="selected-works-heading" initial={reveal} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={transition}>
-          <span className="selected-works-chapter" aria-hidden="true">02</span>
-          <div className="selected-works-heading-copy">
-            <span className="selected-works-exhibit" aria-hidden="true">EXHIBIT</span>
-            <div className="selected-works-heading-row"><span className="selected-works-slash" aria-hidden="true">/</span><h2 id="selected-works-title">精选<span className="text-accent">作品</span></h2></div>
-          </div>
-        </motion.header>
+        <SectionHeading index="02" en="EXHIBIT" title={<>精选<span className="text-accent">作品</span></>} level="h2" id="selected-works-title" motionProps={{ initial: reveal, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: .2 }, transition }} />
 
         <div className="selected-works-grid">
           {works.map((work, i) => (

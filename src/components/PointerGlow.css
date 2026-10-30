@@ -25,7 +25,7 @@
   padding: 2px;
   /* Absolute pointer coordinates and a hollow mask keep the peak under the mouse,
      independent of the rectangle aspect ratio. No angular/conic approximation. */
-  background: radial-gradient(280px circle at var(--pointer-x) var(--pointer-y),
+  background: radial-gradient(var(--pointer-glow-edge-radius) circle at var(--pointer-x) var(--pointer-y),
     rgb(var(--accent-soft-rgb)) 0%, rgb(var(--accent-strong-rgb)) 20%, var(--brand) 45%, rgb(var(--brand-rgb) / .4) 72%, transparent 100%);
   opacity: clamp(0, calc((var(--edge-proximity) - 28) / 48), 1);
   -webkit-mask: linear-gradient(rgb(var(--paper-rgb)) 0 0) content-box, linear-gradient(rgb(var(--paper-rgb)) 0 0);
@@ -42,8 +42,8 @@
   z-index: 0;
   pointer-events: none;
   border-radius: inherit;
-  background: radial-gradient(230px circle at var(--pointer-x) var(--pointer-y), rgb(var(--brand-rgb) / .12), transparent 72%);
-  opacity: clamp(0, calc((var(--edge-proximity) - 25) / 55), .5);
+  background: radial-gradient(var(--pointer-glow-fill-radius) circle at var(--pointer-x) var(--pointer-y), rgb(var(--brand-rgb) / var(--pointer-glow-fill-alpha)), transparent 72%);
+  opacity: clamp(0, calc((var(--edge-proximity) - 25) / 55), var(--pointer-glow-fill-max));
   transition: opacity var(--d-fast) var(--e-smooth);
 }
 

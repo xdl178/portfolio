@@ -1,0 +1,7 @@
+.footer-nav-link { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: var(--footer-nav-size); line-height: 1.5; color: hsl(var(--text)); }
+.footer-nav-roll { display: block; height: 1.5em; overflow: hidden; }
+.footer-nav-track { display: flex; flex-direction: column; }
+.footer-nav-copy { display: flex; align-items: center; flex: none; height: 1.5em; white-space: nowrap; }
+.footer-nav-arrow { width: 1em; }
+.footer-nav-arrow .footer-nav-copy { justify-content: center; }
+.footer-nav-arrow svg { display: block; width: 1em; height: 1em; fill: currentColor; }

@@ -1,8 +1,8 @@
-.surface-card, .surface-card.pointer-glow { gap: 12px; min-width: 0; min-height: 62px; height: 100%; padding: 12px; border: 1px solid rgb(var(--paper-rgb) / .1); border-radius: 8px; background: rgb(var(--paper-rgb) / .04); transition: background-color var(--d-ui) var(--e-feedback), border-color var(--d-ui) var(--e-feedback); }
+.surface-card, .surface-card.pointer-glow { gap: var(--surface-card-gap); min-width: 0; min-height: 62px; height: 100%; padding: var(--surface-card-padding); border: 1px solid rgb(var(--paper-rgb) / var(--surface-card-border-alpha)); border-radius: var(--surface-card-radius); background: rgb(var(--paper-rgb) / var(--surface-card-bg-alpha)); transition: background-color var(--d-ui) var(--e-feedback), border-color var(--d-ui) var(--e-feedback); }
 .surface-card.pointer-glow { box-shadow: none; }
 .surface-card.pointer-glow > * { position: relative; z-index: 1; }
 @media (hover: hover) and (pointer: fine) {
-  .surface-card:hover, .surface-card.pointer-glow:hover { background: rgb(var(--paper-rgb) / .08); border-color: rgb(var(--paper-rgb) / .25); }
+  .surface-card:hover, .surface-card.pointer-glow:hover { background: rgb(var(--paper-rgb) / var(--surface-card-hover-alpha)); border-color: rgb(var(--paper-rgb) / var(--surface-card-border-hover-alpha)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .surface-card, .surface-card.pointer-glow { opacity: 1 !important; transform: none !important; transition-duration: 0s; }

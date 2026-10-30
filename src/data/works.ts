@@ -27,7 +27,7 @@ export const works: Work[] = [
   {
     id: 'original-ip', serial: '01', title: '原创 IP 视觉与交互设计',
     titleEn: 'Original IP Visual & Interaction Design', category: 'ip', categoryLabel: '原创 IP',
-    year: '2025', period: '2025.06 - 2025.12', role: '主视觉 / UI & UX 设计师',
+    year: '年份待补充', period: '项目时间待补充', role: '项目职责待补充',
     cover: frame('original-ip', 8),
     pageImages: Array.from({ length: 19 }, (_, i) => frame('original-ip', i)),
     originalImages: Array.from({ length: 6 }, (_, i) => ({
@@ -47,7 +47,7 @@ export const works: Work[] = [
   {
     id: 'art-studio', serial: '02', title: '粒象工作室品牌交互设计',
     titleEn: 'LX Studio Brand Interaction Design', category: 'brand', categoryLabel: '品牌 & 网页',
-    year: '2026', period: '2026.06 - 2026.08', role: '独立品牌 & 网页 UI/UX 主设计师',
+    year: '年份待补充', period: '项目时间待补充', role: '项目职责待补充',
     cover: frame('art-studio', 14),
     pageImages: Array.from({ length: 15 }, (_, i) => frame('art-studio', i)),
     originalImages: Array.from({ length: 8 }, (_, i) => ({
@@ -66,7 +66,7 @@ export const works: Work[] = [
   {
     id: 'mivox', serial: '03', title: 'Mivox 觅沃产品网页设计',
     titleEn: 'Mivox Product Website Design', category: 'ai', categoryLabel: 'AI 产品官网',
-    year: '2026', period: '2026.03 - 2026.04', role: '产品官网 UI/UX 主设计师',
+    year: '年份待补充', period: '项目时间待补充', role: '项目职责待补充',
     cover: frame('mivox', 7),
     pageImages: Array.from({ length: 11 }, (_, i) => frame('mivox', i)),
     originalImages: [{ src: frame('mivox', 11), label: '界面原稿 01' }],

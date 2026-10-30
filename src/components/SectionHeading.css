@@ -1,0 +1,17 @@
+/* Canonical Home About composition. Only the decorative English watermark clips. */
+.section-heading { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--heading-gap, 16px); min-height: var(--heading-min-height, 88px); }
+.section-heading-index { flex: none; font-family: var(--font-mono); font-size: clamp(var(--heading-index-min, 56px), var(--heading-index-fluid, 5vw), var(--heading-index-max, 84px)); font-weight: var(--heading-title-weight, 600); letter-spacing: var(--heading-index-tracking, -.06em); line-height: 1; color: var(--muted); }
+.section-heading-copy { position: relative; flex: 1; min-width: 0; padding-top: var(--heading-copy-top, 34px); }
+.section-heading-en { position: absolute; left: var(--heading-en-left, -28px); top: var(--heading-en-top, -3px); max-width: calc(100% - var(--heading-en-left, -28px)); overflow: hidden; white-space: nowrap; font-family: var(--font-mono); font-size: clamp(var(--heading-en-min, 36px), var(--heading-en-fluid, 4vw), var(--heading-en-max, 58px)); font-weight: var(--heading-title-weight, 600); letter-spacing: var(--heading-en-tracking, .04em); line-height: 1; color: rgb(var(--paper-rgb) / var(--heading-en-opacity, .12)); pointer-events: none; }
+.section-heading-row { position: relative; display: flex; align-items: center; gap: var(--heading-row-gap, 16px); }
+.section-heading-slash { flex: none; color: var(--muted); font-size: var(--heading-slash-size, 30px); font-weight: 300; }
+.section-heading .section-heading-row > .section-heading-title { min-width: 0; margin: 0; font-family: var(--font-sans); font-size: clamp(var(--heading-title-min, 26px), var(--heading-title-fluid, 2.4vw), var(--heading-title-max, 36px)); font-weight: var(--heading-title-weight, 600); line-height: var(--heading-title-line, 1.3); letter-spacing: var(--heading-title-tracking, -.03em); color: hsl(var(--text)); overflow-wrap: anywhere; text-align: left; }
+.section-heading-subtitle { flex: 0 0 100%; margin-top: 8px; font-size: 16px; line-height: 2; color: var(--muted); }
+.section-heading-action { flex: 0 1 32rem; min-width: 0; }
+@media (max-width: 767px) {
+  .section-heading { min-height: var(--heading-min-height-mobile, 72px); gap: var(--heading-gap-mobile, 14px); }
+  .section-heading-copy { padding-top: var(--heading-copy-top-mobile, 28px); }
+  .section-heading-en { left: var(--heading-en-left-mobile, -20px); max-width: calc(100% - var(--heading-en-left-mobile, -20px)); }
+  .section-heading-row { gap: var(--heading-row-gap-mobile, 12px); }
+  .section-heading-action { flex-basis: 100%; }
+}

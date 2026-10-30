@@ -89,7 +89,9 @@ async function assertNeutralFooter(footer) {
   const exposed = `${text}\n${hrefs.map(href => {
     try { return decodeURIComponent(href) } catch { return href }
   }).join('\n')}`
-  assert.doesNotMatch(exposed, /Zhu|Hongyu|ZHONGYU|朱泓宇|Qingdao|青岛|3112516515|13668862258|brutalist|Khanittha|Hemsamak/i, 'no reference personal data in footer text or hrefs')
+  assert.doesNotMatch(exposed, /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i, 'no populated email in footer text or hrefs')
+  assert.doesNotMatch(exposed, /(?:^|\D)(?:\+?86[-\s]?)?1[3-9]\d(?:[-\s]?\d){8}(?!\d)/, 'no populated mobile number in footer text or hrefs')
+  for (const value of await footer.locator('.contact-value').allTextContents()) assert.match(value, /待补充/, 'contact values remain explicit placeholders')
   for (const href of hrefs) {
     assert.ok(href && href.trim() !== '#' && !/^(?:mailto|tel|phone):/i.test(href.trim()), `no fake contact href: ${href}`)
   }

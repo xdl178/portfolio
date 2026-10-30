@@ -1,0 +1,167 @@
+/* DESIGN-MANAGER:START */
+:root {
+  /* Surface/text neutrals use HSL channels; muted is a complete HEX color.
+     Brand/material colors below use RGB channels. See COLOR-SYSTEM.md. */
+  --bg: 222 47% 4%;
+  --bg-elev: 222 40% 7%;
+  --surface: 220 36% 10%;
+  --text: 210 40% 98%;
+  --muted: #BBC9DB;
+  --secondary: #8692A3;
+  --stroke: 213 28% 20%;
+  /* RGB channels: brand/accent share one source; do not wrap these in hsl(). */
+  --brand-rgb: 38 134 237;
+  --brand: rgb(var(--brand-rgb));
+  --accent: var(--brand-rgb);
+  --accent-soft-rgb: 209 232 255;
+  --accent-strong-rgb: 111 182 255;
+  --accent-deep-rgb: 27 82 201;
+  --accent-strong: var(--accent-strong-rgb);
+  --accent-2: var(--accent-deep-rgb);
+  --paper-rgb: 255 255 255;
+  --ink-rgb: 0 0 0;
+  /* Material/photographic exceptions, never alternate secondary text colors. */
+  --bg-loading-rgb: 3 6 11;
+  --surface-card-rgb: 11 20 34;
+  --surface-card-hover-rgb: 16 30 49;
+  --gallery-overlay-rgb: 5 7 13;
+  --nav-glass-rgb: 10 15 25;
+  --hero-veil-rgb: 6 10 18;
+  --hero-highlight-rgb: 140 196 255;
+  --hero-mid-rgb: 78 155 245;
+  --surface-light-rgb: 209 213 220;
+  --on-light-rgb: 48 61 80;
+  --scrollbar-thumb: 213 28% 22%;
+  --scrollbar-hover: 213 28% 30%;
+
+  /* 字体：思源黑体 Source Han Sans CN（已内嵌 woff2 分片，见 assets/fonts） */
+  --font-sans: 'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', 'PingFang SC',
+    'HarmonyOS Sans SC', 'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', 'JetBrains Mono', 'Cascadia Mono', Consolas, 'Liberation Mono',
+    'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', ui-monospace, monospace;
+
+  /* 动效 token（design.md §6） */
+  --d-stagger: 40ms;
+  --d-micro: 80ms;
+  --d-quick: 150ms;
+  --d-fast: 250ms;
+  --d-medium: 350ms;
+  --d-slow: 400ms;
+  --d-very-slow: 500ms;
+  --d-archive-cover: 900ms;
+  --d-image-hover: 700ms;
+  --d-experiment-cover: 1200ms;
+  --d-reveal: 650ms;
+  --d-tool-reveal: 560ms;
+  --d-tool-stagger: 60ms;
+  --d-detail-reveal: 700ms;
+  --d-section-reveal: 900ms;
+  --d-route: 550ms;
+  --d-entry: 800ms;
+  --d-hover: 200ms;
+  --d-ui: 300ms;
+  --d-role: 450ms;
+  --loop-scroll: 1.6s;
+  --loop-float: 11s;
+  --loop-shimmer: 2.4s;
+  --loop-grid: 24s;
+  --loop-pulse: 2.6s;
+  --loop-marquee: 32s;
+
+  --e-feedback: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --e-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --e-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --e-button: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --e-io: ease-in-out;
+  --e-out: ease-out;
+  --e-linear: linear;
+  --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --e-morph: cubic-bezier(0.32, 1.25, 0.4, 1);
+
+  /* 品牌渐变（蓝色调）：浅蓝 → 主蓝 #2686ED → 深蓝，仅用于描边 / 光带 / 进度条 */
+  --grad-accent: linear-gradient(120deg, rgb(var(--accent-strong-rgb)) 0%, var(--brand) 48%, rgb(var(--accent-deep-rgb)) 100%);
+
+  --radius-rect: 12px;
+  --nav-h: 64px;
+  --container-home: 1536px;
+  --container-hero: 1400px;
+  --container-page: 1380px;
+  --gutter-home: 64px;
+  --section-space: 128px;
+
+  /* Editable component and responsive parameters. */
+  --gutter-home-tablet: 40px;
+  --gutter-home-mobile: 20px;
+  --heading-index-min: 56px;
+  --heading-index-fluid: 5vw;
+  --heading-index-max: 84px;
+  --heading-en-min: 36px;
+  --heading-en-fluid: 4vw;
+  --heading-en-max: 58px;
+  --heading-title-min: 26px;
+  --heading-title-fluid: 2.4vw;
+  --heading-title-max: 36px;
+  --heading-gap: 16px;
+  --heading-gap-mobile: 14px;
+  --heading-row-gap: 16px;
+  --heading-row-gap-mobile: 12px;
+  --heading-copy-top: 34px;
+  --heading-copy-top-mobile: 28px;
+  --heading-en-left: -28px;
+  --heading-en-left-mobile: -20px;
+  --heading-en-top: -3px;
+  --heading-en-opacity: .12;
+  --heading-min-height: 88px;
+  --heading-min-height-mobile: 72px;
+  --heading-title-weight: 600;
+  --heading-title-line: 1.3;
+  --heading-title-tracking: -.03em;
+  --heading-index-tracking: -.06em;
+  --heading-en-tracking: .04em;
+  --heading-slash-size: 30px;
+  --badge-font-size: 14px;
+  --badge-padding-y: 6px;
+  --badge-padding-x: 16px;
+  --badge-gap: 8px;
+  --badge-dot-size: 6px;
+  --badge-tracking: .08em;
+  --work-tag-height: 32px;
+  --work-tag-radius: 4px;
+  --work-tag-font-size: 14px;
+  --work-tag-padding-x: 16px;
+  --work-tag-bg-alpha: .08;
+  --work-tag-hover-alpha: .15;
+  --surface-card-radius: 8px;
+  --surface-card-padding: 12px;
+  --surface-card-gap: 12px;
+  --surface-card-bg-alpha: .04;
+  --surface-card-hover-alpha: .08;
+  --surface-card-border-alpha: .1;
+  --surface-card-border-hover-alpha: .25;
+  --button-padding-x: 18px;
+  --button-padding-y: 10px;
+  --button-icon-size: 20px;
+  --button-gap: 12px;
+  --button-min-height: 56px;
+  --button-font-size: 14px;
+  --button-border-alpha: .2;
+  --button-radius: var(--radius-rect);
+  --profile-name-size: 28px;
+  --profile-position-gap: 12px;
+  --profile-position-size: 16px;
+  --profile-row-gap: 32px;
+  --footer-content-width: 1024px;
+  --footer-title-gap: 24px;
+  --footer-description-gap: 16px;
+  --footer-nav-gap: 28px;
+  --footer-channels-gap: 48px;
+  --footer-copyright-gap: 64px;
+  --footer-value-size: 16px;
+  --footer-nav-size: 13px;
+  --pointer-glow-edge-radius: 280px;
+  --pointer-glow-fill-radius: 230px;
+  --pointer-glow-fill-alpha: .12;
+  --pointer-glow-fill-max: .5;
+}
+/* DESIGN-MANAGER:END */

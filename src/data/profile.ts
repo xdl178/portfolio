@@ -18,8 +18,8 @@ export const profileFields = {
 
 // Reuses the introduction already shown on AboutPage; no reference-author biography.
 export const profileIntro = [
-  '我是一名视觉与 UI/UX 设计师，工作覆盖原创 IP、品牌交互与 AI 产品官网。习惯从真实场景出发，把复杂的信息结构梳理成直觉可读的界面，并与开发一起把设计落到线上。',
-  '当前可接受新项目委托，方向包括品牌视觉系统、产品界面与动态影像。',
+  '个人简介待补充。可在此填写设计方向、创作方法与作品集介绍。',
+  '合作状态待补充。可在此说明合作方向与沟通方式。',
 ] as const
 
 // Display-only contact data: footer uses placeholder text for empty slots and never creates links.

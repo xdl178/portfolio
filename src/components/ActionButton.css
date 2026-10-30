@@ -1,20 +1,20 @@
 .action-button {
-  --action-px: 18px;
-  --action-icon-size: 20px;
-  --action-gap: 12px;
+  --action-px: var(--button-padding-x);
+  --action-icon-size: var(--button-icon-size);
+  --action-gap: var(--button-gap);
   position: relative;
   display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
-  min-height: 56px;
-  padding: 10px var(--action-px);
+  min-height: var(--button-min-height);
+  padding: var(--button-padding-y) var(--action-px);
   overflow: hidden;
-  border: 1px solid rgb(var(--paper-rgb) / .2);
-  border-radius: var(--radius-rect);
+  border: 1px solid rgb(var(--paper-rgb) / var(--button-border-alpha));
+  border-radius: var(--button-radius);
   background-color: transparent;
   color: hsl(var(--text));
-  font-size: 14px;
+  font-size: var(--button-font-size);
   font-weight: 500;
   line-height: 1.5;
   white-space: nowrap;

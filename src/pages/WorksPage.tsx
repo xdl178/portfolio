@@ -12,8 +12,7 @@ import SurfaceCard from '../components/SurfaceCard'
 import WorkTag from '../components/WorkTag'
 import './WorksFilters.css'
 
-/* 作品档案：对齐 portfolio-test 的编辑式版式
-   刊头（标签行 + 两行巨字）→ 导读（序号 + 正文 + 统计卡）→ 筛选 → 图文交替的展陈行 */
+/* 作品档案：独立页面巨字刊头 → 导读正文与统计 → 筛选 → 图文交替的展陈行。 */
 
 export default function WorksPage() {
   const [filter, setFilter] = useState<string>('all')
@@ -41,23 +40,18 @@ export default function WorksPage() {
   return (
     <div data-works-page className="relative min-h-[100dvh] bg-bg pb-28 pt-32 md:pb-44 md:pt-40">
       <div className="container-page">
-        <header data-works-reveal>
+        <div data-works-reveal>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <Badge>Archive · 2026</Badge>
           </div>
 
-          <h1 className="mt-10 whitespace-nowrap text-center text-[clamp(2.8rem,11vw,8.4rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-text-primary">
+          <h1 id="works-page-title" className="mt-10 whitespace-nowrap text-center text-[clamp(2.8rem,11vw,8.4rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-text-primary">
             <span>作品</span><span className="text-gradient">档案</span>
           </h1>
 
           <div className="mt-14 grid gap-10 border-b border-paper/15 pb-14 md:mt-16 md:grid-cols-12 md:items-end md:gap-14 md:pb-16">
             <div className="md:col-span-7">
-              <div className="flex items-center gap-4">
-                <span aria-hidden="true" className="font-mono text-[2.6rem] font-semibold leading-none tracking-[-0.04em] text-muted">01</span>
-                <span aria-hidden="true" className="h-px w-10 bg-paper/25" />
-                <span className="type-label text-xs text-muted">Intro · 章节导读</span>
-              </div>
-              <p className="mt-6 max-w-[52ch] text-base leading-8 text-muted">
+              <p className="max-w-[52ch] text-base leading-8 text-muted">
                 每个项目都是一次从概念到落地的探索：从原创 IP 视觉系统、品牌交互网站到 AI 产品官网，完整呈现设计页面与主要原稿。点击任意作品进入详情展区。
               </p>
             </div>
@@ -71,7 +65,7 @@ export default function WorksPage() {
               ))}
             </div>
           </div>
-        </header>
+        </div>
 
         <div data-works-filter-tabs="true" className="works-filter-tabs" role="group" aria-label="按方向筛选作品">
           {categories.map((category) => (

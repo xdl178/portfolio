@@ -1,0 +1,1161 @@
+{
+  "version": 1,
+  "styleFile": "public/design-system.css",
+  "builtStyleFile": "dist/design-system.css",
+  "groups": [
+    {
+      "id": "colors",
+      "label": "色彩",
+      "description": "保留原始 HEX、RGB 或 HSL 通道格式；品牌别名从同一来源派生。",
+      "tokens": [
+        {
+          "name": "--bg",
+          "label": "页面底色",
+          "type": "hsl",
+          "default": "222 47% 4%"
+        },
+        {
+          "name": "--surface",
+          "label": "面板底色",
+          "type": "hsl",
+          "default": "220 36% 10%"
+        },
+        {
+          "name": "--text",
+          "label": "主文字",
+          "type": "hsl",
+          "default": "210 40% 98%"
+        },
+        {
+          "name": "--muted",
+          "label": "副文字",
+          "type": "hex",
+          "default": "#BBC9DB"
+        },
+        {
+          "name": "--secondary",
+          "label": "资料项标题",
+          "type": "hex",
+          "default": "#8692A3"
+        },
+        {
+          "name": "--brand-rgb",
+          "label": "品牌蓝 RGB",
+          "type": "rgb",
+          "default": "38 134 237"
+        },
+        {
+          "name": "--accent-soft-rgb",
+          "label": "accent soft rgb",
+          "type": "rgb",
+          "default": "209 232 255"
+        },
+        {
+          "name": "--accent-strong-rgb",
+          "label": "accent strong rgb",
+          "type": "rgb",
+          "default": "111 182 255"
+        },
+        {
+          "name": "--accent-deep-rgb",
+          "label": "accent deep rgb",
+          "type": "rgb",
+          "default": "27 82 201"
+        },
+        {
+          "name": "--paper-rgb",
+          "label": "白色材质 RGB",
+          "type": "rgb",
+          "default": "255 255 255"
+        },
+        {
+          "name": "--ink-rgb",
+          "label": "黑色材质 RGB",
+          "type": "rgb",
+          "default": "0 0 0"
+        },
+        {
+          "name": "--bg-loading-rgb",
+          "label": "bg loading rgb",
+          "type": "rgb",
+          "default": "3 6 11"
+        },
+        {
+          "name": "--surface-card-rgb",
+          "label": "surface card rgb",
+          "type": "rgb",
+          "default": "11 20 34"
+        },
+        {
+          "name": "--gallery-overlay-rgb",
+          "label": "gallery overlay rgb",
+          "type": "rgb",
+          "default": "5 7 13"
+        },
+        {
+          "name": "--nav-glass-rgb",
+          "label": "nav glass rgb",
+          "type": "rgb",
+          "default": "10 15 25"
+        },
+        {
+          "name": "--hero-veil-rgb",
+          "label": "hero veil rgb",
+          "type": "rgb",
+          "default": "6 10 18"
+        },
+        {
+          "name": "--hero-highlight-rgb",
+          "label": "hero highlight rgb",
+          "type": "rgb",
+          "default": "140 196 255"
+        },
+        {
+          "name": "--hero-mid-rgb",
+          "label": "hero mid rgb",
+          "type": "rgb",
+          "default": "78 155 245"
+        },
+        {
+          "name": "--surface-light-rgb",
+          "label": "surface light rgb",
+          "type": "rgb",
+          "default": "209 213 220"
+        },
+        {
+          "name": "--on-light-rgb",
+          "label": "on light rgb",
+          "type": "rgb",
+          "default": "48 61 80"
+        },
+        {
+          "name": "--scrollbar-thumb",
+          "label": "scrollbar thumb",
+          "type": "hsl",
+          "default": "213 28% 22%"
+        },
+        {
+          "name": "--scrollbar-hover",
+          "label": "scrollbar hover",
+          "type": "hsl",
+          "default": "213 28% 30%"
+        }
+      ]
+    },
+    {
+      "id": "typography",
+      "label": "字体",
+      "description": "全站自托管字体与系统回退栈。",
+      "tokens": [
+        {
+          "name": "--font-sans",
+          "label": "主字体栈",
+          "type": "text",
+          "default": "'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI', sans-serif"
+        },
+        {
+          "name": "--font-mono",
+          "label": "等宽字体栈",
+          "type": "text",
+          "default": "'SF Mono', 'JetBrains Mono', 'Cascadia Mono', Consolas, 'Liberation Mono', 'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', ui-monospace, monospace"
+        }
+      ]
+    },
+    {
+      "id": "motion",
+      "label": "动效",
+      "description": "现有持续时间、循环与缓动曲线。",
+      "tokens": [
+        {
+          "name": "--d-quick",
+          "label": "d quick",
+          "type": "duration",
+          "default": "150ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-fast",
+          "label": "d fast",
+          "type": "duration",
+          "default": "250ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-medium",
+          "label": "d medium",
+          "type": "duration",
+          "default": "350ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-slow",
+          "label": "d slow",
+          "type": "duration",
+          "default": "400ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-very-slow",
+          "label": "d very slow",
+          "type": "duration",
+          "default": "500ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-archive-cover",
+          "label": "d archive cover",
+          "type": "duration",
+          "default": "900ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-image-hover",
+          "label": "d image hover",
+          "type": "duration",
+          "default": "700ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-experiment-cover",
+          "label": "d experiment cover",
+          "type": "duration",
+          "default": "1200ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-reveal",
+          "label": "d reveal",
+          "type": "duration",
+          "default": "650ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-tool-reveal",
+          "label": "d tool reveal",
+          "type": "duration",
+          "default": "560ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-tool-stagger",
+          "label": "d tool stagger",
+          "type": "duration",
+          "default": "60ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-detail-reveal",
+          "label": "d detail reveal",
+          "type": "duration",
+          "default": "700ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-section-reveal",
+          "label": "d section reveal",
+          "type": "duration",
+          "default": "900ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-route",
+          "label": "d route",
+          "type": "duration",
+          "default": "550ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-entry",
+          "label": "d entry",
+          "type": "duration",
+          "default": "800ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-hover",
+          "label": "d hover",
+          "type": "duration",
+          "default": "200ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--d-ui",
+          "label": "d ui",
+          "type": "duration",
+          "default": "300ms",
+          "unit": "ms",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--loop-scroll",
+          "label": "loop scroll",
+          "type": "duration",
+          "default": "1.6s",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--loop-grid",
+          "label": "loop grid",
+          "type": "duration",
+          "default": "24s",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--loop-pulse",
+          "label": "loop pulse",
+          "type": "duration",
+          "default": "2.6s",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--e-feedback",
+          "label": "e feedback",
+          "type": "text",
+          "default": "cubic-bezier(0.16, 1, 0.3, 1)"
+        },
+        {
+          "name": "--e-smooth",
+          "label": "e smooth",
+          "type": "text",
+          "default": "cubic-bezier(0.22, 1, 0.36, 1)"
+        },
+        {
+          "name": "--e-standard",
+          "label": "e standard",
+          "type": "text",
+          "default": "cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        {
+          "name": "--e-decelerate",
+          "label": "e decelerate",
+          "type": "text",
+          "default": "cubic-bezier(0, 0, 0.2, 1)"
+        },
+        {
+          "name": "--e-button",
+          "label": "e button",
+          "type": "text",
+          "default": "cubic-bezier(0.215, 0.61, 0.355, 1)"
+        },
+        {
+          "name": "--e-io",
+          "label": "e io",
+          "type": "text",
+          "default": "ease-in-out"
+        },
+        {
+          "name": "--e-out",
+          "label": "e out",
+          "type": "text",
+          "default": "ease-out"
+        },
+        {
+          "name": "--e-linear",
+          "label": "e linear",
+          "type": "text",
+          "default": "linear"
+        }
+      ]
+    },
+    {
+      "id": "layout",
+      "label": "布局",
+      "description": "全站容器、边距、间距与矩形圆角。",
+      "tokens": [
+        {
+          "name": "--radius-rect",
+          "label": "矩形圆角",
+          "type": "length",
+          "default": "12px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--container-home",
+          "label": "container home",
+          "type": "length",
+          "default": "1536px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--container-hero",
+          "label": "container hero",
+          "type": "length",
+          "default": "1400px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--container-page",
+          "label": "container page",
+          "type": "length",
+          "default": "1380px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--gutter-home",
+          "label": "桌面侧边距",
+          "type": "length",
+          "default": "64px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--section-space",
+          "label": "区块间距",
+          "type": "length",
+          "default": "128px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "responsive",
+      "label": "响应式边距",
+      "description": "断点不变，仅调整各屏幕侧边距。",
+      "tokens": [
+        {
+          "name": "--gutter-home-tablet",
+          "label": "平板侧边距",
+          "type": "length",
+          "default": "40px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--gutter-home-mobile",
+          "label": "手机侧边距",
+          "type": "length",
+          "default": "20px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "heading",
+      "label": "章节标题",
+      "description": "统一章节序号、英文底字与中文标题；桌面和手机保持各自间距。",
+      "tokens": [
+        {
+          "name": "--heading-index-min",
+          "label": "序号最小字号",
+          "type": "length",
+          "default": "56px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-index-fluid",
+          "label": "序号流体字号",
+          "type": "length",
+          "default": "5vw",
+          "unit": "vw",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-index-max",
+          "label": "序号最大字号",
+          "type": "length",
+          "default": "84px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-en-min",
+          "label": "英文最小字号",
+          "type": "length",
+          "default": "36px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-en-fluid",
+          "label": "英文流体字号",
+          "type": "length",
+          "default": "4vw",
+          "unit": "vw",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-en-max",
+          "label": "英文最大字号",
+          "type": "length",
+          "default": "58px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-title-min",
+          "label": "标题最小字号",
+          "type": "length",
+          "default": "26px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-title-fluid",
+          "label": "标题流体字号",
+          "type": "length",
+          "default": "2.4vw",
+          "unit": "vw",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-title-max",
+          "label": "标题最大字号",
+          "type": "length",
+          "default": "36px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-gap",
+          "label": "标题间距",
+          "type": "length",
+          "default": "16px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-gap-mobile",
+          "label": "手机标题间距",
+          "type": "length",
+          "default": "14px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-row-gap",
+          "label": "行间距",
+          "type": "length",
+          "default": "16px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-row-gap-mobile",
+          "label": "手机行间距",
+          "type": "length",
+          "default": "12px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-copy-top",
+          "label": "文字顶部间距",
+          "type": "length",
+          "default": "34px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-copy-top-mobile",
+          "label": "手机文字顶部间距",
+          "type": "length",
+          "default": "28px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-en-left",
+          "label": "英文左偏移",
+          "type": "length",
+          "default": "-28px",
+          "unit": "px",
+          "step": 1
+        },
+        {
+          "name": "--heading-en-left-mobile",
+          "label": "手机英文左偏移",
+          "type": "length",
+          "default": "-20px",
+          "unit": "px",
+          "step": 1
+        },
+        {
+          "name": "--heading-en-top",
+          "label": "英文上偏移",
+          "type": "length",
+          "default": "-3px",
+          "unit": "px",
+          "step": 1
+        },
+        {
+          "name": "--heading-en-opacity",
+          "label": "英文透明度",
+          "type": "number",
+          "default": ".12",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "name": "--heading-min-height",
+          "label": "最小高度",
+          "type": "length",
+          "default": "88px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-min-height-mobile",
+          "label": "手机最小高度",
+          "type": "length",
+          "default": "72px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--heading-title-weight",
+          "label": "标题字重",
+          "type": "number",
+          "default": "600",
+          "min": 100,
+          "max": 900,
+          "step": 100
+        },
+        {
+          "name": "--heading-title-line",
+          "label": "标题行高",
+          "type": "number",
+          "default": "1.3",
+          "min": 0.5,
+          "max": 4,
+          "step": 0.05
+        },
+        {
+          "name": "--heading-title-tracking",
+          "label": "标题字距",
+          "type": "length",
+          "default": "-.03em",
+          "unit": "em",
+          "step": 0.01
+        },
+        {
+          "name": "--heading-index-tracking",
+          "label": "序号字距",
+          "type": "length",
+          "default": "-.06em",
+          "unit": "em",
+          "step": 0.01
+        },
+        {
+          "name": "--heading-en-tracking",
+          "label": "英文字距",
+          "type": "length",
+          "default": ".04em",
+          "unit": "em",
+          "step": 0.01,
+          "min": 0
+        },
+        {
+          "name": "--heading-slash-size",
+          "label": "斜线字号",
+          "type": "length",
+          "default": "30px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "badge",
+      "label": "胶囊标签",
+      "description": "共用标签几何与字号；首屏保留 12px 特例。",
+      "tokens": [
+        {
+          "name": "--badge-font-size",
+          "label": "字号",
+          "type": "length",
+          "default": "14px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--badge-padding-y",
+          "label": "纵向内边距",
+          "type": "length",
+          "default": "6px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--badge-padding-x",
+          "label": "横向内边距",
+          "type": "length",
+          "default": "16px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--badge-gap",
+          "label": "圆点间距",
+          "type": "length",
+          "default": "8px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--badge-dot-size",
+          "label": "圆点尺寸",
+          "type": "length",
+          "default": "6px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--badge-tracking",
+          "label": "字距",
+          "type": "length",
+          "default": ".08em",
+          "unit": "em",
+          "step": 0.01,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "work-tag",
+      "label": "作品标签",
+      "description": "紧凑矩形标签的现有材质与几何。",
+      "tokens": [
+        {
+          "name": "--work-tag-height",
+          "label": "高度",
+          "type": "length",
+          "default": "32px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--work-tag-radius",
+          "label": "圆角",
+          "type": "length",
+          "default": "4px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--work-tag-font-size",
+          "label": "字号",
+          "type": "length",
+          "default": "14px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--work-tag-padding-x",
+          "label": "横向内边距",
+          "type": "length",
+          "default": "16px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--work-tag-bg-alpha",
+          "label": "背景透明度",
+          "type": "number",
+          "default": ".08",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "name": "--work-tag-hover-alpha",
+          "label": "悬停背景透明度",
+          "type": "number",
+          "default": ".15",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        }
+      ]
+    },
+    {
+      "id": "surface-card",
+      "label": "信息卡片",
+      "description": "共用卡片的静态及悬停材质。",
+      "tokens": [
+        {
+          "name": "--surface-card-radius",
+          "label": "圆角",
+          "type": "length",
+          "default": "8px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--surface-card-padding",
+          "label": "内边距",
+          "type": "length",
+          "default": "12px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--surface-card-gap",
+          "label": "内容间距",
+          "type": "length",
+          "default": "12px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--surface-card-bg-alpha",
+          "label": "背景透明度",
+          "type": "number",
+          "default": ".04",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "name": "--surface-card-hover-alpha",
+          "label": "悬停背景透明度",
+          "type": "number",
+          "default": ".08",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "name": "--surface-card-border-alpha",
+          "label": "描边透明度",
+          "type": "number",
+          "default": ".1",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "name": "--surface-card-border-hover-alpha",
+          "label": "悬停描边透明度",
+          "type": "number",
+          "default": ".25",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        }
+      ]
+    },
+    {
+      "id": "action-button",
+      "label": "操作按钮",
+      "description": "默认按钮参数；紧凑和文字变体保留各自形态。",
+      "tokens": [
+        {
+          "name": "--button-padding-x",
+          "label": "横向内边距",
+          "type": "length",
+          "default": "18px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--button-padding-y",
+          "label": "纵向内边距",
+          "type": "length",
+          "default": "10px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--button-icon-size",
+          "label": "图标尺寸",
+          "type": "length",
+          "default": "20px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--button-gap",
+          "label": "图标间距",
+          "type": "length",
+          "default": "12px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--button-min-height",
+          "label": "最小高度",
+          "type": "length",
+          "default": "56px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--button-font-size",
+          "label": "字号",
+          "type": "length",
+          "default": "14px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--button-border-alpha",
+          "label": "描边透明度",
+          "type": "number",
+          "default": ".2",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "name": "--button-radius",
+          "label": "圆角（引用全局）",
+          "type": "text",
+          "default": "var(--radius-rect)"
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "label": "个人资料",
+      "description": "资料姓名与职位排版参数。",
+      "tokens": [
+        {
+          "name": "--profile-name-size",
+          "label": "姓名字号",
+          "type": "length",
+          "default": "28px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--profile-position-gap",
+          "label": "职位上间距",
+          "type": "length",
+          "default": "12px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--profile-position-size",
+          "label": "职位字号",
+          "type": "length",
+          "default": "16px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--profile-row-gap",
+          "label": "资料行间距",
+          "type": "length",
+          "default": "32px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "footer",
+      "label": "联系页脚",
+      "description": "页脚主要间距与联系方式字号。",
+      "tokens": [
+        {
+          "name": "--footer-content-width",
+          "label": "内容最大宽度",
+          "type": "length",
+          "default": "1024px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--footer-title-gap",
+          "label": "标题上间距",
+          "type": "length",
+          "default": "24px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--footer-description-gap",
+          "label": "描述上间距",
+          "type": "length",
+          "default": "16px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--footer-nav-gap",
+          "label": "导航横间距",
+          "type": "length",
+          "default": "28px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--footer-channels-gap",
+          "label": "联系方式上间距",
+          "type": "length",
+          "default": "48px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--footer-copyright-gap",
+          "label": "版权上间距",
+          "type": "length",
+          "default": "64px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--footer-value-size",
+          "label": "联系方式字号",
+          "type": "length",
+          "default": "16px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--footer-nav-size",
+          "label": "导航字号",
+          "type": "length",
+          "default": "13px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "pointer-glow",
+      "label": "指针高光",
+      "description": "指针局部光照的半径与强度。",
+      "tokens": [
+        {
+          "name": "--pointer-glow-edge-radius",
+          "label": "边缘高光半径",
+          "type": "length",
+          "default": "280px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--pointer-glow-fill-radius",
+          "label": "内部高光半径",
+          "type": "length",
+          "default": "230px",
+          "unit": "px",
+          "step": 1,
+          "min": 0
+        },
+        {
+          "name": "--pointer-glow-fill-alpha",
+          "label": "内部光照透明度",
+          "type": "number",
+          "default": ".12",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        {
+          "name": "--pointer-glow-fill-max",
+          "label": "内部光照强度上限",
+          "type": "number",
+          "default": ".5",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        }
+      ]
+    }
+  ]
+}

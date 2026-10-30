@@ -339,7 +339,7 @@ export default function Hero({ active, bgSrc }: Props) {
                   aria-hidden="true"
                   className="pulse-dot h-1.5 w-1.5 flex-none rounded-full bg-brand"
                 />
-                2026 · 接受新项目委托
+                合作状态待补充
               </p>
             </div>
           </div>

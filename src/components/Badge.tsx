@@ -11,10 +11,10 @@ export default function Badge({ as: Tag = 'span', surface = 'default', className
     ...props,
     ...(Tag === 'button' ? { type: 'button', ...props } : {}),
     'data-ui-badge': true,
-    className: `chip ${surface === 'image' ? 'chip--image' : ''} whitespace-nowrap font-sans normal-case tracking-[0.08em] ${className}`,
+    className: `chip ${surface === 'image' ? 'chip--image' : ''} whitespace-nowrap ${className}`,
   }
   return createElement(Tag, attributes,
-    <span aria-hidden="true" className="h-1.5 w-1.5 flex-none rounded-full bg-brand" />,
+    <span aria-hidden="true" className="badge-dot flex-none rounded-full bg-brand" />,
     children,
   )
 }

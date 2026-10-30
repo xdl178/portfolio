@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node tools/sync-design-manager.mjs",
     "build": "tsc -b && vite build",
+    "test:privacy": "node privacy.spec.mjs && node footer-nav-reuse.spec.mjs",
+    "test:design-manager": "node design-tokens.spec.mjs && node design-manager.spec.mjs && node heading-regression.spec.mjs && node design-runtime.spec.mjs",
     "preview": "vite preview",
     "test:works": "node works-interactions.spec.mjs && node works-polish.spec.mjs",
     "test:shared-work-ui": "node works-refinement.spec.mjs && node surface-card.spec.mjs && node work-tag.spec.mjs",

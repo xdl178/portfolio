@@ -9,97 +9,7 @@
    ============================================================ */
 
 /* ---------- 1. Design Tokens ---------- */
-:root {
-  /* Surface/text neutrals use HSL channels; muted is a complete HEX color.
-     Brand/material colors below use RGB channels. See COLOR-SYSTEM.md. */
-  --bg: 222 47% 4%;
-  --bg-elev: 222 40% 7%;
-  --surface: 220 36% 10%;
-  --text: 210 40% 98%;
-  --muted: #BBC9DB;
-  --secondary: #8692A3;
-  --stroke: 213 28% 20%;
-  /* RGB channels: brand/accent share one source; do not wrap these in hsl(). */
-  --brand-rgb: 38 134 237;
-  --brand: rgb(var(--brand-rgb));
-  --accent: var(--brand-rgb);
-  --accent-soft-rgb: 209 232 255;
-  --accent-strong-rgb: 111 182 255;
-  --accent-deep-rgb: 27 82 201;
-  --accent-strong: var(--accent-strong-rgb);
-  --accent-2: var(--accent-deep-rgb);
-  --paper-rgb: 255 255 255;
-  --ink-rgb: 0 0 0;
-  /* Material/photographic exceptions, never alternate secondary text colors. */
-  --bg-loading-rgb: 3 6 11;
-  --surface-card-rgb: 11 20 34;
-  --surface-card-hover-rgb: 16 30 49;
-  --gallery-overlay-rgb: 5 7 13;
-  --nav-glass-rgb: 10 15 25;
-  --hero-veil-rgb: 6 10 18;
-  --hero-highlight-rgb: 140 196 255;
-  --hero-mid-rgb: 78 155 245;
-  --surface-light-rgb: 209 213 220;
-  --on-light-rgb: 48 61 80;
-  --scrollbar-thumb: 213 28% 22%;
-  --scrollbar-hover: 213 28% 30%;
-
-  /* 字体：思源黑体 Source Han Sans CN（已内嵌 woff2 分片，见 assets/fonts） */
-  --font-sans: 'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', 'PingFang SC',
-    'HarmonyOS Sans SC', 'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'SF Mono', 'JetBrains Mono', 'Cascadia Mono', Consolas, 'Liberation Mono',
-    'Source Han Sans CN', 'Source Han Sans SC', 'Noto Sans SC', ui-monospace, monospace;
-
-  /* 动效 token（design.md §6） */
-  --d-stagger: 40ms;
-  --d-micro: 80ms;
-  --d-quick: 150ms;
-  --d-fast: 250ms;
-  --d-medium: 350ms;
-  --d-slow: 400ms;
-  --d-very-slow: 500ms;
-  --d-archive-cover: 900ms;
-  --d-image-hover: 700ms;
-  --d-experiment-cover: 1200ms;
-  --d-reveal: 650ms;
-  --d-tool-reveal: 560ms;
-  --d-tool-stagger: 60ms;
-  --d-detail-reveal: 700ms;
-  --d-section-reveal: 900ms;
-  --d-route: 550ms;
-  --d-entry: 800ms;
-  --d-hover: 200ms;
-  --d-ui: 300ms;
-  --d-role: 450ms;
-  --loop-scroll: 1.6s;
-  --loop-float: 11s;
-  --loop-shimmer: 2.4s;
-  --loop-grid: 24s;
-  --loop-pulse: 2.6s;
-  --loop-marquee: 32s;
-
-  --e-feedback: cubic-bezier(0.16, 1, 0.3, 1);
-  --e-smooth: cubic-bezier(0.22, 1, 0.36, 1);
-  --e-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --e-decelerate: cubic-bezier(0, 0, 0.2, 1);
-  --e-button: cubic-bezier(0.215, 0.61, 0.355, 1);
-  --e-io: ease-in-out;
-  --e-out: ease-out;
-  --e-linear: linear;
-  --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --e-morph: cubic-bezier(0.32, 1.25, 0.4, 1);
-
-  /* 品牌渐变（蓝色调）：浅蓝 → 主蓝 #2686ED → 深蓝，仅用于描边 / 光带 / 进度条 */
-  --grad-accent: linear-gradient(120deg, rgb(var(--accent-strong-rgb)) 0%, var(--brand) 48%, rgb(var(--accent-deep-rgb)) 100%);
-
-  --radius-rect: 12px;
-  --nav-h: 64px;
-  --container-home: 1536px;
-  --container-hero: 1400px;
-  --container-page: 1380px;
-  --gutter-home: 64px;
-  --section-space: 128px;
-}
+/* Tokens are loaded directly from public/design-system.css by index.html. */
 
 /* ---------- 2. 基础 ---------- */
 @layer base {
@@ -194,18 +104,20 @@
   .chip {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--badge-gap);
     border-radius: 9999px;
-    padding: 6px 16px;
-    font-family: var(--font-mono);
-    font-size: 14px;
+    padding: var(--badge-padding-y) var(--badge-padding-x);
+    font-family: var(--font-sans);
+    font-size: var(--badge-font-size);
     line-height: 1.5;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    letter-spacing: var(--badge-tracking);
+    text-transform: none;
     color: var(--muted);
     background: rgb(var(--paper-rgb) / 0.08);
     border: 1px solid rgb(var(--paper-rgb) / 0.2);
   }
+
+  .badge-dot { width: var(--badge-dot-size); height: var(--badge-dot-size); }
 
   .chip--image { background: rgb(var(--ink-rgb) / .7); }
 
@@ -514,8 +426,8 @@
 }
 
 /* Responsive layout sources; component-specific composition stays local. */
-@media (max-width: 1023px) { :root { --gutter-home: 40px; } }
-@media (max-width: 767px) { :root { --gutter-home: 20px; } }
+@media (max-width: 1023px) { :root { --gutter-home: var(--gutter-home-tablet); } }
+@media (max-width: 767px) { :root { --gutter-home: var(--gutter-home-mobile); } }
 .container-home { width: 100%; max-width: var(--container-home); margin-inline: auto; padding-inline: var(--gutter-home); }
 .container-page { width: 100%; max-width: var(--container-page); margin-inline: auto; padding-inline: var(--gutter-home); }
 .image-hover-transition { transition-duration: var(--d-image-hover); transition-timing-function: var(--e-smooth); }

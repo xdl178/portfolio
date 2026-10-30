@@ -2,13 +2,13 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import './SelectedWorks.css'
+import SectionHeading from './SectionHeading'
 import './Practice.css'
 
 const projects = [
-  { category: '公共空间 · 体感交互', title: '深圳前湾公园', subtitle: '让身体成为游戏的交互方式', description: '面向亲子家庭与年轻游客，设计连接户外互动大屏、移动端 H5 与网页端的运动体验。', tags: '游戏 IP / 界面系统 / 动作反馈' },
-  { category: '智能体测 · 健康终端', title: '长沙智谷', subtitle: '让复杂体测更易理解', description: '围绕注册、检测和结果查看的完整流程，为自助体测终端建立清晰的引导与反馈机制。', tags: '数据可视化 / 引导动效 / 体验测试' },
-  { category: '园区智能体 · 数字服务', title: '北京博大公园', subtitle: '让园区服务触手可及', description: '结合园区导览与信息服务场景，构建跨设备一致的数字化体验。', tags: '服务设计 / 界面规范 / 数字体验' },
+  { category: '项目方向待补充', title: '项目名称待补充 01', subtitle: '设计目标待补充', description: '项目介绍待补充。可在此填写项目背景、设计过程与交付成果。', tags: '项目标签待补充' },
+  { category: '项目方向待补充', title: '项目名称待补充 02', subtitle: '设计目标待补充', description: '项目介绍待补充。可在此填写业务场景、职责范围与协作方式。', tags: '项目标签待补充' },
+  { category: '项目方向待补充', title: '项目名称待补充 03', subtitle: '设计目标待补充', description: '项目介绍待补充。可在此填写体验目标、方案思路与复盘总结。', tags: '项目标签待补充' },
 ]
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -41,13 +41,7 @@ export default function Practice() {
   return (
     <section ref={root} id="practice" aria-labelledby="career-title" className="home-section career-section relative bg-bg">
       <div className="career-container">
-        <header className="selected-works-heading career-header">
-          <span className="selected-works-chapter" aria-hidden="true">03</span>
-          <div className="selected-works-heading-copy">
-            <span className="selected-works-exhibit" aria-hidden="true">EXPERIENCE</span>
-            <div className="selected-works-heading-row"><span className="selected-works-slash" aria-hidden="true">/</span><h2 id="career-title">工作<span className="text-accent">经验</span></h2></div>
-          </div>
-        </header>
+        <SectionHeading index="03" en="EXPERIENCE" title={<>工作<span className="text-accent">经验</span></>} level="h2" id="career-title" className="career-header" />
         <div data-career-tree className="career-tree">
           <div className="career-rail" aria-hidden="true">
             <div className="career-rail-fill" />

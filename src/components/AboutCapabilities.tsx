@@ -6,7 +6,7 @@ import './AboutCapabilities.css'
 export default function AboutCapabilities() {
   return (
     <section id="capabilities" data-about-section="strengths" className="container-page about-section about-strengths" aria-label="个人优势">
-      <SectionHeader index="03" label="STRENGTHS · 个人优势" title={<><span className="block">CORE</span>{' '}<span className="block text-accent">STRENGTHS.</span></>} action={<p className="about-strengths-intro">{aboutStrengthsIntro}</p>} />
+      <SectionHeader index="02" en="STRENGTHS" title={<>个人<span className="text-accent">优势</span></>} id="about-strengths-title" action={<p className="about-strengths-intro">{aboutStrengthsIntro}</p>} />
       <ul className="about-strengths-grid" role="list">
         {aboutStrengths.map((item, index) => (
           <SurfaceCard as="li" key={item.no} index={index} glow className="about-strength-card" data-about-strength>
